@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <title>OVAL</title>
+    <parser>
+        <target>doc/parser</target>
+    </parser>
+    <transformer>
+        <target>doc/phpdocumentor</target>
+    </transformer>
+    <files>
+        <directory>app</directory>
+    </files>
+</phpdoc>
