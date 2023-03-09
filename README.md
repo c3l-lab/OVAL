@@ -59,3 +59,7 @@ Laravel Logs can be found in `/storage/logs/laravel.log`
 ```
 php artisan serve
 ```
+
+
+# Setting up a Laravel environment
+https://teamhelium.medium.com/deploying-laravel-to-elastic-beanstalk-in-2021-5a3d9cc6696d
