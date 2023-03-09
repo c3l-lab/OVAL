@@ -7,7 +7,7 @@ phases:
      commands:
          - apt-get update -y
          - apt-get install -y libpq-dev libzip-dev
-         - apt-get install -y php-pgsql
+         - apt-get install -y php-pgsql php-mysql
          - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
    pre_build:
      commands:
