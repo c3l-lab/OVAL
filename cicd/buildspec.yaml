@@ -17,7 +17,7 @@ phases:
          - npm install
    build:
      commands:
-         - npm run prod
+        #  - npm run prod
          - php artisan migrate --force
          - php artisan db:seed
 artifacts:
