@@ -1,29 +1,29 @@
 version: 0.2
 phases:
-   install:
-     runtime-versions:
-         php: 7.4
-         nodejs: 14.x
-     commands:
-         - apt-get update -y
-         - apt-get install -y libpq-dev libzip-dev
-         - apt-get install -y php-mysql
-         # php-pgsql
-         - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-   pre_build:
-     commands:
-         - cp .env.production .env
-         - composer install
-         - npm install
-   build:
-     commands:
-        #  - npm run prod
-         - php artisan migrate --force
-         - php artisan db:seed
+  install:
+    runtime-versions:
+      php: 7.4
+      nodejs: 14.x
+    commands:
+      - apt-get update -y
+      - apt-get install -y libpq-dev libzip-dev
+      - apt-get install -y php-mysql
+      # php-pgsql
+      - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  pre_build:
+    commands:
+      - cp .env.production .env
+      - composer install
+      - npm install
+  build:
+    commands:
+      #  - npm run prod
+      - php artisan migrate --force
+      - php artisan db:seed
 artifacts:
-   files:
-         - '**/*'
-   name: $(date +%Y-%m-%dT%H:%M:%S).zip
+  files:
+    - '**/*'
+  name: $(date +%Y-%m-%dT%H:%M:%S).zip
 proxy:
-   upload-artifacts: yes
-   logs: yes
+  upload-artifacts: yes
+  logs: yes
