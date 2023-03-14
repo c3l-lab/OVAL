@@ -19,7 +19,7 @@ phases:
     commands:
       #  - npm run prod
       - php artisan migrate --force
-      - php artisan db:seed
+      # - php artisan db:seed
 artifacts:
   files:
     - '**/*'
