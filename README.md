@@ -46,9 +46,14 @@ php artisan migrate --env=local
 ```
 php artisan migrate:install
 ```
-3. run migrations
+3. Run migrations - sets up database scheme - runs scripts found in `/databases/migrations`
 ```
 php artisan migrate
+```
+
+4. Seed the database with dummy data (First time only) - runs scripts found in `/databases/seeds`
+```
+php artisan db:seed
 ```
 
 # Debugging
