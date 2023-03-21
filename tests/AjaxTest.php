@@ -1,35 +1,41 @@
 <?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use oval\User;
+use oval\Video;
+use oval\Comment;
 
 class AjaxTest extends TestCase
 {
+    use RefreshDatabase;
 
-    
     private function loginAsMinnieMouse() {
-    	$minnie = oval\User::find(2);
-    	$this->be($minnie);
+        // Create a user for testing purposes
+        $minnie = oval\User::factory()->create();
+        $this->be($minnie);
     }
-    
-    /*public function testGetAnnotations() {
-    	//have to run "php artisan migrate:refresh --seed" before this test
-    	$minnie = oval\User::find(2);
-    	$this->be($minnie);
-    	//echo "User is ".$minnie->fullName()."\n";
 
-		$this -> json('GET', '/get_annotation_list', 
-    				['video_id'=>'1', 'annotation_mode'=>'true', 'view_mode'=>'1'])
-    		-> seeJson();
-    }*/
-    
     public function testGetComments() {
-    	$this->loginAsMinnieMouse();
-    	
-    	$this -> json('GET', '/get_comments', ['video_id'=>'1'])
-    			-> seeJson();
+        $this->loginAsMinnieMouse();
+    
+        // Create a video
+        $video = Video::factory()->create();
+    
+        // Create some comments
+        Comment::factory()->count(3)->create(['video_id' => $video->id]);
+    
+        $this->json('GET', '/get_comments', ['video_id' => $video->id])
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                '*' => [
+                    'id',
+                    'video_id',
+                    'content',
+                    'author',
+                    'created_at',
+                    'updated_at',
+                ],
+            ]);
     }
     
-
 }

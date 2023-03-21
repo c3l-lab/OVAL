@@ -5,6 +5,7 @@ namespace oval;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Model class for table 'users'.
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class User extends Authenticatable
 {
     use Notifiable;
-
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -266,5 +267,9 @@ class User extends Authenticatable
     **/
     public function analysis_request() {
         return $this->hasMany('oval\AnalysisRequest');
+    }
+    protected static function newFactory()
+    {
+        return \Database\Factories\UserFactory::new();
     }
 }//end class

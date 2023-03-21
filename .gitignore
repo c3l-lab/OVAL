@@ -23,3 +23,11 @@ Homestead.json
 *.DS_Store
 speechtotext-server/videos
 speechtotext-server/audios
+
+# Tests
+.phpunit.result.cache
+phpunit.xml.bak
+.phpunit.cache/
+
+# Remove Composer.lock from CI/CD process
+composer.lock

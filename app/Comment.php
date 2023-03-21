@@ -3,12 +3,14 @@
 namespace oval;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Model class for table 'comments'
  */
 class Comment extends Model
 {
+    use HasFactory;
     /** @var array Table name */
     protected $table = 'comments';
     
@@ -57,5 +59,9 @@ class Comment extends Model
     **/
     public function tags() {
         return $this->belongsToMany('oval\Tag', 'comment_tags')->withTimeStamps();
+    }
+    protected static function newFactory()
+    {
+        return \Database\Factories\CommentFactory::new();
     }
 }

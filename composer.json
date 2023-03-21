@@ -5,26 +5,29 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
-        "imsglobal/lti": "3.0.*",
-        "laravel/framework": "5.4.*",
-        "laracasts/utilities": "~2.1",
-        "doctrine/dbal": "v2.5.12",
-        "google/apiclient": "^2.13" 
+        "php": "^8.2",
+        "imsglobal/lti": "^3.0",
+        "laravel/framework": "^10.0",
+        "laracasts/utilities": "^3.0",
+        "doctrine/dbal": "^3.6",
+        "symfony/polyfill-uuid": "^1.22",
+        "laravel/ui": "^4.2",
+        "google/apiclient": "^2.13.1" 
     },
     "require-dev": {
-        "fzaninotto/faker": "~1.4",
-        "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.7",
-        "symfony/css-selector": "3.1.*",
-        "symfony/dom-crawler": "3.1.*"
+        "fakerphp/faker": "^1.21",
+        "mockery/mockery": "^1.5",
+        "phpunit/phpunit": "^10.0",
+        "symfony/css-selector": "^6.2",
+        "symfony/dom-crawler": "^6.2"
     },
     "autoload": {
         "classmap": [
             "database"
         ],
         "psr-4": {
-            "oval\\": "app/"
+            "oval\\": "app/",
+            "Database\\Factories\\": "app/Database/Factories/"
         }
     },
     "autoload-dev": {
@@ -48,14 +51,10 @@
             "php artisan optimize"
         ],
         "test": [
-            "Composer\\Config::disableProcessTimeout",
-            "phpunit"
+            "vendor/bin/phpunit"
         ]
     },
     "config": {
-        "preferred-install": "dist",
-        "allow-plugins": {
-            "kylekatarnls/update-helper": true
-        }
+        "preferred-install": "dist"
     }
 }

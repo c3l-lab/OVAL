@@ -2,7 +2,7 @@
 
 namespace oval\Exceptions;
 
-use Exception;
+use Throwable; // Add this line
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -27,10 +27,10 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $exception
+     * @param  \Throwable  $exception  // Change the type hint from 'Exception' to 'Throwable'
      * @return void
      */
-    public function report(Exception $exception)
+    public function report(Throwable $exception)  // Change the type hint from 'Exception' to 'Throwable'
     {
         parent::report($exception);
     }
@@ -39,16 +39,16 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
+     * @param  \Throwable  $exception  // Change the type hint from 'Exception' to 'Throwable'
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception)
+    public function render($request, Throwable $exception) // Change the type hint from 'Exception' to 'Throwable'
     {
-    	//-- if csrf token mismatch because the page was left open for too long,
-    	//-- redirect to login
-    	if ( $exception instanceof \Illuminate\Session\TokenMismatchException ) {
-			return redirect('/login');
-		}
+        //-- if csrf token mismatch because the page was left open for too long,
+        //-- redirect to login
+        if ( $exception instanceof \Illuminate\Session\TokenMismatchException ) {
+            return redirect('/login');
+        }
 
         return parent::render($request, $exception);
     }

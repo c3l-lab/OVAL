@@ -4,12 +4,14 @@ namespace oval;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Model class for table 'groups'.
  */
 class Group extends Model
 {
+    use HasFactory;
     protected $table = "groups";
 	protected $fillable = ['name', 'course_id'];  
 	  
@@ -160,5 +162,8 @@ class Group extends Model
     		}
     	}
     }
-    
+    protected static function newFactory()
+    {
+        return \Database\Factories\GroupFactory::new();
+    }
 }

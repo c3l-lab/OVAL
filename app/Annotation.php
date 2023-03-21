@@ -3,9 +3,11 @@
 namespace oval;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Annotation extends Model
 {
+	use HasFactory;
 	protected $tablename = 'annotations';
 	protected $fillable = ['group_video_id','user_id','start_time'];
 	
@@ -38,4 +40,8 @@ class Annotation extends Model
 	public function tags() {
 		return $this->belongsToMany('oval\Tag', 'annotation_tags')->withTimeStamps();
 	}
+	protected static function newFactory()
+    {
+        return \Database\Factories\AnnotationFactory::new();
+    }
 }

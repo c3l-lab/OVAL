@@ -1899,24 +1899,25 @@ class AjaxController extends Controller
 		
 		$result_arr = [];
 
-		for($x = 0; $x < count($videoid_arr); $x++){
-			
+		for ($x = 0; $x < count($videoid_arr); $x++) {
+
 			/*------ get quiz list ------*/
 			$quiz_list = DB::table('quiz_creation')
-						->join('videos', 'quiz_creation.identifier', '=', 'videos.identifier')
-						->select('videos.id as video_id','quiz_creation.identifier as identifier', 'quiz_creation.visable')
-						->where([
-							['videos.id', '=', $videoid_arr[$x]]
-						])
-						->first();
-
-			if(count($quiz_list) > 0){
-				array_push($result_arr, $quiz_list);				
-			}else{
+				->join('videos', 'quiz_creation.identifier', '=', 'videos.identifier')
+				->select('videos.id as video_id', 'quiz_creation.identifier as identifier', 'quiz_creation.visable')
+				->where([
+					['videos.id', '=', $videoid_arr[$x]]
+				])
+				->first();
+		
+			if ($quiz_list !== null && count((array)$quiz_list) > 0) {
+				array_push($result_arr, $quiz_list);
+			} else {
 				array_push($result_arr, "no quiz");
 			}
-			
+		
 		}
+		
 
 		
 		return $result_arr;

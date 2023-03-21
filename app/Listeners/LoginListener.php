@@ -6,6 +6,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use oval;
+use Illuminate\Support\Str; // Import the Str facade
 
 class LoginListener
 {
@@ -22,7 +23,7 @@ class LoginListener
     /**
      * Handle the event on user login.
      *
-     *	Set api_token for the user, and save tracking.
+     *  Set api_token for the user, and save tracking.
      *
      * @param  Login  $event
      * @return void
@@ -30,13 +31,13 @@ class LoginListener
     public function handle(Login $event)
     {
         $user = $event->user;
-        $user->api_token = str_random(60);
+        $user->api_token = Str::random(60); // Replace str_random with Str::random
         $user->save();
         
         $tracking = new oval\Tracking;
-		$tracking->user_id = $user->id;
-		$tracking->event = "Login";
-		$tracking->event_time = date("Y-m-d H:i:s");
-		$tracking->save();
+        $tracking->user_id = $user->id;
+        $tracking->event = "Login";
+        $tracking->event_time = date("Y-m-d H:i:s");
+        $tracking->save();
     }
 }

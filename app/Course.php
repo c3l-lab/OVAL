@@ -4,12 +4,14 @@ namespace oval;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Model class for table 'courses'.
  */
 class Course extends Model
 {
+	use HasFactory;
 	protected $table = 'courses';
 	protected $fillable = ['name'];
 	
@@ -92,4 +94,8 @@ class Course extends Model
 		});
 		return $students;
 	}
+	protected static function newFactory()
+    {
+        return \Database\Factories\CourseFactory::new();
+    }
 }

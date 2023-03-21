@@ -4,12 +4,14 @@ namespace oval;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Model class for table 'videos'
  */
 class Video extends Model
 {
+    use HasFactory;
     protected $table = "videos";
     protected $fillable = ['identifier', 'title', 'description', 'duration', 'thumbnail_url', 'media_type', 'added_by'];
     
@@ -158,5 +160,9 @@ class Video extends Model
         }
         
         return $retVal;
+    }
+    protected static function newFactory()
+    {
+        return \Database\Factories\VideoFactory::new();
     }
 }

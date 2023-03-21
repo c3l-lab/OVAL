@@ -4,12 +4,14 @@ namespace oval;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Model class for 'group_videos'.
  */
 class GroupVideo extends Model
 {
+	use HasFactory;
 	protected $table = 'group_videos';
 	protected $fillable = ['group_id', 'video_id', 'hide', 'show_analysis'];
 	protected $casts = ['hide'=>'boolean', 'show_analysis'=>'boolean'];
@@ -311,5 +313,8 @@ class GroupVideo extends Model
 					->where('event', '=', 'View')
 					->count();
 	}
-
+	protected static function newFactory()
+    {
+        return \Database\Factories\GroupVideoFactory::new();
+    }
 }
