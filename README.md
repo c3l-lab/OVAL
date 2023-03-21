@@ -6,15 +6,15 @@ OVAL 2.0 is an interactive video platform designed to be integrated into a learn
   - [1. Requirements](#1-requirements)
   - [2. Installation](#2-installation)
     - [2.1 Development Environment using Laravel Homestead](#21-development-environment-using-laravel-homestead)
-- [3. Adaptations for AWS and Elastic Beanstalk:](#3-adaptations-for-aws-and-elastic-beanstalk)
-  - [3.1 Resolving Composer Errors](#31-resolving-composer-errors)
-  - [3.2 Setting up Ubuntu..](#32-setting-up-ubuntu)
-  - [3.3 Setting an APP\_KEY..](#33-setting-an-app_key)
-  - [3.4 Install database for first time.](#34-install-database-for-first-time)
-  - [3.5 Debugging](#35-debugging)
-  - [3.6 Run App Locally](#36-run-app-locally)
-- [4. Additional Resources](#4-additional-resources)
-  - [4.1 Setting up a Laravel environment](#41-setting-up-a-laravel-environment)
+  - [3. Adaptations for AWS and Elastic Beanstalk:](#3-adaptations-for-aws-and-elastic-beanstalk)
+    - [3.1 Resolving Composer Errors](#31-resolving-composer-errors)
+    - [3.2 Setting up Ubuntu..](#32-setting-up-ubuntu)
+    - [3.3 Setting an APP\_KEY..](#33-setting-an-app_key)
+    - [3.4 Install database for first time.](#34-install-database-for-first-time)
+    - [3.5 Debugging](#35-debugging)
+    - [3.6 Run App Locally](#36-run-app-locally)
+  - [4. Additional Resources](#4-additional-resources)
+    - [4.1 Setting up a Laravel environment](#41-setting-up-a-laravel-environment)
 
 
 ## 1. Requirements
@@ -136,23 +136,23 @@ php artisan migrate --seed
 The OVAL application should now be accessible at http://oval.test.
 
 
-# 3. Adaptations for AWS and Elastic Beanstalk:
+## 3. Adaptations for AWS and Elastic Beanstalk:
 
-## 3.1 Resolving Composer Errors
+### 3.1 Resolving Composer Errors
 Got lots of errors running composer to install packages related to Google API Services. Seems to need an increase in the default timeout.
 Phrase that seemed to work is:
 ```
 COMPOSER_PROCESS_TIMEOUT=2000 composer install
 ```
 
-## 3.2 Setting up Ubuntu..
+### 3.2 Setting up Ubuntu..
 Add driver for php and mysql
 ``
 sudo apt-get install php7.4-mysql
 
 ``
 
-## 3.3 Setting an APP_KEY..
+### 3.3 Setting an APP_KEY..
 I had lots of troubles with this.. I needed to copy the .env.example to .env - then set a default key that matched the right encyption value set in `config/app.php` line 108 'cipher' setting i.e
 APP_KEY = base64:MsUJo+qAhIVGPx52r1mbxCYn5YbWtCx8FQ7pTaHEvRo=base64:Ign7MpdXw4FMI5ai7SXXiU2vbraqhyEK1NniKPNJKGY=
 
@@ -172,7 +172,7 @@ php artisan migrate --env=local
 ```
 
 
-## 3.4 Install database for first time.
+### 3.4 Install database for first time.
 1. Manually create db in MySQL Workbench (there must be a blank database/schema to connect to)
 2. Create migrate table
 ```
@@ -188,18 +188,18 @@ php artisan migrate
 php artisan db:seed
 ```
 
-## 3.5 Debugging
+### 3.5 Debugging
 
 Laravel Logs can be found in `/storage/logs/laravel.log`
 
 
-## 3.6 Run App Locally
+### 3.6 Run App Locally
 ```
 php artisan serve
 ```
 
 
-# 4. Additional Resources
+## 4. Additional Resources
 
-## 4.1 Setting up a Laravel environment
+### 4.1 Setting up a Laravel environment
 https://teamhelium.medium.com/deploying-laravel-to-elastic-beanstalk-in-2021-5a3d9cc6696d
