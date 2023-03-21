@@ -15,12 +15,12 @@ phases:
       - cp .env.production .env
       - composer install
       - npm install
-      - npm install --global cross-env
+      # - npm install --global cross-env
       # - chmod +x .platform/hooks/prebuild/*.sh
       - chmod +x .platform/hooks/postdeploy/*.sh
   build:
     commands:
-      - npm run prod
+      - npm run production
       - php artisan migrate --force
 artifacts:
   files:
