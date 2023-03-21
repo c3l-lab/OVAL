@@ -3,7 +3,7 @@ phases:
   install:
     runtime-versions:
       php: 8.2
-      nodejs: 14.x
+      nodejs: 16.x
     commands:
       - apt-get update -y
       - apt-get install -y libpq-dev libzip-dev
