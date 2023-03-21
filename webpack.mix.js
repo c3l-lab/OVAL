@@ -13,6 +13,6 @@ mix.js('resources/assets/js/app.js', 'public/js')
       },
     },
   })
-  .vue()
+  .vue({ version: 2 })
   .version()
   .sourceMaps();
