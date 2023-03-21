@@ -19,7 +19,7 @@ phases:
       - chmod +x .platform/hooks/postdeploy/*.sh
   build:
     commands:
-      #  - npm run prod
+      - npm run prod
       - php artisan migrate --force
 artifacts:
   files:
