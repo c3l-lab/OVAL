@@ -5,6 +5,7 @@ phases:
       php: 8.1
       nodejs: 16
     commands:
+      - set -e
       - apt-get update -y
       - apt-get install -y libpq-dev libzip-dev
       - apt-get install -y php-mysql
