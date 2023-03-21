@@ -15,9 +15,12 @@
 </template>
 
 <script>
-    export default {
-        mounted() {
-            console.log('Component ready.')
-        }
-    }
+export default {
+    name: 'App',
+};
 </script>
+<style scoped>
+.container {
+    max-width: 800px;
+}
+</style>
