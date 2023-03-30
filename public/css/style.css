@@ -289,8 +289,11 @@ h4 {
 /* -------- Video Player -------- */
 .video-width {
 	width: 98%;	
-	max-width: 640px;	
+	max-width: 854px;	
+	height: 98%;	
+	max-height: 480px;
 	margin: 0 auto;
+	align-items: center;
 }
 
 /* -------- Content Tabs -------- */
@@ -343,6 +346,9 @@ h4 {
 	overflow-y: scroll;
 	height: 160px;
 }
+#left-side {
+	align-items: center;
+}
 #right-side .keyword-ul-box {
 	margin: 5%;	
 }
@@ -371,6 +377,9 @@ h4 {
 }
 .container .dropdown-menu > li:hover {
 	background: #C8C8C8;
+}
+.container {
+	padding: 15px;
 }
 #modal-iframe {
 	border: none;
