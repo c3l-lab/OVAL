@@ -26,8 +26,6 @@ function onYouTubeIframeAPIReady() {
 	});//end YT.Player
 
 	load_quiz(video_identifier);
-
-	player.loadModule("captions");
 }//end onYouTubeIframeAPIReady
 
 function pauseVideo() {
