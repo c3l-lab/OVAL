@@ -469,7 +469,7 @@ $(document).ready (
 				}
 			}
 			if (show) {
-				modal.find("#modalLabel").text("ADD ANNOTATION");
+				modal.find("#modalLabel").text("ADD THOUGHT REPORT");
 				item_start_time_text = secondsToMinutesAndSeconds(item_start_time);
 				modal.find("#time-label").html(item_start_time_text);
 				modal.find(".edit-annotation-time").show();
@@ -702,7 +702,7 @@ $(document).ready (
 
 			var tags = commaDelimitedToArray(tags_string);
 
-			if (title==="ADD ANNOTATION") {
+			if (title==="ADD THOUGHT REPORT") {
 				$.ajax({
 					type:"POST",
 					url: "/add_annotation",
@@ -785,7 +785,7 @@ $(document).ready (
 		});
 		modal.on("click", "#delete", function() {
 			var title = $("#modalLabel").text();
-			if ((title === "ADD ANNOTATION")||(title === "ADD COMMENT")) {
+			if ((title === "ADD THOUGHT REPORT")||(title === "ADD COMMENT")) {
 				$("#annotation-modal .close").click();
 				return;
 			}
@@ -1343,7 +1343,7 @@ $(document).ready (
 
 		//Tracking all meaningful events
 		var trackingsArr = [
-			{event: 'click', target: '.add-annotation', info: 'Add Annotation'},
+			{event: 'click', target: '.add-annotation', info: 'Add Thought Report'},
 			{event: 'click', target: '.download-comments', info: 'Download Annotations'},
 			{event: 'click', target: '#rewind-button', info: 'Edit annotation time (back)'},
 			{event: 'click', target: '#forward-button', info: 'Edit annotation time (forward)'},
