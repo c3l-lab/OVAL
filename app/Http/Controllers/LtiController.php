@@ -5,6 +5,7 @@ namespace oval\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use IMSGlobal\LTI\ToolProvider;
 use IMSGlobal\LTI\ToolProvider\DataConnector;
 
@@ -34,10 +35,12 @@ const LTI_PASSWORD = '[lti_password]';
 class OvalLtiProvider extends ToolProvider\ToolProvider {
 
   function onLaunch() {
+    Log::debug('Starting onLaunch method');
     // Insert code here to handle incoming connections - use the user,
     // context and resourceLink properties of the class instance
     // to access the current user, context and resource link.
     $this->user->save();
+    Log::debug('User details', ['user' => $this->user]);
 
     //--find user with email address
     //--leave it as is if already exists
@@ -70,6 +73,8 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
     
     $course = Course::where('moodle_course_id', '=', intval($_POST['context_id']))->first();
     $course_id = empty($course) ? -1 : $course->id;
+
+    Log::debug('Course details', ['course' => $course]);
     
     // update course information
     $enrollments = DB::connection('moodle')->table('user_enrolments')
@@ -110,6 +115,8 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
       }
       $enrollment->save();
 
+      Log::debug('Enrollment details', ['enrollment' => $enrollment]);
+
       if ($this->isInstructor()) {
         // update groups information
         $groups = DB::connection('moodle')->table('groups')
@@ -130,6 +137,8 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
               ])
               ->get();
       }
+
+      Log::debug('Groups details', ['groups' => $groups]);
 
       // Create a default Course Group if no group is found for the course
       $g = Group::firstOrCreate(['moodle_group_id' => NULL, 'course_id' => $course->id], ['name'=>'Course Group']);
@@ -199,52 +208,57 @@ class LtiController extends Controller
      * 
      */
     public function launch(Request $req) {
-      global $_POST;
-      $_POST = $req->all();
+        global $_POST;
+        $_POST = $req->all();
 
-      try {
-        $db_config = DB::getConfig();
-        $conn_str = $db_config['driver'] . ':host=' . $db_config['host'] . ';port=' . $db_config['port'] . ';dbname=' . $db_config['database'];
-        $pdo = new \PDO($conn_str, $db_config['username'], $db_config['password']);
-      } catch (PDOException $e) {
-        return 'Connection failed: ' . $e->getMessage();
-      }
-      $db_connector = DataConnector\DataConnector::getDataConnector('', $pdo);
+        Log::debug('LTI launch request data', ['request_data' => $_POST]);
 
-      $tool = new OvalLtiProvider($db_connector);
-      $tool->setParameterConstraint('oauth_consumer_key', TRUE, 50, array('basic-lti-launch-request', 'ContentItemSelectionRequest', 'DashboardRequest'));
-      $tool->setParameterConstraint('resource_link_id', TRUE, 50, array('basic-lti-launch-request'));
-      $tool->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
-      $tool->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
-      $tool->handleRequest();
+        try {
+            $db_config = DB::getConfig();
+            $conn_str = $db_config['driver'] . ':host=' . $db_config['host'] . ';port=' . $db_config['port'] . ';dbname=' . $db_config['database'];
+            $pdo = new \PDO($conn_str, $db_config['username'], $db_config['password']);
+        } catch (PDOException $e) {
+            return 'Connection failed: ' . $e->getMessage();
+        }
+        $db_connector = DataConnector\DataConnector::getDataConnector('', $pdo);
 
-      // close PDO connection
-      $pdo = null;
+        $tool = new OvalLtiProvider($db_connector);
+        $tool->setParameterConstraint('oauth_consumer_key', TRUE, 50, array('basic-lti-launch-request', 'ContentItemSelectionRequest', 'DashboardRequest'));
+        $tool->setParameterConstraint('resource_link_id', TRUE, 50, array('basic-lti-launch-request'));
+        $tool->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
+        $tool->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
+        $tool->handleRequest();
 
-      $lti_user = Auth::user();
+        // close PDO connection
+        $pdo = null;
 
-      $link_id = $req->resource_link_id;
-      $group_video = GroupVideo::where([
-                        ['moodle_resource_id', '=', $link_id],
-                        ['status', '=', 'current']
-                    ])->first();
-      $course = Course::where('moodle_course_id', '=', intval($req->context_id))->first();
-      if(empty($course)) {
-        return view('pages.message-page', ['title'=>'ERROR', 'message'=>'Oops, something is wrong. Please try again later.']);
-      }
-      
-      if($lti_user->isInstructorOf($course)){
-        //--if instructor, redirect to select video page 
-        return redirect()->secure('/select-video/'.$link_id.(!empty($group_video) ? '/'.$group_video->id : ""));
-      }
-      elseif(!empty($group_video)) {
-        //--if student and lti-resource-id is linked to group_video, redirect to it
-        return redirect()->secure('/view/'.$group_video->id);
-      }
-      else {
-        //--else redirect to course if student & no group_video associated to link
-        return redirect()->secure('/course/'.$course->id);
-      }
+        $lti_user = Auth::user();
+
+        $link_id = $req->resource_link_id;
+        $group_video = GroupVideo::where([
+                            ['moodle_resource_id', '=', $link_id],
+                            ['status', '=', 'current']
+                        ])->first();
+        $course = Course::where('moodle_course_id', '=', intval($req->context_id))->first();
+        if(empty($course)) {
+            return view('pages.message-page', ['title'=>'ERROR', 'message'=>'Oops, something is wrong. Please try again later.']);
+        }
+        
+        if($lti_user->isInstructorOf($course)){
+            //--if instructor, redirect to select video page 
+            Log::debug('User is an instructor. Redirecting to select-video page.');
+            return redirect()->secure('/select-video/'.$link_id.(!empty($group_video) ? '/'.$group_video->id : ""));
+        }
+        elseif(!empty($group_video)) {
+            //--if student and lti-resource-id is linked to group_video, redirect to it
+            Log::debug('User is a student. Redirecting to view group_video page.');
+            return redirect()->secure('/view/'.$group_video->id);
+        }
+        else {
+            //--else redirect to course if student & no group_video associated to link
+            Log::debug('User is a student. Redirecting to course page.');
+            return redirect()->secure('/course/'.$course->id);
+        }
       
     }
 }
