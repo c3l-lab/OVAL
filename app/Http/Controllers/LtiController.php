@@ -32,7 +32,7 @@ const LTI_PASSWORD = '[lti_password]';
  * @author Ken
  * @see https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/wiki/Usage
  */
-class OvalLtiProvider extends ToolProvider\ToolProvider {
+class LtiProvider extends ToolProvider\ToolProvider {
 
 function onLaunch() {
   // Authentication success (user has valid credentials)
