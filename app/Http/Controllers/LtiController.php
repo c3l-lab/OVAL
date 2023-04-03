@@ -83,15 +83,15 @@ class LtiController extends Controller {
 
         if($lti_user->isInstructorOf($course)){
             Log::debug('User is an instructor. Redirecting to select-video page.');
-            return redirect()->secure('/select-video/'.$link_id.(!empty($group_video) ? '/'.$group_video->id : ""));
+            return redirect()->secure('/view/');
         }
         elseif(!empty($group_video)) {
           Log::debug('User is a student. Redirecting to view group_video page.');
-          return redirect()->secure('/view/'.$group_video->id);
+          return redirect()->secure('/view/');
       }
       else {
           Log::debug('User is a student. Redirecting to course page.');
-          return redirect()->secure('/course/'.$course->id);
+          return redirect()->secure('/view/');
       }
   }
 }
