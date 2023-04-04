@@ -50,6 +50,10 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
         if ($this->user->isStaff()) return true;
         return false;
     }
+
+    function onError() {
+        Log::error('Error in LTI handling', ['error_message' => $this->message]);
+    }
 }
 
 class LtiController extends Controller {
@@ -65,7 +69,11 @@ class LtiController extends Controller {
         $tool->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
         $tool->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
         Log::debug('Before handleRequest');
-        $tool->handleRequest();
+        try {
+            $tool->handleRequest();
+        } catch (\Exception $e) {
+            Log::error('Exception during handleRequest', ['exception' => $e]);
+        }
         Log::debug('After handleRequest');
 
         $lti_user = Auth::user();
