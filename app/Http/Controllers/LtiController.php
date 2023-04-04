@@ -23,21 +23,30 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
     function onLaunch() {
         Log::debug('Starting onLaunch method');
 
-        $this->user->save();
-        Log::debug('User details', ['user' => $this->user]);
+        try {
+            $this->user->save();
+            Log::debug('User details', ['user' => $this->user]);
 
-        $user = User::where('email', '=', $this->user->email)->first();
-        if (empty($user)) {
-            $user = new User;
-            $user->email = $this->user->email;
-            $user->first_name = $this->user->firstname;
-            $user->last_name = $this->user->lastname;
-            $user->role = $this->getOvalUserRole();
-            $user->password = bcrypt(LTI_PASSWORD);
-            $user->save();
+            $user = User::where('email', '=', $this->user->email)->first();
+            if (empty($user)) {
+                $user = new User;
+                $user->email = $this->user->email;
+                $user->first_name = $this->user->firstname;
+                $user->last_name = $this->user->lastname;
+                $user->role = $this->getOvalUserRole();
+                $user->password = bcrypt(LTI_PASSWORD);
+                $user->save();
+            }
+            Auth::login($user);
+            Log::debug('User logged in successfully');
+
+            // The LMS database connection and related code have been removed.
+            // You will need to find an alternative method to obtain or provide the course, enrollment, and group information.
+
+        } catch (\Exception $e) {
+            Log::error('Exception during onLaunch', ['exception' => $e]);
+            $this->message->setError('Sorry, there was an error connecting you to the application.');
         }
-        Auth::login($user);
-        Log::debug('User logged in successfully');
     }
 
     function getOvalUserRole() {
