@@ -37,10 +37,7 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
             $user->save();
         }
         Auth::login($user);
-
-        // The LMS database connection and related code have been removed.
-        // You will need to find an alternative method to obtain or provide the course, enrollment, and group information.
-
+        Log::debug('User logged in successfully');
     }
 
     function getOvalUserRole() {
@@ -67,16 +64,23 @@ class LtiController extends Controller {
         $tool->setParameterConstraint('resource_link_id', TRUE, 50, array('basic-lti-launch-request'));
         $tool->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
         $tool->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
+        Log::debug('Before handleRequest');
         $tool->handleRequest();
+        Log::debug('After handleRequest');
 
         $lti_user = Auth::user();
+        Log::debug('Authenticated user', ['lti_user' => $lti_user]);
 
         $link_id = $req->resource_link_id;
         $group_video = GroupVideo::where([
                             ['moodle_resource_id', '=', $link_id],
                             ['status', '=', 'current']
                         ])->first();
+        Log::debug('Group video query result', ['group_video' => $group_video]);
+
         $course = Course::where('moodle_course_id', '=', intval($req->context_id))->first();
+        Log::debug('Course query result', ['course' => $course]);
+
         if(empty($course)) {
             return view('pages.message-page', ['title'=>'ERROR', 'message'=>'Oops, something is wrong. Please try again later.']);
         }
@@ -86,13 +90,13 @@ class LtiController extends Controller {
             return redirect()->secure('/view/');
         }
         elseif(!empty($group_video)) {
-          Log::debug('User is a student. Redirecting to view group_video page.');
-          return redirect()->secure('/view/');
-      }
-      else {
-          Log::debug('User is a student. Redirecting to course page.');
-          return redirect()->secure('/view/');
-      }
-  }
+            Log::debug('User is a student. Redirecting to view group_video page.');
+            return redirect()->secure('/view/');
+        }
+        else {
+            Log::debug('User is a student. Redirecting to course page.');
+            return redirect()->secure('/view/');
+        }
+    }
 }
 
