@@ -22,13 +22,15 @@ const LTI_PASSWORD = '[lti_password]';
 class OvalLtiProvider extends ToolProvider\ToolProvider {
     function onLaunch() {
         Log::debug('Starting onLaunch method');
-
+    
         try {
+            Log::debug('Attempting to save user');
             $this->user->save();
             Log::debug('User details', ['user' => $this->user]);
-
+    
             $user = User::where('email', '=', $this->user->email)->first();
             if (empty($user)) {
+                Log::debug('Creating new user');
                 $user = new User;
                 $user->email = $this->user->email;
                 $user->first_name = $this->user->firstname;
@@ -37,12 +39,13 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
                 $user->password = bcrypt(LTI_PASSWORD);
                 $user->save();
             }
+            Log::debug('Attempting to log in user');
             Auth::login($user);
             Log::debug('User logged in successfully');
-
+    
             // The LMS database connection and related code have been removed.
             // You will need to find an alternative method to obtain or provide the course, enrollment, and group information.
-
+    
         } catch (\Exception $e) {
             Log::error('Exception during onLaunch', [
                 'exception' => $e, 
@@ -51,8 +54,8 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
             ]);
             $this->message->setError('Sorry, there was an error connecting you to the application.');
         }
-        
     }
+    
 
     function getOvalUserRole() {
         if ($this->user->isAdmin()) return 'A';
