@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use IMSGlobal\LTI\ToolProvider;
-use IMSGlobal\LTI\ToolProvider\DataConnector;
 
 use oval\User;
 use oval\Course;
@@ -15,59 +14,9 @@ use oval\Enrollment;
 use oval\Group;
 use oval\GroupMember;
 use oval\GroupVideo;
-use oval\LtiCredential;
 
-const LTI_PASSWORD = '[lti_password]';
-
-class OvalLtiProvider extends ToolProvider\ToolProvider {
-    function onLaunch() {
-        Log::debug('Starting onLaunch method');
-    
-        try {
-            Log::debug('Attempting to save user');
-            $this->user->save();
-            Log::debug('User details', ['user' => $this->user]);
-    
-            $user = User::where('email', '=', $this->user->email)->first();
-            if (empty($user)) {
-                Log::debug('Creating new user');
-                $user = new User;
-                $user->email = $this->user->email;
-                $user->first_name = $this->user->firstname;
-                $user->last_name = $this->user->lastname;
-                $user->role = $this->getOvalUserRole();
-                $user->password = bcrypt(LTI_PASSWORD);
-                $user->save();
-            }
-            Log::debug('Attempting to log in user');
-            Auth::login($user);
-            Log::debug('User logged in successfully');
-    
-            // The LMS database connection and related code have been removed.
-            // You will need to find an alternative method to obtain or provide the course, enrollment, and group information.
-    
-        } catch (\Exception $e) {
-            Log::error('Exception during onLaunch: ' . $e->getMessage() . '; Stack trace: ' . $e->getTraceAsString());
-            $this->message->setError('Sorry, there was an error connecting you to the application.');
-        }
-    }
-    
-
-    function getOvalUserRole() {
-        if ($this->user->isAdmin()) return 'A';
-        return 'O';
-    }
-
-    function isInstructor() {
-        if ($this->user->isAdmin()) return true;
-        if ($this->user->isStaff()) return true;
-        return false;
-    }
-
-    function onError() {
-        Log::error('Error in LTI handling', ['error_message' => $this->message]);
-    }
-}
+use oval\Lti\OvalLtiProvider;
+use oval\Lti\NoDatabaseDataConnector;
 
 class LtiController extends Controller {
     public function launch(Request $req) {
@@ -77,7 +26,8 @@ class LtiController extends Controller {
         Log::debug('LTI launch request data', ['request_data' => $_POST]);
 
         Log::debug('Attempting to instantiate OvalLtiProvider');
-        $tool = new OvalLtiProvider(null);
+        $data_connector = new NoDatabaseDataConnector($req);
+        $tool = new OvalLtiProvider($data_connector);
         Log::debug('OvalLtiProvider instantiated');
         $tool->setParameterConstraint('oauth_consumer_key', TRUE, 50, array('basic-lti-launch-request', 'ContentItemSelectionRequest', 'DashboardRequest'));
         $tool->setParameterConstraint('resource_link_id', TRUE, 50, array('basic-lti-launch-request'));
