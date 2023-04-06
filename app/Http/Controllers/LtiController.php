@@ -47,11 +47,7 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
             // You will need to find an alternative method to obtain or provide the course, enrollment, and group information.
     
         } catch (\Exception $e) {
-            Log::error('Exception during onLaunch', [
-                'exception' => $e, 
-                'message' => $e->getMessage(), 
-                'stack_trace' => $e->getTraceAsString()
-            ]);
+            Log::error('Exception during onLaunch: ' . $e->getMessage() . '; Stack trace: ' . $e->getTraceAsString());
             $this->message->setError('Sorry, there was an error connecting you to the application.');
         }
     }
@@ -80,7 +76,9 @@ class LtiController extends Controller {
 
         Log::debug('LTI launch request data', ['request_data' => $_POST]);
 
+        Log::debug('Attempting to instantiate OvalLtiProvider');
         $tool = new OvalLtiProvider(null);
+        Log::debug('OvalLtiProvider instantiated');
         $tool->setParameterConstraint('oauth_consumer_key', TRUE, 50, array('basic-lti-launch-request', 'ContentItemSelectionRequest', 'DashboardRequest'));
         $tool->setParameterConstraint('resource_link_id', TRUE, 50, array('basic-lti-launch-request'));
         $tool->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
