@@ -52,7 +52,7 @@ class OvalLtiProvider extends ToolProvider\ToolProvider {
             // You will need to find an alternative method to obtain or provide the course, enrollment, and group information.
     
         } catch (\Exception $e) {
-            Log::error('Exception during onLaunch: ' . $e->getMessage() . '; Stack trace: ' . $e->getTraceAsString());
+            Log::debug('Exception during onLaunch: ' . $e->getMessage() . '; Stack trace: ' . $e->getTraceAsString());
             $this->message->setError('Sorry, there was an error connecting you to the application.');
         }
     }
