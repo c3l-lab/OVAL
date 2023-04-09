@@ -419,7 +419,7 @@ function show_feedback_modal(feedback_array) {
 					}
 					
 				}else{
-					var th = "<td>" + "please check example answer" + "</td>";
+					var th = "<td>" + "Please check the example answer." + "</td>";
 				}
 
 				$tr.append(th);
