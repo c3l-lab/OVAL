@@ -4,9 +4,9 @@ namespace oval\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use LonghornOpen\LaravelCelticLti\LtiToolProvider;
-use LonghornOpen\LaravelCelticLti\LtiContext;
+use IMSGlobal\LTI\ToolProvider;
 
 use oval\User;
 use oval\Course;
@@ -14,123 +14,62 @@ use oval\Enrollment;
 use oval\Group;
 use oval\GroupMember;
 use oval\GroupVideo;
-use oval\LtiCredential;
 
-const LTI_PASSWORD = '[lti_password]';
+use oval\Lti\OvalLtiProvider;
+use oval\Lti\NoDatabaseDataConnector;
 
-/**
- * This class handles LTI connection.
- * @author Ken
- */
-class LtiController extends Controller
-{
-    public function __construct() {
-
-    }
-
-    /**
-     * Method called from route /lti - the route used when user clicks on LTI link on Moodle
-     * 
-     * This method uses LTI library to check authentication,
-     * saves info coming from LTI request,
-     * then redirects instructor to /select-video page,
-     * student to /view (or /course/{course_id}).
-     * 
-     * @see https://github.com/longhornopen/laravel-celtic-lti
-     * @param Request $req
-     * @return Illuminate\Http\RedirectResponse
-     * 
-     */
+class LtiController extends Controller {
     public function launch(Request $req) {
-        // Handle LTI request and create a context object
-        $context = LtiToolProvider::handleLaunchRequest($req);
+        global $_POST;
+        $_POST = $req->all();
 
-        // Get the LTI user and save it to the local user
-        $ltiUser = $context->getUser();
-        $user = User::where('email', '=', $ltiUser->email)->first();
+        Log::debug('LTI launch request data', ['request_data' => $_POST]);
 
-        if (empty($user)) {
-            $user = new User;
-            $user->email = $ltiUser->email;
-            $user->first_name = $ltiUser->firstname;
-            $user->last_name = $ltiUser->lastname;
-            $user->role = $ltiUser->isAdmin() ? 'A' : 'O';
-            $user->password = bcrypt(LTI_PASSWORD);
-            $user->save();
-
-            Log::info('User created', ['user' => $user->toArray()]);
+        Log::debug('Attempting to instantiate OvalLtiProvider');
+        $data_connector = new NoDatabaseDataConnector($req);
+        $tool = new OvalLtiProvider($data_connector);
+        Log::debug('OvalLtiProvider instantiated');
+        $tool->setParameterConstraint('oauth_consumer_key', TRUE, 50, array('basic-lti-launch-request', 'ContentItemSelectionRequest', 'DashboardRequest'));
+        $tool->setParameterConstraint('resource_link_id', TRUE, 50, array('basic-lti-launch-request'));
+        $tool->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
+        $tool->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
+        Log::debug('Before handleRequest');
+        try {
+            $tool->handleRequest();
+        } catch (\Exception $e) {
+            Log::error('Exception during handleRequest', ['exception' => $e]);
         }
+        Log::debug('After handleRequest');
 
-        Auth::login($user);
+        $lti_user = Auth::user();
+        Log::debug('Authenticated user', ['lti_user' => $lti_user]);
 
-        // Get course information from LTI request
-        $context = $lti->getContext();
-        $contextId = intval($context->getId());
-        $contextTitle = $context->getTitle();
-        $contextLabel = $context->getLabel();
-        $contextStartDate = $context->getStartDate();
-        $contextEndDate = $context->getEndDate();
-
-        Log::info('Course information from LTI request', [
-            'contextId' => $contextId,
-            'contextTitle' => $contextTitle,
-            'contextLabel' => $contextLabel,
-            'contextStartDate' => $contextStartDate,
-            'contextEndDate' => $contextEndDate
-        ]);
-
-        $course = Course::where('moodle_course_id', '=', $contextId)->first();
-
-        if (empty($course)) {
-            $course = new Course;
-            $course->moodle_course_id = $contextId;
-            $course->name = $contextTitle;
-            $course->start_date = $contextStartDate;
-            $course->end_date = $contextEndDate;
-            $course->save();
-        }
-
-        Log::info('Course information', ['course' => $course->toArray()]);
-
-        // Update user enrollment
-        $enrollment = Enrollment::where([
-            ['course_id', '=', $course->id],
-            ['user_id', '=', $user->id]
-        ])->first();
-   
-        if (empty($enrollment)) {
-            $enrollment = new Enrollment;
-            $enrollment->course_id = $course->id;
-            $enrollment->user_id = $user->id;
-        }
-    
-        if ($ltiUser->isAdmin() || $ltiUser->isStaff()) {
-            $enrollment->is_instructor = true;
-        }
-        $enrollment->save();
-    
-        Log::info('Enrollment information', ['enrollment' => $enrollment->toArray()]);
-    
-        // Handle group information based on the user role
-        $defaultGroup = Group::firstOrCreate(['moodle_group_id' => NULL, 'course_id' => $course->id], ['name'=>'Course Group']);
-        $defaultGroup->addMember($user);
-    
         $link_id = $req->resource_link_id;
         $group_video = GroupVideo::where([
-            ['moodle_resource_id', '=', $link_id],
-            ['status', '=', 'current']
-        ])->first();
-    
-        if ($ltiUser->isAdmin() || $ltiUser->isStaff()) {
-            // Redirect instructor to select video page
-            return redirect()->secure('/select-video/' . $link_id . (!empty($group_video) ? '/' . $group_video->id : ""));
-        } elseif (!empty($group_video)) {
-            // Redirect student to the group video
-            return redirect()->secure('/view/' . $group_video->id);
-        } else {
-            // Redirect student to the course page
-            return redirect()->secure('/course/' . $course->id);
+                            ['moodle_resource_id', '=', $link_id],
+                            ['status', '=', 'current']
+                        ])->first();
+        Log::debug('Group video query result', ['group_video' => $group_video]);
+
+        $course = Course::where('moodle_course_id', '=', intval($req->context_id))->first();
+        Log::debug('Course query result', ['course' => $course]);
+
+        if(empty($course)) {
+            return view('pages.message-page', ['title'=>'ERROR', 'message'=>'Oops, something is wrong. Please try again later.']);
+        }
+
+        if($lti_user->isInstructorOf($course)){
+            Log::debug('User is an instructor. Redirecting to select-video page.');
+            return redirect()->secure('/view/');
+        }
+        elseif(!empty($group_video)) {
+            Log::debug('User is a student. Redirecting to view group_video page.');
+            return redirect()->secure('/view/');
+        }
+        else {
+            Log::debug('User is a student. Redirecting to course page.');
+            return redirect()->secure('/view/');
         }
     }
- }
-    
+}
+
