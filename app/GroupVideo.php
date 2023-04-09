@@ -57,34 +57,6 @@ class GroupVideo extends Model
 	}
 
 	/**
-	*	One-to-One relationship
-	*	@return CommentInstruction object
-	**/
-	public function comment_instruction() {
-		return $this->hasOne('oval\CommentInstruction');
-	}
-
-	/**
-	 * Method to return comment_instruction related to this GroupVideo
-	 * 
-	 * It returns this GroupVideo's comment_instruction OR if it is
-	 * set to be course_wide in config.settings, returns the default group's.
-	 * @return CommentInstruction 
-	 */
-	public function relatedCommentInstruction() {
-		$ci = $this->comment_instruction;
-		if (empty($ci) && config('settings.course_wide.comment_instruction')==1) {
-			$def_group = $this->course()->defaultGroup();
-			$def_group_video = GroupVideo::where([
-									['group_id', "=", $def_group->id],
-									['video_id', '=', $this->video_id]
-								])->first();
-			$ci = $def_group_video->comment_instruction;
-		}
-		return $ci;
-	}
-	
-	/**
 	*	One-to-Many relationship
 	*	@return collection of Point objects
 	**/

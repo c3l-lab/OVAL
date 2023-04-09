@@ -134,12 +134,6 @@ class HomeController extends Controller
 		}
 		$video = $group_video->video();
 
-
-
-
-
-		$comment_instruction = empty($group_video->relatedCommentInstruction()) ? null : $group_video->relatedCommentInstruction()->description;
-
 		$group_members = [];
 		foreach ($group->students() as $student) {
 			$group_members[] = [
