@@ -2129,7 +2129,6 @@ class AjaxController extends Controller
 								['group_id', '=', $g->id]
 							])
 							->first();
-			$comment_instruction = $group_video->relatedCommentInstruction();
 			$points = $group_video->relatedPoints();
 			$quiz = oval\quiz_creation::where('identifier', '=', oval\Video::find($video_id)->identifier)
 						->first();
