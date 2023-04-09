@@ -143,24 +143,6 @@ class GroupVideo extends Model
 		return $points;
 	}
 
-	/**
-    *	One-to-One relationship.
-    *	Returns instruction for points for this GroupVideo
-    *	@return PointInstruction object
-    **/
-    public function point_instruction() {
-    	return $this->hasOne('oval\PointInstruction');
-	}
-	
-	public function relatedPointInstruction() {
-		$instruction = null;
-		if (config('settings.course_wide.point')){
-			$def_group_video = $this->defaultGroupVideo();
-			$instruction = $def_group_video->point_instruction;
-		}
-		return $instruction;
-	}
-    
 
     /**
     *	One-to-Many relationship
