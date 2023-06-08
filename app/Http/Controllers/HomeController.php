@@ -134,12 +134,6 @@ class HomeController extends Controller
 		}
 		$video = $group_video->video();
 
-
-
-
-
-		$comment_instruction = empty($group_video->relatedCommentInstruction()) ? null : $group_video->relatedCommentInstruction()->description;
-
 		$group_members = [];
 		foreach ($group->students() as $student) {
 			$group_members[] = [
@@ -157,9 +151,6 @@ class HomeController extends Controller
 			$tracking->event_time = date("Y-m-d H:i:s");
 			$tracking->save();
 		}
-
-		$point_instruction = $group_video->relatedPointInstruction();
-		$instruction = $point_instruction ? $point_instruction->description : "";
 
 		//--if there's transcript, save a .srt file
 		//--and get the analysis value if exists
@@ -224,12 +215,10 @@ class HomeController extends Controller
 			'thumbnail_url'=>$video->thumbnail_url,
 			'media_type'=>$video->media_type,
 			// 'transcript_path'=>$transcript_path,
-			'comment_instruction'=>$comment_instruction,
 			'text_analysis'=>$analysis,
 			'current_keywords'=>$currents,
 			'group_video_id'=>$group_video->id,
 			'points'=>$group_video->relatedPoints(),
-			'point_instruction'=>htmlspecialchars($instruction, ENT_QUOTES),
 			'api_token'=>$api_token,
 			'helix_server_host'=>env('HELIX_SERVER_HOST', 'https://helix.example.com'),
 			'helix_js_host'=>env('HELIX_JS_HOST', 'https://helix.example.com'),

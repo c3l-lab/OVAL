@@ -17,7 +17,9 @@ function onYouTubeIframeAPIReady() {
 			enablejsapi: 1, 
 			origin: domain,
 			fs: 0,
-			modestbranding: 1
+			modestbranding: 1,
+			disablekb: 1,
+			controls: 0
 		},
 		events: {
 			'onReady': onPlayerReady,
@@ -26,8 +28,6 @@ function onYouTubeIframeAPIReady() {
 	});//end YT.Player
 
 	load_quiz(video_identifier);
-
-	player.loadModule("captions");
 }//end onYouTubeIframeAPIReady
 
 function pauseVideo() {
@@ -420,7 +420,7 @@ function show_feedback_modal(feedback_array) {
 					}
 					
 				}else{
-					var th = "<td>" + "please check example answer" + "</td>";
+					var th = "<td>" + "Please check the example answer." + "</td>";
 				}
 
 				$tr.append(th);
