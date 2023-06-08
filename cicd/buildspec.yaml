@@ -14,6 +14,7 @@ phases:
   pre_build:
     commands:
       - cp ".env.${ENVIRONMENT_TYPE}" .env
+      - cp ".env.${ENVIRONMENT_TYPE}" .env.local -i
       - composer install
       - npm install
       # - npm install --global cross-env
@@ -22,7 +23,7 @@ phases:
   build:
     commands:
       - npm run $ENVIRONMENT_TYPE
-      - php artisan --env=$ENVIRONMENT_TYPE migrate --force
+      - php artisan migrate --force
 artifacts:
   files:
     - '**/*'
