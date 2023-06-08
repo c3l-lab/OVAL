@@ -14,7 +14,7 @@ phases:
   pre_build:
     commands:
       - cp ".env.${ENVIRONMENT_TYPE}" .env
-      - cp ".env.${ENVIRONMENT_TYPE}" .env.local -i
+      - cp ".env.${ENVIRONMENT_TYPE}" .env.local
       - composer install
       - npm install
       # - npm install --global cross-env
