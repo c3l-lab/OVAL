@@ -27,12 +27,12 @@
 					<form id="annotation-form" role="form" data-toggle="validator">
 						<div class="form-group">
 	 						<label for="annotation-description" id="annotation-instruction"></label>
-							<textarea id="annotation-description" name="annnotation-description" rows="10" placeholder="Your thoughts ..." required></textarea>
+							<textarea id="annotation-description" name="annnotation-description" rows="10" placeholder="Your comment ..." required></textarea>
 							<div class="help-block with-errors"></div>
 						</div><!-- form-group -->
 						<div class="form-group">
 							<i class="fa fa-tags"></i>
-							<input type="text" id="tags" name="tags" placeholder="Thought types separated by comma ...">
+							<input type="text" id="tags" name="tags" placeholder="Tags separated by comma ...">
 						</div><!-- form-group -->
 						<div class="form-group">
 							<label for="private" class="private-radio-label">
