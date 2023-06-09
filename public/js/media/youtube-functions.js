@@ -8,18 +8,13 @@ var player;
 
 function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
-		width: '854',
-		height: '480',
+		width: '100%',
 		videoId: video_identifier,
 		playerVars: { 
 			wmode: "transparent", 
 			rel: 0, 
 			enablejsapi: 1, 
-			origin: domain,
-			fs: 0,
-			modestbranding: 1,
-			disablekb: 1,
-			controls: 0
+			origin: domain
 		},
 		events: {
 			'onReady': onPlayerReady,
@@ -28,6 +23,8 @@ function onYouTubeIframeAPIReady() {
 	});//end YT.Player
 
 	load_quiz(video_identifier);
+
+	player.loadModule("captions");
 }//end onYouTubeIframeAPIReady
 
 function pauseVideo() {
@@ -420,7 +417,7 @@ function show_feedback_modal(feedback_array) {
 					}
 					
 				}else{
-					var th = "<td>" + "Please check the example answer." + "</td>";
+					var th = "<td>" + "please check example answer" + "</td>";
 				}
 
 				$tr.append(th);
