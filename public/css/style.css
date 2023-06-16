@@ -289,7 +289,7 @@ h4 {
 /* -------- Video Player -------- */
 .video-width {
 	width: 80%;	
-	max-width: 854px;	
+	max-width: 720px;	
 	height: 80%;	
 	max-height: 480px;
 	margin: 0 auto;
