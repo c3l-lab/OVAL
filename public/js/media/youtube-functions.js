@@ -8,8 +8,8 @@ var player;
 
 function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
-		width: '854',
-		height: '480',
+		width: '640',
+		height: '350',
 		videoId: video_identifier,
 		playerVars: { 
 			wmode: "transparent", 
