@@ -31,3 +31,5 @@ phpunit.xml.bak
 
 # Remove Composer.lock from CI/CD process
 composer.lock
+
+public/mix-manifest.json

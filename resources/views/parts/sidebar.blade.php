@@ -5,16 +5,18 @@
   			@if(isset($user) && $user->isAnInstructor())
   			<li><a href="/video-management">Video Management</a></li>
 			@endif
-			@if(isset($user) && $user->role=="A") 
+			@if(isset($user) && $user->role=="A")
 			<li><a href="/manage-analysis-requests">Manage Content Analysis Requests</a></li>
 			<li><a href="/register">Add an admin user</a></li>
 			@endif
 			@if(isset($user) && $user->isAnInstructor())
 			<li><a href="/analytics">Analytics</a></li>
 			@endif
-			@if(isset($user) && $user->role=="A") 
+			@if(isset($user) && $user->role=="A")
 			<li><a href="/batch-upload">Batch Upload</a></li>
 			<li><a href="/manage-lti-connections">Manage LTI Connections</a></li>
+			<li><a href="/lti/platforms">Manage LTI Platforms</a></li>
+			<li><a href="/lti/deployments">Manage LTI Deployments</a></li>
   			<li class="space-top"><a href="/logout">Logout</a></li>
 			@endif
   		</ul>

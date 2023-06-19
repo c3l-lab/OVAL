@@ -36,15 +36,7 @@ class PlatformController extends Controller
         $platform->iss = $request->iss;
         $platform->save();
 
-        return redirect('/lti/platforms');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        return redirect()->route('platforms.index');
     }
 
     /**
@@ -52,7 +44,7 @@ class PlatformController extends Controller
      */
     public function edit(string $id)
     {
-        return view('lti.platforms.create', [
+        return view('lti.platforms.edit', [
             'platform' => LtiPlatform::find($id)
         ]);
     }
@@ -67,7 +59,7 @@ class PlatformController extends Controller
         $platform->iss = $request->iss;
         $platform->save();
 
-        return redirect('/lti/platforms');
+        return redirect()->route('platforms.index');
     }
 
     /**
@@ -78,6 +70,6 @@ class PlatformController extends Controller
         $platform = LtiPlatform::find($id);
         $platform->delete();
 
-        return redirect('/lti/platforms');
+        return redirect()->route('platforms.index');
     }
 }
