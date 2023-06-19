@@ -94,13 +94,13 @@ h4 {
 .side-bar-nav > li > a {
 	padding: 15px 0;
 }
-.navmenu-default .navmenu-nav > li > a, 
+.navmenu-default .navmenu-nav > li > a,
 .navbar-default .navbar-offcanvas .navmenu-nav > li > a {
 	color: #FFFFFF;
 	font-size: 19px;
 	font-weight: 700;
 }
-.navmenu-default .navmenu-nav > li > a:hover, 
+.navmenu-default .navmenu-nav > li > a:hover,
 .navmenu-default .navmenu-nav > li > a:active,
 .navbar-default .navbar-offcanvas .navmenu-nav > li > a:hover,
 .navbar-default .navbar-offcanvas .navmenu-nav > li > a:active {
@@ -160,7 +160,7 @@ h4 {
 .oval-branding {
 	float: right;
 	font-size: 14px;
-	
+
 }
 .oval-logo {
 	margin-top: 8px;
@@ -288,8 +288,8 @@ h4 {
 
 /* -------- Video Player -------- */
 .video-width {
-	width: 98%;	
-	max-width: 640px;	
+	width: 98%;
+	max-width: 640px;
 	margin: 0 auto;
 }
 
@@ -297,13 +297,13 @@ h4 {
 .content-tabs {
 	border-bottom: 1px solid #00A8E4;
 }
-.nav-tabs.content-tabs > li.active > a, 
-.nav-tabs.content-tabs > li.active > a:focus, 
+.nav-tabs.content-tabs > li.active > a,
+.nav-tabs.content-tabs > li.active > a:focus,
 .nav-tabs.content-tabs > li.active > a:hover {
 	color: #00A8E4;
 	background-color: transparent;
 	border: 1px solid transparent;
-	
+
 }
 .nav-tabs.content-tabs > li > a {
 	border-radius: 0px 0px 0px 0px;
@@ -319,13 +319,13 @@ h4 {
 	font-size: 16px;
 	font-weight: 600;
 }
-.nav.content-tabs > li:focus, 
+.nav.content-tabs > li:focus,
 .nav.content-tabs > li:hover,
-.nav.content-tabs > li > a:focus, 
+.nav.content-tabs > li > a:focus,
 .nav.content-tabs > li > a:hover {
 	text-decoration: none;
 	background-color: #393939;
-	
+
 }
 
 /* -------- Content Analysis -------- */
@@ -344,7 +344,7 @@ h4 {
 	height: 160px;
 }
 #right-side .keyword-ul-box {
-	margin: 5%;	
+	margin: 5%;
 }
 #related-ul {
     margin-top: 20px;
@@ -423,7 +423,7 @@ h4 {
 	font-family: FontAwesome;
 	font-size: 13px;
 	color: #737373;
-	
+
 }
 #annotations .modal-tags {
 	padding-left: 25px;
@@ -435,8 +435,8 @@ h4 {
 /*  	background: url("../img/annotation_list_bg.png") no-repeat; */
 	background: url("../img/annotation_list_bg_vertical.png"),
 				url("../img/annotation_list_bg_bottom.png");
-	background-repeat: 	no-repeat, 
-						no-repeat;						
+	background-repeat: 	no-repeat,
+						no-repeat;
  	background-size: 	100% 100%,
  						100% auto;
  	background-position:	0 0,
@@ -580,8 +580,8 @@ h4 {
 .tags::before {
 	font-family: FontAwesome;
 	display: inline-block;
-	content: "\f02c"; 
-	letter-spacing: 4px; 
+	content: "\f02c";
+	letter-spacing: 4px;
 	font-size: 12px;
 	color: #93a6b3;
 }
@@ -589,7 +589,7 @@ h4 {
 	display: inline-block;
 	font-size: 13px;
 	color: #737373;
-	
+
 	border-radius: 10px;
 	padding-left: 8px;
 	padding-right: 8px;
@@ -792,7 +792,7 @@ h4.inline-with-img {
 } */
 .modal input[type=checkbox].checkbox.pull-right {
 	display: none;
-} 
+}
 .modal .circle-radio {
 	font-weight: 400;
 }
@@ -822,20 +822,20 @@ h4.inline-with-img {
 .private-radio-label:before {
 	font-family: FontAwesome;
 	display: inline-block;
-	content: "\f070"; 
-	letter-spacing: 10px; 
+	content: "\f070";
+	letter-spacing: 10px;
 }
-.public-radio-label:before { 
+.public-radio-label:before {
 	font-family: FontAwesome;
-	content: "\f06e"; 
-	letter-spacing: 10px; 
-} 
-.nominated-radio-label:before { 
+	content: "\f06e";
+	letter-spacing: 10px;
+}
+.nominated-radio-label:before {
 	font-family: FontAwesome;
-	content: "\f070"; 
-	letter-spacing: 10px; 
+	content: "\f070";
+	letter-spacing: 10px;
 	color: #474244;
-} 
+}
 .modal-content .small-gray-icon {
 	font-size: 13px;
 	color: #737373;
@@ -896,11 +896,11 @@ h4.inline-with-img {
 #feedback #point-instruction {
 	padding-bottom: 24px;
 }
-#feedback #re-enter-comment { 
+#feedback #re-enter-comment {
 	position: absolute;
 	bottom: 24px;
 }
-.form-buttons .modal-text-button {		
+.form-buttons .modal-text-button {
 	font-size: 18px;
 }
 .form-buttons .modal-text-button i {
@@ -1008,7 +1008,7 @@ h4.inline-with-img {
 }
 .error {
 	color: red;
-}	
+}
 .admin-page-section .rectangle-button {
 	min-height: 34px;
 	border: 1px solid #FFFFFF;
@@ -1058,10 +1058,16 @@ h4.inline-with-img {
 .adimn-page-section .search-bar {
 	display: inline-block;
 }
+
+.admin-page-section .toolbar {
+	width: 98%;
+	margin: 0 auto 16px auto;
+}
+
 .admin-page-section .table {
 	width: 98%;
 	margin: auto;
-	
+
 }
 .admin-page-section .table-striped th {
 	background: #231E20;
@@ -1175,9 +1181,9 @@ h4.inline-with-img {
 	color: #737373;
 }
 
-.modal .checkbox.disabled label, 
-.modal .radio.disabled label, 
-.modal fieldset[disabled] .checkbox label, 
+.modal .checkbox.disabled label,
+.modal .radio.disabled label,
+.modal fieldset[disabled] .checkbox label,
 .modal fieldset[disabled] .radio label {
 	color: #C8C8C8;
 }
@@ -1202,8 +1208,8 @@ h4.inline-with-img {
 #same-tag-modal .video-time::before {
 	font-family: FontAwesome;
 	display: inline-block;
-	content: "\f017"; 
-	letter-spacing: 4px; 
+	content: "\f017";
+	letter-spacing: 4px;
 	font-size: 12px;
 }
 
@@ -1388,7 +1394,7 @@ ul.question_list_wrap {
 }
 
 .quiz_options_wrap{
-	width:100%;	
+	width:100%;
 }
 
 .quiz_options_btn{
@@ -1678,10 +1684,10 @@ overflow-y: auto;
 	width: 30px;
 	height: 17px;
   }
-  
+
   /* Hide default HTML checkbox */
   .switch input {display:none;}
-  
+
   /* The slider */
   .slider {
 	position: absolute;
@@ -1694,7 +1700,7 @@ overflow-y: auto;
 	-webkit-transition: .4s;
 	transition: .4s;
   }
-  
+
   .slider:before {
 	position: absolute;
 	content: "";
@@ -1706,26 +1712,26 @@ overflow-y: auto;
 	-webkit-transition: .4s;
 	transition: .4s;
   }
-  
+
   input:checked + .slider {
 	background-color: #66CBEF;
   }
-  
+
   input:focus + .slider {
 	box-shadow: 0 0 1px #66CBEF;
   }
-  
+
   input:checked + .slider:before {
 	-webkit-transform: translateX(13px);
 	-ms-transform: translateX(13px);
 	transform: translateX(13px);
   }
-  
+
   /* Rounded sliders */
   .slider.round {
 	border-radius: 17px;
   }
-  
+
   .slider.round:before {
 	border-radius: 50%;
   }
@@ -1786,7 +1792,7 @@ overflow-y: auto;
 	font-size: 25px;
     font-weight: bolder;
 	padding: 5px 0;
-	color: red; 
+	color: red;
   }
 
   .img_wrap img{
@@ -1799,7 +1805,7 @@ overflow-y: auto;
 
   #quiz_create_modal{
     max-height: 768px;
-    overflow-y: scroll; 
+    overflow-y: scroll;
   }
 
 /** sortable list (html5sortable **/
@@ -1815,8 +1821,8 @@ overflow-y: auto;
 .sortable-list li:after  {
 	font-family: FontAwesome;
 	display: block;
-	content: "\f0c9"; 
-	letter-spacing: 8px; 
+	content: "\f0c9";
+	letter-spacing: 8px;
 	font-size: 12px;
 	float: right;
 }

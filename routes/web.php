@@ -1,4 +1,6 @@
 <?php
+use oval\Http\Controllers\Lti\PlatformController;
+use oval\Http\Middleware\RequireAdmin;
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +120,14 @@ Route::get('/lti', function() {
 	return redirect()->secure('/view');
 });
 Route::post('/lti', 'LtiController@launch');
+
+Route::prefix('lti')->group(function () {
+	Route::middleware([RequireAdmin::class])->group(function () {
+		Route::resources([
+			'platforms' => PlatformController::class,
+		]);
+	});
+});
 
 // ----------- youtube data api ------------- //
 Route::post('/add_google_cred', 'GoogleAPIController@add_google_cred');
