@@ -22,13 +22,6 @@ class GroupVideoController extends Controller
         $group = $group_video->group();
         $course = $group->course;
 
-        if (
-            !$user->isInstructorOf($course) &&
-            (!$user->checkIfEnrolledIn($course) || !$user->checkIfInGroup($group) || $group_video->hide)
-        ) {
-            $group_video = null;
-        }
-
         $video = $group_video->video();
 
         $group_members = [];
