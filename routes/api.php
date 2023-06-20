@@ -23,5 +23,5 @@ Route::get('/user', function (Request $request) {
 Route::prefix('lti')->group(function () {
     Route::get('/jwks', [ToolController::class, 'jwks'])->name('lti.jwks');
     Route::get('/login', [ToolController::class, 'login'])->name('lti.login');
-    Route::match(['GET', 'POST'], '/launch', [ToolController::class, 'launch'])->name('lti.launch');
+    Route::post('/launch', [ToolController::class, 'launch'])->name('lti.launch');
 });
