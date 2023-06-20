@@ -46,5 +46,10 @@ class AppServiceProvider extends ServiceProvider
                 'timeout' => 30,
             ]));
         });
+
+        view()->composer('*', function($view){
+            $user = \Auth::user();
+            $view->with('user', $user);
+        });
     }
 }

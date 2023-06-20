@@ -3,6 +3,19 @@
 @section('title', 'OVAL Admin Page - Manage LTI Registrations')
 
 
+@section('additional-css')
+    <style>
+        .admin-page-section.lti-information {
+            padding: 8px;
+        }
+
+        .lti-information ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="page-title">
@@ -14,6 +27,24 @@
                 {{ session('msg') }}
             </div>
         @endif
+
+        <div class="admin-page-section-header">
+            <h2>LTI INFORMATION</h2>
+        </div>
+
+        <div class="admin-page-section lti-information">
+            <ul class="">
+                <li>
+                    <strong>Launch URL:</strong> {{ route('lti.launch') }}
+                </li>
+                <li>
+                    <strong>Login URL:</strong> {{ route('lti.login') }}
+                </li>
+                <li>
+                    <strong>Keyset URL:</strong> {{ route('lti.jwks') }}
+                </li>
+            </ul>
+        </div>
 
         <div class="admin-page-section-header">
             <h2>EXISTING REGISTRATIONSS</h2>
@@ -36,6 +67,7 @@
                             <tr>
                                 <th>NAME</th>
                                 <th>ISSUER</th>
+                                <th>CLIENT ID</th>
                                 <th>EDIT</th>
                                 <th>DELETE</th>
                             </tr>
@@ -45,6 +77,7 @@
                                 <tr>
                                     <td>{{ $registration->name }}</td>
                                     <td>{{ $registration->issuer }}</td>
+                                    <td>{{ $registration->client_id }}</td>
                                     <td>
                                         <a href="/lti/registrations/{{ $registration->id }}/edit">
                                             <button type="button" class="btn btn-link edit-lti-button"
