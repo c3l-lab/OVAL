@@ -99,6 +99,6 @@ class GroupVideoController extends Controller
 
         return response()
             ->view('group_videos.embed', compact('user', 'course', 'group', 'video', 'group_video', 'has_quiz'))
-            ->header('X-Frame-Options', 'ALLOW-FROM *');
+            ->header('X-Frame-Options', 'ALLOW-FROM *', true);
     }
 }
