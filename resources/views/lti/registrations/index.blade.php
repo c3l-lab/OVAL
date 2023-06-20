@@ -35,13 +35,13 @@
         <div class="admin-page-section lti-information">
             <ul class="">
                 <li>
-                    <strong>Launch URL:</strong> {{ route('lti.launch') }}
+                    <strong>Launch URL:</strong> {{ secure_url(route('lti.launch')) }}
                 </li>
                 <li>
-                    <strong>Login URL:</strong> {{ route('lti.login') }}
+                    <strong>Login URL:</strong> {{ secure_url(route('lti.login')) }}
                 </li>
                 <li>
-                    <strong>Keyset URL:</strong> {{ route('lti.jwks') }}
+                    <strong>Keyset URL:</strong> {{ secure_url(route('lti.jwks')) }}
                 </li>
             </ul>
         </div>
