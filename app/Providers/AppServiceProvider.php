@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         JWT::$leeway = 5;
         if (env('APP_ENV') !== 'local') {
-            \URL::forceSchema('https');
+            \URL::forceScheme('https');
         }
     }
 
