@@ -47,7 +47,7 @@ class ToolController extends Controller
         if ($launch->isDeepLinkLaunch()) {
             return redirect()->route('view', ['group_video_id' => $group_video->id]);
         } else {
-            return redirect()->route('view', ['group_video_id' => $group_video->id]);
+            return redirect()->route('group_videos.show.embed', ['id' => $group_video->id]);
         }
     }
 }
