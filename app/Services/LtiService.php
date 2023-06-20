@@ -2,6 +2,7 @@
 namespace oval\Services;
 
 use Illuminate\Http\Request;
+use oval\LtiRegistration;
 use Packback\Lti1p3\Interfaces\ICache;
 use Packback\Lti1p3\Interfaces\ICookie;
 use Packback\Lti1p3\Interfaces\IDatabase;
@@ -72,10 +73,12 @@ class LtiService
    */
   public function jwks(string $id = null): array
   {
-    $priate_key = base64_decode(env("LTI_PRIVATE_KEY"));
+    $registrations = LtiRegistration::all();
+    $keys = $registrations->reduce(function ($acc, $registration) {
+      $acc[$registration->key_id] = $registration->getPrivateKey();
+      return $acc;
+    }, []);
 
-    return JwksEndpoint::new([
-      env("LTI_KEY_ID") => $priate_key
-    ])->getPublicJwks();
+    return JwksEndpoint::new($keys)->getPublicJwks();
   }
 }

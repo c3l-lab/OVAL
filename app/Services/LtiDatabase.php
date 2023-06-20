@@ -20,7 +20,7 @@ class LtiDatabase implements Lti1p3\Interfaces\IDatabase
             ->setKeySetUrl($registration->keyset_url)
             ->setKid($registration->key_id)
             ->setIssuer($registration->issuer)
-            ->setToolPrivateKey(\Crypt::decryptString($registration->private_key));
+            ->setToolPrivateKey($registration->getPublicKey());
     }
 
     public function findDeployment($issuer, $deployment_id, $client_id = null)

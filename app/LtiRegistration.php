@@ -23,4 +23,9 @@ class LtiRegistration extends Model
         $this->private_key = \Crypt::encryptString($private_key_pem);
         $this->key_id = \Str::uuid();
     }
+
+    public function getPrivateKey()
+    {
+        return \Crypt::decryptString($this->private_key);
+    }
 }
