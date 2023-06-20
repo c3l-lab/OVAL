@@ -15,7 +15,7 @@ class RequireAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-		$user = \Auth::user();
+        $user = \Auth::user();
         if ($user->role != 'A') {
             return response()->view('pages.not-admin', compact('user'), 401);
         }

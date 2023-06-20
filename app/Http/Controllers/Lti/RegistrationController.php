@@ -39,7 +39,7 @@ class RegistrationController extends Controller
         $registration->auth_token_url = $request->auth_token_url;
         $registration->auth_login_url = $request->auth_login_url;
         $registration->keyset_url = $request->keyset_url;
-        $registration->generate_key();
+        $registration->generateKey();
         $registration->save();
 
         return redirect()->route('registrations.index');

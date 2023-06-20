@@ -9,7 +9,7 @@ class LtiRegistration extends Model
 {
     use HasFactory;
 
-    public function generate_key()
+    public function generateKey()
     {
         $private_key = openssl_pkey_new([
             "digest_alg" => "sha256",
