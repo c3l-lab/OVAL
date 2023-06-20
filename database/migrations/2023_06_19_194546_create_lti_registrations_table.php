@@ -11,14 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lti_deployments', function (Blueprint $table) {
+        Schema::create('lti_registrations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('issuer');
             $table->string('client_id');
             $table->string('deployment_id');
+            $table->string('keyset_url');
             $table->string('auth_token_url');
             $table->string('auth_login_url');
-            $table->string('keyset_url');
+            $table->string('key_id');
+            $table->text('public_key');
+            $table->text('private_key');
             $table->timestamps();
         });
     }
@@ -28,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lti_deployments');
+        Schema::dropIfExists('lti_registrations');
     }
 };

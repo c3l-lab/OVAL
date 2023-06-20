@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'OVAL Admin Page - Manage LTI Deployments')
+@section('title', 'OVAL Admin Page - Manage LTI Registrations')
 
 
 @section('content')
 <div class="container-fluid">
     <div class="page-title">
         <i class="fa fa-laptop"></i>
-        MANAGE LTI DEPLOYMENTS
+        MANAGE LTI REGISTRATIONSS
     </div>
     @if (!empty(session('msg')))
     <div class="msg">
@@ -15,7 +15,7 @@
     </div>
     @endif
 
-    @include('lti.deployments._form')
+    @include('lti.registrations._form', ['registration' => $registration])
 </div><!-- container-fluid -->
 
 

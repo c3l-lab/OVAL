@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use oval\Http\Controllers\Api\Lti\ToolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,11 @@ use Illuminate\Http\Request;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
+
+
+
+Route::prefix('lti')->group(function () {
+    Route::get('/jwks', [ToolController::class, 'jwks'])->name('lti.jwks');
+    Route::get('/login', [ToolController::class, 'login'])->name('lti.login');
+    Route::post('/launch', [ToolController::class, 'launch'])->name('lti.launch');
+});

@@ -15,18 +15,18 @@ class GroupVideo extends Model
 	protected $table = 'group_videos';
 	protected $fillable = ['group_id', 'video_id', 'hide', 'show_analysis'];
 	protected $casts = ['hide'=>'boolean', 'show_analysis'=>'boolean'];
-	
-	
+
+
 	/**
 	 * Default values.
-	 * These are used to set object values when using new or create:: 
+	 * These are used to set object values when using new or create::
 	 * But not used if there are values obtained from database table
 	 **/
 	protected $attributes;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * Set the attributes with default values taken from config file (config/settings.php)
 	 * The value of config is read in runtime, so it has to be set in constructor.
 	 */
@@ -37,7 +37,7 @@ class GroupVideo extends Model
 		];
 	}
 
-	
+
 	/**
 	*	One-to-Many relationship.
 	*	Returns Annotations related to the video for the group
@@ -46,7 +46,7 @@ class GroupVideo extends Model
 	public function annotations() {
 		return $this->hasMany('oval\Annotation');
 	}
-	
+
 	/**
 	*	One-to-Many relationship.
 	*	Method to get Comments related to the video for the group
@@ -64,12 +64,16 @@ class GroupVideo extends Model
 		return $this->hasOne('oval\CommentInstruction');
 	}
 
+	public function lti_registration() {
+		return $this->belongsTo(LtiRegistration::class);
+	}
+
 	/**
 	 * Method to return comment_instruction related to this GroupVideo
-	 * 
+	 *
 	 * It returns this GroupVideo's comment_instruction OR if it is
 	 * set to be course_wide in config.settings, returns the default group's.
-	 * @return CommentInstruction 
+	 * @return CommentInstruction
 	 */
 	public function relatedCommentInstruction() {
 		$ci = $this->comment_instruction;
@@ -83,7 +87,7 @@ class GroupVideo extends Model
 		}
 		return $ci;
 	}
-	
+
 	/**
 	*	One-to-Many relationship
 	*	@return collection of Point objects
@@ -91,7 +95,7 @@ class GroupVideo extends Model
 	public function points() {
 		return $this->hasMany('oval\Point');
 	}
-	
+
 	/**
 	*	Method to return the Course the group of this GroupVideo belongs to
 	*	@return Course object
@@ -100,7 +104,7 @@ class GroupVideo extends Model
 		$group = Group::find($this->group_id);
 		return $group->course;
 	}
-	
+
 	/**
 	*	Method to return the Group of this GroupVideo
 	*	@return Group object
@@ -108,15 +112,15 @@ class GroupVideo extends Model
 	public function group() {
 		return Group::find($this->group_id);
 	}
-	
+
 	/**
 	*	Method to return the Video of this GroupVideo
 	*	@return Video object
-	**/	
+	**/
 	public function video() {
 		return Video::find($this->video_id);
 	}
-	
+
 	/**
     *	Method to return Groups that has access to this Video that belongs to Course
     *	whose id is passed in
@@ -137,8 +141,8 @@ class GroupVideo extends Model
 
 	/**
 	 * Method to return the course's default group's GroupVideo
-	 * 
-	 * This method can be used to get to the "default group" of 
+	 *
+	 * This method can be used to get to the "default group" of
 	 * the course this GroupVideo belongs to.
 	 * @return GroupVideo
 	 */
@@ -154,7 +158,7 @@ class GroupVideo extends Model
 
 	/**
 	*	Method to find related Points for this GroupVideo.
-	*	This returns the course-wide points for this video 
+	*	This returns the course-wide points for this video
 	*	if it was saved to be the same for all groups in the course.
 	*	@return collection of Point objects
 	**/
@@ -179,7 +183,7 @@ class GroupVideo extends Model
     public function point_instruction() {
     	return $this->hasOne('oval\PointInstruction');
 	}
-	
+
 	public function relatedPointInstruction() {
 		$instruction = null;
 		if (config('settings.course_wide.point')){
@@ -188,7 +192,7 @@ class GroupVideo extends Model
 		}
 		return $instruction;
 	}
-    
+
 
     /**
     *	One-to-Many relationship
@@ -197,12 +201,12 @@ class GroupVideo extends Model
     public function trackings() {
     	return $this->hasMany('oval\Tracking');
     }
-    
-    
+
+
     /**
     *	Method used for analytics page to show number of unique users who viewed this video
-    *	@return int 
-    **/	
+    *	@return int
+    **/
     public function numUniqueViews() {
     	return Tracking::where('group_video_id', '=', $this->id)
     			->distinct()
@@ -212,7 +216,7 @@ class GroupVideo extends Model
 	/**
     *	Method used for analytics page to show group member
     *	@return string
-    **/	
+    **/
     public function memberList() {
 		$usersWithAccess = $this->group()->members;
 		$list = '';
@@ -223,12 +227,12 @@ class GroupVideo extends Model
 			}else{
 				$list = $list.$usersWithAccess[$i]->id.",";
 			}
-			
+
 		}
-		
+
     	return $list;
 	}
-	
+
 	public function usersWhoAccessed() {
 		$viewers_ids = Tracking::where([
 							['group_video_id', '=', $this->id],
@@ -240,17 +244,17 @@ class GroupVideo extends Model
 		$accessed = User::whereIn('id', $viewers_ids)->get();
 		return $accessed;
 	}
-	
-    
+
+
     /**
     *	Method used for analytics page to show the percentage users who viewed this video
-    *	@return float (rounded to 2 decimal places) 
-    **/	
+    *	@return float (rounded to 2 decimal places)
+    **/
     public function percentageUsersViewed() {
     	$usersWithAccess = count($this->group()->members);
     	$uniqueViewers = $this->numUniqueViews();
     	$percent = 0;
-    	if ($uniqueViewers != 0) { 
+    	if ($uniqueViewers != 0) {
     		$percent = $uniqueViewers/$usersWithAccess*100;
     	}
     	return round($percent, 2);
@@ -258,7 +262,7 @@ class GroupVideo extends Model
 
 	/**
     *	Method used for analytics page to show average number of annotation users made
-    *	@return float (rounded to 2 decimal places) 
+    *	@return float (rounded to 2 decimal places)
     **/
 	public function aveAnnotationsPerUser() {
 		$numAnnotations = count($this->annotations);
@@ -269,10 +273,10 @@ class GroupVideo extends Model
 		}
 		return $ave;
 	}
-	
+
 	/**
     *	Method used for analytics page to show average number of comments users made
-    *	@return float (rounded to 2 decimal places) 
+    *	@return float (rounded to 2 decimal places)
     **/
 	public function aveCommentsPerUser() {
 		$numComments = count($this->comments);
@@ -283,31 +287,31 @@ class GroupVideo extends Model
 		}
 		return $ave;
 	}
-	
+
 	/**
     *	Method used for analytics page to show number times 'download annotations' button was clicked on this video
-    *	@return int 
-    **/	
+    *	@return int
+    **/
 	public function numAnnotationDownloads() {
 		return $this->trackings
 					->where('target', '=', '.download-comments')
 					->count();
 	}
-	
+
 	/**
     *	Method used for analytics page to show number of times an annotation was expanded to view
-    *	@return int 
-    **/	
+    *	@return int
+    **/
 	public function numTimesAnnotationViewed() {
 		return $this->trackings
 					->where ('target', '=', '.annotation-list-item')
 					->count();
 	}
-	
+
 	/**
     *	Method to return total number of times this video was viewed
-    *	@return int 
-    **/	
+    *	@return int
+    **/
 	public function numViews() {
 		return $this->trackings
 					->where('event', '=', 'View')

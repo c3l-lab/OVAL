@@ -62,10 +62,10 @@ class RegisterController extends Controller
 
     /**
      * Create a new user or edit existing user's password and role after validation.
-     * 
+     *
      * Check if user with email address entered already exists.
      * If new, create user with detailes supplied.
-     * If exists (because they were created via LTI link), 
+     * If exists (because they were created via LTI link),
      * change password and role.
      *
      * @param  array  $data
@@ -88,7 +88,7 @@ class RegisterController extends Controller
         $user->save();
         return $user;
 
-        //-- below is original Laravel method 
+        //-- below is original Laravel method
         // return User::create([
         //     'first_name' => $data['first_name'],
         //     'last_name' => $data['last_name'],
@@ -103,12 +103,12 @@ class RegisterController extends Controller
      *
      * If the user requesting this route has admin role, show the form.
      * Else show error message page.
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     protected function showRegistrationForm() {
         $user = Auth::user();
-        
+
         if ($user->role=="A") {
             return view('auth.register');
         }
@@ -123,7 +123,7 @@ class RegisterController extends Controller
      *
      * This override method stops the newly created user to be logged in upon account creation,
      * and display message that user was created/updated.
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */

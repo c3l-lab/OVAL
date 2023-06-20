@@ -14,9 +14,7 @@
 			@endif
 			@if(isset($user) && $user->role=="A")
 			<li><a href="/batch-upload">Batch Upload</a></li>
-			<li><a href="/manage-lti-connections">Manage LTI Connections</a></li>
-			<li><a href="/lti/platforms">Manage LTI Platforms</a></li>
-			<li><a href="/lti/deployments">Manage LTI Deployments</a></li>
+			<li><a href="/lti/registrations">Manage LTI Registrations</a></li>
   			<li class="space-top"><a href="/logout">Logout</a></li>
 			@endif
   		</ul>

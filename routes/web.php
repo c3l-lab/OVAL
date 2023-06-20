@@ -1,6 +1,5 @@
 <?php
-use oval\Http\Controllers\Lti\DeploymentController;
-use oval\Http\Controllers\Lti\PlatformController;
+use oval\Http\Controllers\Lti\RegistrationController;
 use oval\Http\Middleware\RequireAdmin;
 
 /*
@@ -125,10 +124,7 @@ Route::post('/lti', 'LtiController@launch');
 Route::prefix('lti')->group(function () {
 	Route::middleware([RequireAdmin::class])->group(function () {
 		Route::resources([
-			'platforms' => PlatformController::class,
-		]);
-		Route::resources([
-			'deployments' => DeploymentController::class,
+			'registrations' => RegistrationController::class,
 		]);
 	});
 });

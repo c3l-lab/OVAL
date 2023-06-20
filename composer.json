@@ -12,7 +12,10 @@
         "doctrine/dbal": "^3.6",
         "symfony/polyfill-uuid": "^1.22",
         "laravel/ui": "^4.2",
-        "google/apiclient": "^2.13.1" 
+        "google/apiclient": "^2.13.1",
+        "packbackbooks/lti-1p3-tool": "^5.3",
+        "guzzlehttp/guzzle": "^7.0",
+        "firebase/php-jwt": "6.5.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.21",
