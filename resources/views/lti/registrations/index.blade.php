@@ -65,6 +65,7 @@
                     <table class="table table-striped" id="lti-registrations-table">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>NAME</th>
                                 <th>ISSUER</th>
                                 <th>CLIENT ID</th>
@@ -75,6 +76,7 @@
                         <tbody>
                             @foreach ($registrations as $registration)
                                 <tr>
+                                    <td>{{ $registration->id }}</td>
                                     <td>{{ $registration->name }}</td>
                                     <td>{{ $registration->issuer }}</td>
                                     <td>{{ $registration->client_id }}</td>
