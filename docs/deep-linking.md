@@ -28,7 +28,7 @@
 
 ## Getting user's email
 
-Getting user's email from LTI launch requires some configuration on Open edX which require admin privileges.
+Getting user's email from LTI launch requires some configuration on Open edX which requires admin privileges.
 
 1. Open https://edxstudio.lift.c3l.ai/admin/waffle_utils/waffleflagcourseoverridemodel/
 1. Click on **Add Waffle Flag Course Override**.
