@@ -87,16 +87,16 @@ class LtiService
 
   public function loginUser($launchData)
   {
-    $email = $launchData['email'];
+    $email = $launchData['email'] ?? null;
     if (empty($email)) {
       return;
     }
     $user = User::where('email', $email)->first();
     if (empty($user)) {
-      $username = $launchData['preferred_username'];
+      $username = $launchData['preferred_username'] ?? 'Unknow';
       $user = new User;
       $user->email = $email;
-      $user->first_name = $username ? $username : 'Unknow';
+      $user->first_name = $username;
       $user->last_name = 'Unknow';
       $user->role = 'O';
       $user->password = bcrypt(LTI_PASSWORD);
