@@ -2,7 +2,7 @@
 
 1. Edit the unit in which you want to add the remote LTI tool and select **Advanced** from the **Add New Component** section. Select **LTI Consumer**.
 1. Select **Edit** in the component that appears.
-1. In the "Edit" submenu, fill it in following these instructions:
+1. In the **Edit** window, fill it in following these instructions:
 
     - **Display Name**: set your preferred name
     - **LTI Version**: LTI 1.3
