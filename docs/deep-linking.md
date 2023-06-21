@@ -10,8 +10,12 @@
     - **Tool Initiate Login URL**: https://oval.c3l.ai/api/lti/login
     - **Tool Public Key Mode**: Keyset URL
     - **Tool Keyset URL**: https://oval.c3l.ai/api/lti/jwks
+    - **Enable LTI NRPS**: True
     - **Deep linking**: True
     - **Deep Linking Launch URL**: https://oval.c3l.ai/api/lti/launch
+    - **Deep Linking Launch URL**: https://oval.c3l.ai/api/lti/launch
+    - **Request user's username**: True
+    - **Request user's email**: True
     - Click the **Save** button.
 
     > URLs can be found in the **Manage LTI Registrations** section on Oval.
