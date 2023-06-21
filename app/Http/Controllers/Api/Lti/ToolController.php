@@ -34,8 +34,10 @@ class ToolController extends Controller
         $launch = $this->ltiService->validateLaunch($request);
         $launch_data = $launch->getLaunchData();
         \Log::debug($launch_data);
+        $email = $launch_data['email'];
         $issuer = $launch_data['iss'];
         $client_id = $launch_data['azp'];
+
 
         $registration = LtiRegistration::where('issuer', $issuer)
             ->where('client_id', $client_id)
@@ -47,6 +49,9 @@ class ToolController extends Controller
         if ($launch->isDeepLinkLaunch()) {
             return redirect()->route('view', ['group_video_id' => $group_video->id]);
         } else {
+            if (!empty($email)) {
+                $this->ltiService->loginUser($email);
+            }
             return redirect()->route('group_videos.show.embed', ['id' => $group_video->id]);
         }
     }

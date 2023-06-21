@@ -11,6 +11,9 @@ use Packback\Lti1p3\JwksEndpoint;
 use Packback\Lti1p3\LtiDeepLinkResource;
 use Packback\Lti1p3\LtiMessageLaunch;
 use Packback\Lti1p3\LtiOidcLogin;
+use oval\User;
+
+const LTI_PASSWORD = '[lti_password]';
 
 class LtiService
 {
@@ -80,5 +83,20 @@ class LtiService
     }, []);
 
     return JwksEndpoint::new($keys)->getPublicJwks();
+  }
+
+  public function loginUser(string $email)
+  {
+    $user = User::where('email', $email)->first();
+    if (empty($user)) {
+      $user = new User;
+      $user->email = $email;
+      $user->first_name = 'Unknow';
+      $user->last_name = 'Unknow';
+      $user->role = 'O';
+      $user->password = bcrypt(LTI_PASSWORD);
+      $user->save();
+    }
+    \Auth::login($user);
   }
 }
