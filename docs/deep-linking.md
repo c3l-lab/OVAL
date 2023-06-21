@@ -30,7 +30,7 @@
 
 Getting user's email from LTI launch requires some configuration on Open edX which require admin privileges.
 
-1. Open `https://edxstudio.lift.c3l.ai/admin/waffle_utils/waffleflagcourseoverridemodel/`.
+1. Open https://edxstudio.lift.c3l.ai/admin/waffle_utils/waffleflagcourseoverridemodel/
 1. Click on **Add Waffle Flag Course Override**.
 1. Fill in the form using the following values:
 
@@ -41,7 +41,7 @@ Getting user's email from LTI launch requires some configuration on Open edX whi
     > Course id can be found in the URL of the course page, e.g. id for https://edxstudio.lift.c3l.ai/course/course-v1:UniSA+202+2023 is `course-v1:UniSA+202+2023`
 
 1. Check the **Enabled** checkbox and click **Save**.
-1. Open `https://edxstudio.lift.c3l.ai/admin/lti_consumer/courseallowpiisharinginltiflag/`.
+1. Open https://edxstudio.lift.c3l.ai/admin/lti_consumer/courseallowpiisharinginltiflag/
 1. Click on **Add Course Allow PII Sharing In LTI Flag**.
 1. Fill in the form using the following values:
 
