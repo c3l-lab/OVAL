@@ -87,6 +87,9 @@ class LtiService
 
   public function loginUser(string $email)
   {
+    if (empty($email)) {
+      return;
+    }
     $user = User::where('email', $email)->first();
     if (empty($user)) {
       $user = new User;
