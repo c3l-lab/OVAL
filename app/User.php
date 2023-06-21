@@ -229,7 +229,7 @@ class User extends Authenticatable
     public function annotationViewed() {
     	return $this->belongsToMany('oval\Annotation', 'annotation_viewed_by');
     }
-    
+
     /**
     *	One-to-Many relationship.
     *	Feedbacks made by this user.
@@ -238,7 +238,7 @@ class User extends Authenticatable
     public function feedbacks() {
     	return $this->hasMany('oval\Feedback');
     }
-    
+
     /**
     *	Method to get this user's ConfidenceLevel for GroupVideo whose id is passed in
     *	@param int group_video_id
@@ -252,7 +252,7 @@ class User extends Authenticatable
     			])
     			->first();
     }
-    
+
     /**
     *	One-to-Many relationship
     *	@return collection of Tracking objects

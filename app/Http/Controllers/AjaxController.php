@@ -12,7 +12,7 @@ use oval\Jobs\AnalyzeTranscript;
 
 /**
  * Controller class to handle Ajax requests
- * 
+ *
  */
 class AjaxController extends Controller
 {
@@ -25,7 +25,7 @@ class AjaxController extends Controller
 
 	/**
 	 * Private utility method to format time from seconds to 00:00:00 format
-	 * 
+	 *
 	 * @param integer $seconds
 	 * @return string time in string format of 00:00:00
 	 */
@@ -42,7 +42,7 @@ class AjaxController extends Controller
 
 	/**
 	 * Private utility function to convert number used in time to be double digit (00)
-	 * 
+	 *
 	 * @param number $value
 	 * @return string With 0 at start if single digit number
 	 */
@@ -56,9 +56,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Private utility method to convert array of string (integer in string format) to array of int
-	 * 
+	 *
 	 * When parameter from AJAX request has array of integer in the JSON, convert the array of string to array integer.
-	 * 
+	 *
 	 * @param array $stringArray array containing integer values in string format
 	 * @return array array containing integers
 	 */
@@ -76,7 +76,7 @@ class AjaxController extends Controller
 
 	/**
 	 * Private utility method to convert time duration from ISO8601 (00H00M00S) to seconds.
-	 * 
+	 *
 	 * @param string $ISO8601 time in format 00H00M00S
 	 * @return string the duration in seconds
 	 */
@@ -108,11 +108,11 @@ class AjaxController extends Controller
 
 	/**
 	 * Private function to return annotations for group_video
-	 * 
+	 *
 	 * This method fetches current annotations for group_video
-	 * whose ID passed in, and filter the privacy setting of annotation 
+	 * whose ID passed in, and filter the privacy setting of annotation
 	 * using the user_id passed in.
-	 * 
+	 *
 	 * @param int $user_id
 	 * @param int $group_video_id
 	 * @return collection collection of Annotation objects visible to the user
@@ -127,7 +127,7 @@ class AjaxController extends Controller
 			$visible = false;
 			$privacy = $a->privacy;
 			$mine = $a->user_id==$user_id ? true : false;
-			$visible = ($mine || $privacy=="all") ? true : false;	
+			$visible = ($mine || $privacy=="all") ? true : false;
 			if ($privacy == "nominated") {
 				$audience = json_decode($a->visible_to);
 				if (!empty($audience)) {
@@ -145,11 +145,11 @@ class AjaxController extends Controller
 
 	/**
 	 * Methtod called from route /get_annotations to fetch annotations to display on home page
-	 * 
+	 *
 	 * The request object should contain course_id, video_id, group_id.
 	 * @uses get_all_annotations() to fetch annotations.
 	 * The array returned is formatted ready for display.
-	 * 
+	 *
 	 * @param Request $req
 	 * @return array array of array with keys [id, start_time, name, date, description, tas, miine, privacy, by_instructor]
 	 */
@@ -168,20 +168,29 @@ class AjaxController extends Controller
 		$annotations = [];
 
 		foreach ($all_annotations as $a) {
-			$instructor = oval\User::find($a->user_id)->isInstructorOf($course);
+			$author = oval\User::find($a->user_id);
+			if (empty($author)) {
+				$instructor = false;
+				$mine = false;
+				$name = "Unknown User";
+			} else {
+				$instructor = $author->isInstructorOf($course);
+				$mine = $a->user_id==$user->id ? true : false;
+				$name = $author->fullName();
+			}
+
 			$date = empty($a->updated_at) ? null:$a->updated_at->format('g:iA d M, Y');
-			$mine = $a->user_id==$user->id ? true : false;
 
 			$annotations[] = [
-				"id"=>$a->id,
-				"start_time"=>$a->start_time,
-				"name"=>oval\User::find($a->user_id)->fullName(),
-				"date"=>$date,
-				"description"=>$a->description,
-				"tags"=>$a->tags->pluck('tag'),
-				"mine"=>$mine,
-				"privacy"=>$a->privacy,
-				"by_instructor"=>$instructor
+				"id" => $a->id,
+				"start_time" => $a->start_time,
+				"name" => $name,
+				"date" => $date,
+				"description" => $a->description,
+				"tags" => $a->tags->pluck('tag'),
+				"mine" => $mine,
+				"privacy" => $a->privacy,
+				"by_instructor" => $instructor
 			];
 		}
 		return $annotations;
@@ -189,11 +198,11 @@ class AjaxController extends Controller
 
 	/**
 	 * Private method that returns comments for group_video_id passed in that are visible to user_id passed in
-	 * 
+	 *
 	 * This method fetches comments with status "current" that are made by the user whose ID is passed in,
 	 * and "current" comments that are made by others that are visible to the user.
 	 * The returned array contains data ready for display.
-	 * 
+	 *
 	 * @param integer $user_id
 	 * @param integer $group_video_id
 	 * @return array Array of array with keys - id, user_id, name, description, tags, is_mine, privacy, updated_at, created_at
@@ -209,7 +218,7 @@ class AjaxController extends Controller
 						['user_id', '<>', $user_id],
 						['group_video_id', '=', $group_video_id],
 						['privacy', '<>', 'private'],
-						['status', '=', 'current']						
+						['status', '=', 'current']
 					])
 					->get();
 		foreach ($others as $key=>$val) {
@@ -228,20 +237,28 @@ class AjaxController extends Controller
 		$course = oval\GroupVideo::find($group_video_id)->course();
 		foreach ($all_comments as $c) {
 			$user = oval\User::find($c->user_id);
+			if (empty($user)) {
+				$name = "Unknown User";
+				$mine = false;
+				$instructor = false;
+			} else {
+				$name = $user->fullName();
+				$mine = $c->user_id==$user_id ? true : false;
+				$instructor = $user->isInstructorOf($course);
+			}
+
 			$date = empty($c->updated_at) ? null:$c->updated_at->format('g:iA d M, Y');
-			$mine = $c->user_id==$user_id ? true : false;
-			$instructor = oval\User::find($c->user_id)->isInstructorOf($course);
-			
+
 			$comments[] = [
-				"id"=>$c->id,
-				"user_id"=>$user_id,
-				"name"=>$user->fullName(),
-				"description"=>$c->description,
-				"tags"=>$c->tags->pluck('tag'),
-				"is_mine"=>$mine,
-				"privacy"=>$c->privacy,
-				"updated_at"=>$date,
-				"by_instructor"=>$instructor
+				"id" => $c->id,
+				"user_id" => $user_id,
+				"name" => $name,
+				"description" => $c->description,
+				"tags" => $c->tags->pluck('tag'),
+				"is_mine" => $mine,
+				"privacy" => $c->privacy,
+				"updated_at" => $date,
+				"by_instructor" => $instructor
 			];
 		}
 		return $comments;
@@ -249,10 +266,10 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /get_comments to fetch comments to display on home page
-	 * 
+	 *
 	 * This method returns comments visible for the user who is logged in, for the group_video_id passed in.
 	 * @uses \oval\Http\Controllers\AjaxController::get_all_comments()
-	 * 
+	 *
 	 * @param Request $req The request has parameters group_video_id
 	 * @return array Array of array containing values from Comment object ready for display
 	 */
@@ -265,10 +282,10 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /add_comment
-	 * 
-	 * This method inserts a new comment in database 
+	 *
+	 * This method inserts a new comment in database
 	 * and returns array with values from the new comment ready for display.
-	 * 
+	 *
 	 * @param Request $req Request contains group_video_id, description, privacy, nominated_students_ids.
 	 * @return array array with keys [id, user_id, userr_fullname, description, tags, is_mine, privacy, updated_at]
 	 */
@@ -290,7 +307,7 @@ class AjaxController extends Controller
 		$comment->save();
 
 		$c = array(
-				"id"=>$comment->id, 
+				"id"=>$comment->id,
 				"user_id"=>$comment->user->id,
 				"user_fullname"=>$comment->user->fullName(),
 				"description"=>$comment->description,
@@ -303,9 +320,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /add_annotation to add annotation
-	 * 
+	 *
 	 * The method inserts a new annotation and returns the result.
-	 * 
+	 *
 	 * @param Request $req Request contains group_video_id, start_time, description, privacy, nominated_students_ids
 	 * @return array Array with key [result] containing boolean value - true if successfully inserted, false if not.
 	 */
@@ -336,10 +353,10 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /edit_annotation
-	 * 
-	 * This method marks old record as "archived" 
+	 *
+	 * This method marks old record as "archived"
 	 * and inserts a new one with the values passed in and returns the result.
-	 * 
+	 *
 	 * @param Request $req Request contains annotation_id, start_time, description, privacy, nominated_students_ids, tags
 	 * @return array Array with key [result] containing boolean value - true if successfully updated, false if not.
 	 */
@@ -351,13 +368,13 @@ class AjaxController extends Controller
 		}
 		$annotation = new oval\Annotation;
 		$annotation->group_video_id = $old->group_video_id;
-		$annotation->user_id = Auth::user()->id;		
+		$annotation->user_id = Auth::user()->id;
 		$annotation->start_time = $req->start_time;
-		$annotation->description = htmlspecialchars($req->description, ENT_QUOTES);		
+		$annotation->description = htmlspecialchars($req->description, ENT_QUOTES);
 		$annotation->privacy = $req->privacy;
 		$annotation->visible_to = json_encode($this->convertStringArrayToIntArray($req->nominated_students_ids));
 		$annotation->save();
-		
+
 		$tags = $req->tags;
 		foreach ($tags as $t) {
 			$t = htmlspecialchars($t, ENT_QUOTES);
@@ -370,11 +387,11 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /edit_comment
-	 * 
-	 * This marks old record as "archived" 
+	 *
+	 * This marks old record as "archived"
 	 * and creates a new comment with values passed in
 	 * then returns array with values of new comment ready for display.
-	 * 
+	 *
 	 * @param Request $req Request contains: comment_id, description, privacy, nominated_students_ids, tags
 	 * @return array Array with keys: id, user_id, user_fullname, description, tags, is_mine, privacy, updated_at
 	 */
@@ -392,7 +409,7 @@ class AjaxController extends Controller
 		$comment->visible_to = json_encode($this->convertStringArrayToIntArray($req->nominated_students_ids));
 		$comment->parent = $old->id;
 		$comment->save();
-		
+
 		$tags = $req->tags;
 		foreach ($tags as $t) {
 			$t = htmlspecialchars($t, ENT_QUOTES);
@@ -402,7 +419,7 @@ class AjaxController extends Controller
 		$comment->save();
 
 		$c = array(
-				"id"=>$comment->id, 
+				"id"=>$comment->id,
 				"user_id"=>$comment->user->id,
 				"user_fullname"=>$comment->user->fullName(),
 				"description"=>$comment->description,
@@ -415,9 +432,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /delete_annotation
-	 * 
+	 *
 	 * This method marks the annotation's status as "deleted"
-	 * 
+	 *
 	 * @param Request $req Request contains annotation_id
 	 * @return void
 	 */
@@ -429,9 +446,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /delete_comment
-	 * 
+	 *
 	 * This method marks comment's status as "deleted"
-	 * 
+	 *
 	 * @param Request $req Request contains comment_id
 	 * @return void
 	 */
@@ -443,14 +460,14 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /add_video
-	 * 
+	 *
 	 * This is triggered by "save" button click in video-management page's add video form.
 	 * The method first checks if the video already exists in database.
 	 * If it doesn't exist, it gets video meta-data from API and insert a row in videos table.
 	 * If assign to default group option was selected, assign it.
 	 * If assigning to default group *and* adding points, insert points.
 	 * If request text analysis option was selected, add request.
-	 * 
+	 *
 	 * @param Request $req Request contains: video_id, media_type, course_id, points, request_analysis
 	 * @return array Array with keys: course_id, video_id
 	 */
@@ -511,7 +528,7 @@ class AjaxController extends Controller
 					return ['error'=>$errno];
 				}
 				$result = json_decode($response);
-				
+
 				$v = oval\Video::firstOrNew([
 					'identifier' => $req->video_id,
 					'media_type' => $req->media_type
@@ -554,15 +571,15 @@ class AjaxController extends Controller
 			$ar->save();
 			$this->process_youtube_text_analysis($ar);
 		}
-		
+
 		return ['course_id'=>$course_id, 'video_id'=>$v->id];
 	}
 
 	/**
-	 * Private method to process Youtube video's text analysis 
+	 * Private method to process Youtube video's text analysis
 	 * for AnalysisRequest object passed in as parameter.
 	 * TODO: move this somewhere ... This was copied from another controller.
-	 * 
+	 *
 	 * @param oval\AnalysisRequest $analysis_request
 	 * @return void
 	 */
@@ -576,10 +593,10 @@ class AjaxController extends Controller
 		}
 
 		$video = $analysis_request->video;
-		
+
 		// Change status to 'processing'
 		oval\AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processing']);
-		
+
 		$user_ids = $analysis_request->requestorsIds();
 		array_push($user_ids, Auth::user()->id);
 
@@ -602,7 +619,7 @@ class AjaxController extends Controller
 			oval\AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processed']);
 			return "no transcript";
 		}
-		
+
 		// Send analyse transcript job to queue
 		$this->dispatch(new AnalyzeTranscript([
 			'videoId'    => $video->id,
@@ -613,7 +630,7 @@ class AjaxController extends Controller
 
 	/**
 	 * Private method to get caption of a Youtube video.
-	 * 
+	 *
 	 * It downloads Youtube video's caption via Youtube data API
 	 * using YoutubeDataHelper, or publicly available caption and return the caption text.
 	 * TODO: move this somewhere - this was copied from another controller.
@@ -636,10 +653,10 @@ class AjaxController extends Controller
             foreach ($credentials as $cred) {
 				$helper = new YoutubeDataHelper($cred->client_id, $cred->client_secret);
                 $helper->handle_access_token_refresh($cred);
-                
+
 				$track_id = $helper->get_caption_track_id($video->identifier);
 				if(!empty($track_id)) {
-					$caption_array = $helper->download_caption($track_id);				
+					$caption_array = $helper->download_caption($track_id);
 				}
                 if (!empty($caption_array)) {
 					break;
@@ -663,7 +680,7 @@ class AjaxController extends Controller
                     foreach ($cc->text as $item) {
                         $line = "{";
                         $time = 0;
-                        foreach ($item->attributes() as $key=>$val) {				
+                        foreach ($item->attributes() as $key=>$val) {
                             if ($key == "start") {
                                 $time = floatval($val);
                                 $line .= '"start":'.$time.', ';
@@ -673,7 +690,7 @@ class AjaxController extends Controller
                                 $line .= '"end":'.$time.', ';
                                 $time = 0;
                             }
-						}	
+						}
 						$text .= $item;
                         $line .= '"transcript":"'.$item.'"}';
                         $caption_array[] = $line;
@@ -691,9 +708,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /delete_video
-	 * 
+	 *
 	 * This method deletes record from videos table.
-	 * 
+	 *
 	 * @param Request $req Request contains video_id
 	 * @return array Array with key [result] containing boolean value - true if successfully deleted, false if not
 	 */
@@ -704,9 +721,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /get_groups
-	 * 
+	 *
 	 * This method fetches groups that belong to the course whose id is passed in.
-	 * 
+	 *
 	 * @param Request $req Request contains course_id
 	 * @return array Array with key [groups] containing collection of group objects
 	 */
@@ -718,11 +735,11 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /get_group_info_for_video
-	 * 
-	 * This method returns collection of groups the user is teaching, 
+	 *
+	 * This method returns collection of groups the user is teaching,
 	 * that belong to the course (all_groups),
 	 * and collection of ids of groups that have this video assigned to (assigned_groups_ids).
-	 * 
+	 *
 	 * @param Request $req The request contains course_id, vidveo_id, and user_id
 	 * @return array with keys [all_groups, assigned_groups_ids]
 	 */
@@ -741,9 +758,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /save_video_group
-	 * 
-	 * This method associates video to groups. 
-	 * 
+	 *
+	 * This method associates video to groups.
+	 *
 	 * @param Request $req Request contains course_id(int), group_ids(array of int), video_id(int)
 	 * @return void
 	 */
@@ -756,7 +773,7 @@ class AjaxController extends Controller
 		$copy_comment_instruction = $req->copy_comment_instruction;
 		$copy_points = $req->copy_points;
 		$copy_quiz = $req->copy_quiz;
-		
+
 		$video = oval\Video::find($video_id);
 		$copy_origin = $copy_from_group_id == -1 ? null : oval\GroupVideo::where([['group_id', '=', $copy_from_group_id], ['video_id', '=', $video_id]])->first();
 
@@ -806,12 +823,12 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /download_annotations
-	 * 
+	 *
 	 * This method fetches all comments and annotations visible for the user logged in,
-	 * and constructs csv file containing these values, then return it as body of Response 
-	 * 
+	 * and constructs csv file containing these values, then return it as body of Response
+	 *
 	 * @param Request $req Request contains group_video_id, course_id
-	 * @return StreamedResponse 
+	 * @return StreamedResponse
 	 */
 	public function download_annotations (Request $req) {
 		$user = Auth::user();
@@ -854,14 +871,14 @@ class AjaxController extends Controller
 					fputcsv($file_handle, $row);
 				}
 			}
-			
+
 			$type = "comment";
 			$start = "";
 			if (count($comments) > 0) {
 				foreach ($comments as $c) {
 					$name = $c['name'];
 					$desc = htmlspecialchars_decode($c['description'], ENT_QUOTES);
-					$tags = $c['tags']; 
+					$tags = $c['tags'];
 					$tag = "";
 					foreach($tags as $t) {
 						$tag .= "'".htmlspecialchars_decode($t, ENT_QUOTES)."', ";
@@ -880,7 +897,7 @@ class AjaxController extends Controller
 					fputcsv($file_handle, $row);
 				}
 			}
-			
+
 			fclose($file_handle);
 		});
 
@@ -895,15 +912,15 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /save_feedback
-	 * 
+	 *
 	 * This method receives comment_id, confidence_level and answers(array) as parameters,
 	 * and saves the confidence level and answers for comment.
-	 * 
+	 *
 	 * @param Request $req Request contains comment_id, confidence_level, answers(array with keys [point_id, answer])
 	 * @return void
 	 */
 	public function save_feedback(Request $req) {
-		$comment_id = intval($req->comment_id); 
+		$comment_id = intval($req->comment_id);
 		$level = intval($req->confidence_level);
 		$answers = $req->answers;
 		foreach ($answers as $a) {
@@ -919,12 +936,12 @@ class AjaxController extends Controller
 		$confidence_level->save();
 	}
 
-	/** 
+	/**
 	 * Method called from route /get_videos_for_course
-	 * 
-	 * This method returns videos which are assigned 
+	 *
+	 * This method returns videos which are assigned
 	 * for the course whose id is passed in as parameter
-	 * 
+	 *
 	 * @param Request $req Request contains course_id
 	 * @return array array with key [videos] whose value contains collection of Video objects
 	 */
@@ -936,9 +953,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /get_groups_for_video
-	 * 
+	 *
 	 * This method returns groups that have the video with id passed in is assigned to
-	 * 
+	 *
 	 * @param Request $req Request contains video_id
 	 * @return array Array with key "groups" - containing collection of Group objects
 	 */
@@ -950,9 +967,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from /check_if_course_wide_points
-	 * 
+	 *
 	 * This method is used to check if the video for this course has course wide points.
-	 * 
+	 *
 	 * @param Request $req Request contains course_id, video_id
 	 * @return array Array with key is_course_wide. The value is true if it is course wide, false if not.
 	 */
@@ -980,12 +997,12 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /add_trackings
-	 * 
+	 *
 	 * This method saves trackings passed in as parameter
 	 * @author Harry
-	 * 
-	 * @param Request $req Request contains 
-	 * 								group_video_id, 
+	 *
+	 * @param Request $req Request contains
+	 * 								group_video_id,
 	 * 								data (array of array with keys [event, target, info, event_time])
 	 * @return void
 	 */
@@ -1005,9 +1022,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /add_analysis_request
-	 * 
+	 *
 	 * This method saves an AnalysisRequest for the video_id and user_id passed in.
-	 * 
+	 *
 	 * @param Request $req Request contains video_id and user_id
 	 * @return array Array with key "msg" which contains text to display when the request is processed
 	 */
@@ -1040,11 +1057,11 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /get_nominated_students_ids
-	 * 
+	 *
 	 * This method returns students to make the annotation/comment available for.
-	 * 
-	 * @param Request $req Request contains 
-	 * 								item (string "comment" or "annotation"), 
+	 *
+	 * @param Request $req Request contains
+	 * 								item (string "comment" or "annotation"),
 	 * 								item_id
 	 * @return array Array with key "nominated" with value containing array of User objects
 	 */
@@ -1065,10 +1082,10 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /edit_comment_instruction
-	 * 
+	 *
 	 * This method fetches existing CommentInsruction or creates a new one,
 	 * then saves the values passed in as parameter.
-	 * 
+	 *
 	 * @param Requestt $req Request contains group_video_id, and description
 	 * @return string description The description of CommentInstruction
 	 */
@@ -1087,9 +1104,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /delete_comment_instruction
-	 * 
+	 *
 	 * This method deletes CommentInstruction for the group_video_id passed in.
-	 * 
+	 *
 	 * @param Request $req Request contains group_video_id
 	 * @return void
 	 */
@@ -1101,9 +1118,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /get_comments_for_tag
-	 * 
+	 *
 	 * This method returns comments with tag passed in as parameter.
-	 * 
+	 *
 	 * @param Request $req Request contains course_id and tag
 	 * @return array Array of array with keys [id, user_id, name, description, tags, is_mine, privacy, updated_at, by_instructor]
 	 */
@@ -1117,7 +1134,7 @@ class AjaxController extends Controller
 						['group_video_id', '=', $group_video->id]
 					])
 					->whereHas('tags', function($q) use($tag) {
-							$q->where('tag', '=', $tag);	
+							$q->where('tag', '=', $tag);
 						})
 					->orderBy('updated_at', 'desc')
 					->get();
@@ -1144,9 +1161,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /get_annotations_for_tag
-	 * 
+	 *
 	 * This method returns annotations with tag passed in as parameter.
-	 * 
+	 *
 	 * @param Request $req Request contains course_id, tag
 	 * @return array Array of array with keys [id, start_time, user_id, name, description, tags, is_mine, privacy, updated_at, by_instructor]
 
@@ -1161,7 +1178,7 @@ class AjaxController extends Controller
 							['group_video_id', '=', $group_video->id]
 						])
 						->whereHas('tags', function($q) use($tag) {
-								$q->where('tag', '=', $tag);	
+								$q->where('tag', '=', $tag);
 							})
 						->orderBy('updated_at', 'desc')
 						->get();
@@ -1204,7 +1221,7 @@ class AjaxController extends Controller
 		$quiz->media_type = (string)($req->media_type);
 		$quiz->quiz_data = json_encode($req->quiz_data);
 		$quiz->visable = 1;
-		$result = $quiz->save();				
+		$result = $quiz->save();
 
 		return ['result' => 'success'];
 	}
@@ -1259,7 +1276,7 @@ class AjaxController extends Controller
 								 ])
 								 ->orderBy('event_time', 'desc')
 								 ->first();
-			
+
 			if(empty($latest_end_record)){
 
 				/*------ user did not finish video, calculate portion ------*/
@@ -1280,7 +1297,7 @@ class AjaxController extends Controller
 				}else{
 					$portion = 0;
 				}
-				
+
 			}else{
 				$portion = 1;
 			}
@@ -1298,13 +1315,13 @@ class AjaxController extends Controller
 						  ->get();
 
 			if(count($play_record) > 0){
-				$last_play  = $play_record[0]->event_time; 
+				$last_play  = $play_record[0]->event_time;
 				$first_play = $play_record[count($play_record)-1]->event_time;
 			}else{
 				$first_play = 'Never played';
 				$last_play = 'Never played';
 			}
-			
+
 			// /*------ general comments viewed ---------*/
 			$comment_view = DB::table('trackings')
 							->select('user_id', 'event', 'event_time')
@@ -1325,7 +1342,7 @@ class AjaxController extends Controller
 								])
 								->orderBy('event_time', 'desc')
 								->get();
-			
+
 			$annotations_close = DB::table('trackings')
 								 ->select('user_id', 'event', 'info', 'event_time')
 								 ->where([
@@ -1344,11 +1361,11 @@ class AjaxController extends Controller
 			}
 
 			if($annotations_num > 0){
-				$annotations_average_time = $total/$annotations_num; 
+				$annotations_average_time = $total/$annotations_num;
 			}else{
 				$annotations_average_time = 0;
 			}
-	
+
 
 			// /*------ if annotations download ------*/
 			$annotations_download = DB::table('trackings')
@@ -1366,7 +1383,7 @@ class AjaxController extends Controller
 			}else{
 				$annotations_download_status = "Never download";
 			}
-				
+
 			array_push($result_arr, compact('surname','first_name', 'student_id','portion','first_play','last_play','comment_view','annotations_num','annotations_average_time','annotations_download_status'));
 
 		}
@@ -1385,7 +1402,7 @@ class AjaxController extends Controller
 			$surname = $user->last_name;
 			$first_name = $user->first_name;
 			$student_id = $user->email;
-			
+
 			/*------ get num of annotation, avg length ------*/
 			$annotation_info = DB::table('annotations')
 							   ->where([
@@ -1393,7 +1410,7 @@ class AjaxController extends Controller
 									['user_id', '=', $user->id],
 							   ])
 							   ->get();
-			
+
 			if(count($annotation_info) > 0){
 				$annotation_num = count($annotation_info);
 
@@ -1405,7 +1422,7 @@ class AjaxController extends Controller
 				$annotation_average_length = ceil($annotation_length_total/$annotation_num);
 			}else{
 				$annotation_num = 0;
-				$annotation_average_length = 0; 
+				$annotation_average_length = 0;
 			}
 
 			/*------ get Number of annotations edited, Number of annotations viewed, Average time spent viewing each annotation ------*/
@@ -1418,7 +1435,7 @@ class AjaxController extends Controller
 											['info', '=', 'Edit annotation']
 										])
 										->count();
-			
+
 			$annotation_viewed_num = DB::table('trackings')
 										->select('event','info','event_time')
 										->where([
@@ -1439,7 +1456,7 @@ class AjaxController extends Controller
 										])
 										->orderBy('event_time', 'desc')
 										->get();
-			
+
 			$annotations_close = DB::table('trackings')
 										->select('user_id', 'event', 'info', 'event_time')
 										->where([
@@ -1458,15 +1475,15 @@ class AjaxController extends Controller
 			}
 
 			if($annotations_num > 0){
-				$annotations_average_time = $annotations_total/$annotations_num; 
+				$annotations_average_time = $annotations_total/$annotations_num;
 			}else{
 				$annotations_average_time = 0;
 			}
 
 			array_push($result_arr, compact('surname','first_name', 'student_id', 'annotation_num', 'annotation_average_length', 'annotation_edited_num','annotation_viewed_num', 'annotations_average_time'));
-							   
+
 		}
-		
+
 		return $result_arr;
 
 	}
@@ -1481,7 +1498,7 @@ class AjaxController extends Controller
 			$surname = $user->last_name;
 			$first_name = $user->first_name;
 			$student_id = $user->email;
-			
+
 			/*------ Number of comments, Average Comment Length (word count) ------*/
 			$comment_info = DB::table('comments')
 							->select('description')
@@ -1490,9 +1507,9 @@ class AjaxController extends Controller
 								['user_id', '=', $user->id],
 							])
 							->get();
-			
+
 			$comment_num = count($comment_info);
-			
+
 			$comment_total = 0;
 
 			for ($i = 0; $i < $comment_num; $i++) {
@@ -1500,7 +1517,7 @@ class AjaxController extends Controller
 			}
 
 			if($comment_num > 0){
-				$comment_average_length = ceil($comment_total/$comment_num); 
+				$comment_average_length = ceil($comment_total/$comment_num);
 			}else{
 				$comment_average_length = 0;
 			}
@@ -1515,7 +1532,7 @@ class AjaxController extends Controller
 										['info', '=', 'Edit comment']
 								  ])
 								  ->count();
-			
+
 			$comment_view_info = DB::table('trackings')
 								 ->select('event_time')
 								 ->where([
@@ -1525,12 +1542,12 @@ class AjaxController extends Controller
 								 ])
 								 ->orderBy('event_time', 'desc')
 								 ->get();
-								 
+
 			$comment_viewed_num = count($comment_view_info);
 
 			if(floor($comment_viewed_num/2) > 0){
 				$comment_viewed_length = 0;
-				
+
 				for($i = 0; $i < floor($comment_viewed_num/2); $i = $i + 2){
 
 					$comment_viewed_length += (strtotime($comment_view_info[$i]->event_time) - strtotime($comment_view_info[$i+1]->event_time));
@@ -1548,11 +1565,11 @@ class AjaxController extends Controller
 		}
 
 		return $result_arr;
-	} 
+	}
 
 	// public function get_video_point_answer (Request $req){
 	// 	// $user_arr = explode(',', $req->user_id);
-		
+
 	// 	// $result_arr = [];
 
 	// 	// for($x = 0; $x < count($user_arr); $x++){
@@ -1567,16 +1584,16 @@ class AjaxController extends Controller
 	// 	//     $surname = $user_info->first_name;
 	// 	//    	$first_name = $user_info->last_name;
 	// 	// 	$student_id = $user_info->email;
-			
+
 	// 	// 	/*------ get video point anser ------*/
 	// 	// 	$feedback = DB::table('feedbacks')
 	// 	// 				->select('point_id', 'answer')
 	// 	// 				->orderby('point_id')
 	// 	// 				->orderby('created_at','desc')
 	// 	// 				->get();
-			
+
 	// 	// 	array_push($result_arr, compact('feedback'));
-						
+
 	// 	// }
 
 	// 	// return $result_arr;
@@ -1664,7 +1681,7 @@ class AjaxController extends Controller
 				$portion = 1;
 			}
 
-			$portion = 	number_format($portion,4);		
+			$portion = 	number_format($portion,4);
 
 			/*------ get quiz result ------*/
 			$quiz_result = DB::table('quiz_result')
@@ -1676,7 +1693,7 @@ class AjaxController extends Controller
 							   ['group_videos.id', '=', intval($req->group_video_id)]
 						   ])
 						   ->get();
-			
+
 			$score = 0;
 			$total_answer_num = 0;
 
@@ -1687,11 +1704,11 @@ class AjaxController extends Controller
 					if(strcmp($obj->items[$j]->type, 'multiple_choice') == 0){
 
 						$is_equal = strcmp((string)($obj->items[$j]->ans[0]),(string)($obj->items[$j]->user_ans));
-						
+
 						if($is_equal == 0){
 							$score++;
 						}
-						
+
 					}
 
 
@@ -1769,7 +1786,7 @@ class AjaxController extends Controller
 	public function get_quiz_visable_status (Request $req){
 
 		$videoid_arr = explode(',', $req->videoid);
-		
+
 		$result_arr = [];
 
 		for ($x = 0; $x < count($videoid_arr); $x++) {
@@ -1782,24 +1799,24 @@ class AjaxController extends Controller
 					['videos.id', '=', $videoid_arr[$x]]
 				])
 				->first();
-		
+
 			if ($quiz_list !== null && count((array)$quiz_list) > 0) {
 				array_push($result_arr, $quiz_list);
 			} else {
 				array_push($result_arr, "no quiz");
 			}
-		
-		}
-		
 
-		
+		}
+
+
+
 		return $result_arr;
 	}
 
 	public function get_all_student_record(Request $req){
 
 		$user_arr = explode(',', $req->user_id);
-		
+
 		$result_arr = [];
 
 		for($x = 0; $x < count($user_arr); $x++){
@@ -1815,7 +1832,7 @@ class AjaxController extends Controller
 			$surname = $user_info->first_name;
 			$first_name = $user_info->last_name;
 			$student_id = $user_info->email;
-			
+
 			/*------ get all attempt record ------*/
 			$student_record_list = DB::table('quiz_result')
 						->join('videos', 'videos.identifier', '=', 'quiz_result.identifier')
@@ -1833,26 +1850,26 @@ class AjaxController extends Controller
 		}
 
 		return $result_arr;
-		
+
 	}
 
 	/*------ end analysis ajax funciton ------*/
-	
-	
+
+
 	/**
 	 * Method called from route /edit_visibility
-	 * 
+	 *
 	 * This method saves visibility setting for the GroupVideo.
-	 * If the GroupVideo is set to not visible, instructors can still see the page 
+	 * If the GroupVideo is set to not visible, instructors can still see the page
 	 * with message letting them know it is not visible for students.
-	 * 
+	 *
 	 * @param Request $req Contains group_video_id, visibility
 	 * @return void
 	 */
 	public function edit_visibility (Request $req) {
 		$group_video_id = intval($req->group_video_id);
 		$vis = intval($req->visibility);
-		
+
 		$group_video = oval\GroupVideo::find($group_video_id);
 		$group_video->hide = $vis;
 		$group_video->save();
@@ -1860,9 +1877,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /edit_video_order
-	 * 
-	 * This method sets the value for "order" of GroupVideo 
-	 * 
+	 *
+	 * This method sets the value for "order" of GroupVideo
+	 *
 	 * @param Request $req Contains group_video_ids - array of ids in the order to display.
 	 */
 	public function edit_video_order (Request $req) {
@@ -1878,10 +1895,10 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /edit_text_analysis_visibility
-	 * 
+	 *
 	 * This method saves the visibility of content analysis.
 	 * When GroupVideo's show_analysis is set to false, it is not displayed.
-	 * 
+	 *
 	 * @param Request $req Contains group_video_id, visibility
 	 * @return void
 	 */
@@ -1896,9 +1913,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from /set_lti_resource_link
-	 * 
+	 *
 	 * This method saves moodle_resource_id value for GroupVideo.
-	 * 
+	 *
 	 * @param Request $req Contains link_id, group_video_id
 	 * @return array Array with key "result". Value is true if saved successfully, false if not.
 	 */
@@ -1916,10 +1933,10 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /check_student_activity
-	 * 
-	 * This method finds if there is any student activity associated with the GroupVideo whose id passed in. 
+	 *
+	 * This method finds if there is any student activity associated with the GroupVideo whose id passed in.
 	 * TODO:: Check if there are quiz answers
-	 * 
+	 *
 	 * @param Request $req Contains group_video_id
 	 * @return array Array with keys [group_video_id, has_activity] - has_activity's value is boolean
 	 */
@@ -1938,9 +1955,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /archive_group_video
-	 * 
+	 *
 	 * This method marks GroupVideo as "archived"
-	 * 
+	 *
 	 * @param Request $req Contains group_video_id
 	 * @return array Array with key "result", value is true if saved successfully, false if not.
 	 */
@@ -1953,14 +1970,14 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /delete_group_video
-	 * 
+	 *
 	 * This method deletes GroupVideo whose id passed in as parameter
-	 * 
+	 *
 	 * @param Request $req Contains group_video_id
 	 * @return array Array with key:result, value:true if successfully deleted, false if not.
 	 */
 	public function delete_group_video (Request $req) {
-		$result = oval\GroupVideo::destroy(intval($req->group_video_id));		
+		$result = oval\GroupVideo::destroy(intval($req->group_video_id));
 		return compact('result');
 	}
 
@@ -1978,10 +1995,10 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /get_groups_with_video
-	 * 
+	 *
 	 * This method receives video_id and returns groups that has access to this video,
 	 * along with whether the groups have contents that can be copied (comment instruction, points, quiz)
-	 * 
+	 *
 	 * @param Request $req Contains video_id
 	 * @return collection Collection of Group objects
 	 */
@@ -1995,7 +2012,7 @@ class AjaxController extends Controller
 						})
 						->get();
 		$groups = collect();
-		
+
 		foreach($the_groups as $g) {
 			$group_video = oval\GroupVideo::where([
 								['video_id', '=', $video_id],
@@ -2005,11 +2022,11 @@ class AjaxController extends Controller
 			$points = $group_video->relatedPoints();
 			$quiz = oval\quiz_creation::where('identifier', '=', oval\Video::find($video_id)->identifier)
 						->first();
-			
+
 			$group = [
 						"course_id"=>$g->course->id,
 						"course_name"=>$g->course->name,
-						"id"=>$g->id, 
+						"id"=>$g->id,
 						"name"=>$g->name,
 						"has_comment_instruction"=>empty($comment_instruction) ? false : true,
 						"has_points"=>$points->count()>0 ? true : false,
@@ -2029,7 +2046,7 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /get_video_info
-	 * 
+	 *
 	 * Takes video_id as parameter and returns thumbnail url and title of the video
 	 * @param Request $req Contains video_id
 	 * @return array Array containing thumbnail_url and title
@@ -2044,7 +2061,7 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /delete_lti_connection (manage-lti page)
-	 * 
+	 *
 	 * Deletes the LtiConsumer whose id passed in as parameter.
 	 * @param Request $req Contains id of LtiConsumer to delete
 	 * @return array Array containing boolean value for key "result"
@@ -2056,16 +2073,16 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from ajax route /get_lti_connection_detail (manage-lti page)
-	 * 
+	 *
 	 * This method is used to retrieve the existing values relating to
 	 * the LtiConsumer and its database credential whose id passed in as parameter.
 	 * @param Request Contains id (id for LtiConsumer to get details for)
-	 * @return array Array 
+	 * @return array Array
 	 */
 	public function get_lti_connection_detail (Request $req) {
 		$consumer = oval\LtiConsumer::find(intval($req->id));
 		$cred = $consumer->credential;
-		
+
 		$retval = [
 			"name"=>$consumer->name,
 			"key"=>$consumer->consumer_key256,
@@ -2085,9 +2102,9 @@ class AjaxController extends Controller
 
 	/**
 	 * Method called from route /edit_lti_connection (manage-lti page)
-	 * 
+	 *
 	 * Takes values from parameter and saves the LtiConsumer.
-	 * If database credential is entered, it is also saved. 
+	 * If database credential is entered, it is also saved.
 	 * (New one is inserted if it didn't exist)
 	 * @param Request $req Contains name, key, secret, from, to, dbtype, host, port, db, un, pw, prefix
 	 */
@@ -2099,7 +2116,7 @@ class AjaxController extends Controller
 		$consumer->enable_from = empty($req->from) ? null : $req->from;
 		$consumer->enable_until = empty($req->to) ? null : $req->to;
 		$result = $consumer->save();
-		
+
 		if(!empty($req->dbtype) && !empty($req->host) && !empty($req->port) && !empty($req->un) && !empty($req->pw)) {
 			$result = false;
 			$cred = $consumer->credential;
