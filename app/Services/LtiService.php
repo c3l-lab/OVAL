@@ -85,16 +85,18 @@ class LtiService
     return JwksEndpoint::new($keys)->getPublicJwks();
   }
 
-  public function loginUser(string $email)
+  public function loginUser($launchData)
   {
+    $email = $launchData['email'];
     if (empty($email)) {
       return;
     }
     $user = User::where('email', $email)->first();
     if (empty($user)) {
+      $username = $launchData['preferred_username'];
       $user = new User;
       $user->email = $email;
-      $user->first_name = 'Unknow';
+      $user->first_name = $username ? $username : 'Unknow';
       $user->last_name = 'Unknow';
       $user->role = 'O';
       $user->password = bcrypt(LTI_PASSWORD);
