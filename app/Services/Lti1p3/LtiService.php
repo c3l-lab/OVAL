@@ -97,7 +97,7 @@ class LtiService
       $user = new User;
       $user->email = $email;
       $user->first_name = $username;
-      $user->last_name = 'Unknow';
+      $user->last_name = 'student';
       $user->role = 'O';
       $user->password = bcrypt(LTI_PASSWORD);
       $user->save();
