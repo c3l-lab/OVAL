@@ -1,6 +1,6 @@
 <?php
 
-namespace oval\Http\Controllers\Api\Lti;
+namespace oval\Http\Controllers\Api\Lti13;
 
 use Illuminate\Http\Request;
 use oval\GroupVideo;

@@ -35,7 +35,7 @@ class LtiService
     $this->serviceConnector = $serviceConnector;
 
 
-    $this->launchUrl = route('lti.launch');
+    $this->launchUrl = route('lti13.launch');
   }
 
   /**

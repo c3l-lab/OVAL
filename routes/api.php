@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-use oval\Http\Controllers\Api\Lti\ToolController;
+use oval\Http\Controllers\Api\Lti13\ToolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +21,9 @@ Route::get('/user', function (Request $request) {
 
 
 Route::prefix('lti')->group(function () {
-    Route::get('/jwks', [ToolController::class, 'jwks'])->name('lti.jwks');
-    Route::get('/login', [ToolController::class, 'login'])->name('lti.login');
-    Route::post('/launch', [ToolController::class, 'launch'])->name('lti.launch');
+    Route::prefix('1.3')->group(function () {
+        Route::get('/jwks', [ToolController::class, 'jwks'])->name('lti13.jwks');
+        Route::get('/login', [ToolController::class, 'login'])->name('lti13.login');
+        Route::post('/launch', [ToolController::class, 'launch'])->name('lti13.launch');
+    });
 });
