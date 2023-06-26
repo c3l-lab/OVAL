@@ -1,5 +1,5 @@
 <?php
-namespace oval\Services;
+namespace oval\Services\Lti1p3;
 
 use Packback\Lti1p3;
 use oval\LtiRegistration;

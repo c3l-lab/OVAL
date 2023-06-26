@@ -5,10 +5,10 @@ namespace oval\Providers;
 use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
-use oval\Services\LtiCache;
-use oval\Services\LtiCookie;
-use oval\Services\LtiDatabase;
-use oval\Services\LtiService;
+use oval\Services\Lti1p3\LtiCache;
+use oval\Services\Lti1p3\LtiCookie;
+use oval\Services\Lti1p3\LtiDatabase;
+use oval\Services\Lti1p3\LtiService;
 use Packback\Lti1p3\LtiServiceConnector;
 
 class AppServiceProvider extends ServiceProvider

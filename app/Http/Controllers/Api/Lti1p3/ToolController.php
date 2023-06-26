@@ -1,12 +1,12 @@
 <?php
 
-namespace oval\Http\Controllers\Api\Lti13;
+namespace oval\Http\Controllers\Api\Lti1p3;
 
 use Illuminate\Http\Request;
 use oval\GroupVideo;
 use oval\Http\Controllers\Controller;
 use oval\LtiRegistration;
-use oval\Services\LtiService;
+use oval\Services\Lti1p3\LtiService;
 
 class ToolController extends Controller
 {
@@ -48,7 +48,9 @@ class ToolController extends Controller
         if ($launch->isDeepLinkLaunch()) {
             return redirect()->route('view', ['group_video_id' => $group_video->id]);
         } else {
-            $this->ltiService->loginUser($launch_data);
+            if (\Auth::user() == null) {
+                $this->ltiService->loginUser($launch_data);
+            }
             return redirect()->route('group_videos.show.embed', ['id' => $group_video->id]);
         }
     }

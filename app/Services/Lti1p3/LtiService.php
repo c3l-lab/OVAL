@@ -1,5 +1,5 @@
 <?php
-namespace oval\Services;
+namespace oval\Services\Lti1p3;
 
 use Illuminate\Http\Request;
 use oval\LtiRegistration;
@@ -35,7 +35,7 @@ class LtiService
     $this->serviceConnector = $serviceConnector;
 
 
-    $this->launchUrl = route('lti13.launch');
+    $this->launchUrl = route('lti1p3.launch');
   }
 
   /**

@@ -28,8 +28,8 @@
                 <thead>
                     <tr>
                         <th>NAME</th>
-                        <th>KEY</th>
-                        <th>SECRET</th>
+                        <th>LTI ID</th>
+                        <th>PASSPORT</th>
                         <th>DATE</th>
                         <th>EDIT</th>
                         <th>DELETE</th>
@@ -40,8 +40,8 @@
 
                     <tr>
                         <td>{{$c->name}}</td>
-                        <td>{{{$c->consumer_key256}}}</td>
-                        <td>{{{$c->secret}}}</td>
+                        <td>{{$c->consumer_pk}}</td>
+                        <td>{{$c->passport()}}</td>
                         <td>
                             @isset($c->enable_from)
                             {{$c->enable_from}}<br />
@@ -88,7 +88,7 @@
 
                         <fieldset class="form-group row">
                             <legend class="col-xs-12">Key</legend>
-                            <div class="col-xs-10">  
+                            <div class="col-xs-10">
                                 <input type="text" id="lti-connection-key" class="form-control gray-textbox" name="key" required>
                             </div>
                             <div class="col-xs-2">
@@ -99,7 +99,7 @@
 
                         <fieldset class="form-group row">
                             <legend class="col-xs-12">Secret</legend>
-                            <div class="col-xs-10">  
+                            <div class="col-xs-10">
                                 <input type="text" id="lti-connection-secret" class="form-control gray-textbox" name="secret" required>
                             </div>
                             <div class="col-xs-2">
@@ -117,13 +117,13 @@
                             <label for="lti-connection-to">To</label>
                             <input type="date" id="lti-connection-to" class="form-control gray-textbox" name="to_date">
                         </div>
-  
+
                     </div><!-- col -->
 
                     <div class="col-xs-12 col-md-6">
                         <fieldset>
                             <legend>Database Credential</legend>
-                            
+
                             <div class="form-group col-xs-12">
                                 <label for="lti-db-type">DB type</label>
                                 <input id="lti-db-type" class="form-control gray-textbox" name="db_type">

@@ -18,4 +18,13 @@ class LtiConsumer extends Model
     public function credential() {
         return $this->hasOne('oval\LtiCredential', 'consumer_id', 'consumer_pk');
     }
+
+    public function passport()
+    {
+        return join(":", [
+            $this->consumer_pk,
+            $this->consumer_key256,
+            $this->secret
+        ]);
+    }
 }
