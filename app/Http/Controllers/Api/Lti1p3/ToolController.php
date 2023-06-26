@@ -34,16 +34,8 @@ class ToolController extends Controller
         $launch = $this->ltiService->validateLaunch($request);
         $launch_data = $launch->getLaunchData();
         \Log::debug($launch_data);
-        $issuer = $launch_data['iss'];
-        $client_id = $launch_data['azp'];
 
-
-        $registration = LtiRegistration::where('issuer', $issuer)
-            ->where('client_id', $client_id)
-            ->firstOrFail();
-
-        $group_video = GroupVideo::where('lti_registration_id', $registration->id)
-            ->firstOrFail();
+        $group_video = GroupVideo::findOrFail(intval($request->query("resource_id")));
 
         if ($launch->isDeepLinkLaunch()) {
             return redirect()->route('view', ['group_video_id' => $group_video->id]);

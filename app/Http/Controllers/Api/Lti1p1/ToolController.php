@@ -47,8 +47,7 @@ class ToolController extends Controller
         $lti_user = Auth::user();
         Log::debug('Authenticated user', ['lti_user' => $lti_user]);
 
-        // $resourceId = $req->query('resource_id');
-        $resourceId = 2;
+        $resourceId = $req->query('resource_id');
         $group_video = GroupVideo::where([
             ['id', '=', $resourceId],
             ['status', '=', 'current']
