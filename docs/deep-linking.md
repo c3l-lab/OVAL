@@ -1,4 +1,7 @@
 # Setting up Deep Linking in Open edX
+
+## Setting up LTI 1.1
+
 1. Setup passpport (can skip if it's already set up)
     1. From the Studio **Settings** menu, select **Advanced Settings**.
     1. In the **LTI Passports** field, place your cursor between the brackets.
