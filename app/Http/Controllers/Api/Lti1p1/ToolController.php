@@ -3,7 +3,6 @@
 namespace oval\Http\Controllers\Api\Lti1p1;
 
 use Illuminate\Http\Request;
-use IMSGlobal\LTI\OAuth\OAuthUtil;
 use oval\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -21,19 +20,15 @@ class ToolController extends Controller
         global $_POST;
         $_POST = $req->all();
 
-        $query = OAuthUtil::build_http_query($_POST);
 
-        Log::debug('server name', [
-            'https' => $req->isSecure(),
-            'server_name' => $req->getHost(),
-            'request_method' => $req->method(),
-        ]);
-
+        /**
+         * oat-sa/imsglobal-lti requires these variables to verify the request
+         * from LTI consumer, but I don't know why these variables are either
+         * not set or incorrect on server, so I set them exipitly.
+         */
         $_SERVER['HTTPS'] = 'on';
         $_SERVER['SERVER_PORT'] = '';
         $_SERVER['SERVER_NAME'] = $req->getHost();
-
-        Log::debug("oauth query", ['query' => $query]);
 
         Log::debug('LTI launch request data', ['request_data' => $req->all()]);
 
