@@ -78,6 +78,6 @@ class LtiProvider extends ToolProvider\ToolProvider
 
     function onError()
     {
-        Log::error('Error in LTI handling', ['error_message' => $this->message]);
+        Log::error('Error in LTI handling', ['error_message' => $this->reason]);
     }
 }
