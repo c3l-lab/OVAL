@@ -23,7 +23,11 @@ class ToolController extends Controller
 
         $query = OAuthUtil::build_http_query($_POST);
 
-        Log::debug('server name', ['server_name' => $_SERVER['SERVER_NAME']]);
+        Log::debug('server name', [
+            'https' => $req->isSecure(),
+            'server_name' => $req->getHost(),
+            'request_method' => $req->method(),
+        ]);
 
         Log::debug("oauth query", ['query' => $query]);
 
