@@ -36,6 +36,7 @@ class ToolController extends Controller
         $tool->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
         $tool->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
         Log::debug('Before handleRequest');
+        Log::debug('debug mode', [$tool->getDebugMode() ? 'true' : 'false']);
         try {
             $tool->handleRequest();
         } catch (\Exception $e) {

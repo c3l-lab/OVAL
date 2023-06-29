@@ -19,6 +19,11 @@ class LtiProvider extends ToolProvider\ToolProvider
         Log::debug('OvalLtiProvider initialized with NoDatabaseDataConnector');
     }
 
+    function getDebugMode()
+    {
+        return $this->debugMode;
+    }
+
     function onLaunch()
     {
         Log::debug('Starting onLaunch method');
