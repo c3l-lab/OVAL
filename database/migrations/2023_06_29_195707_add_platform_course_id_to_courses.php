@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use oval\LtiRegistration;
 
 return new class extends Migration
 {
@@ -12,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('group_videos', function (Blueprint $table) {
-            $table->foreignIdFor(LtiRegistration::class)->nullable();
+        Schema::table('courses', function (Blueprint $table) {
+            $table->string('platform_course_id')->unique()->nullable();
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('group_videos', function (Blueprint $table) {
-            $table->dropForeignIdFor(LtiRegistration::class);
+        Schema::table('courses', function (Blueprint $table) {
+            $table->dropColumn('platform_course_id');
         });
     }
 };

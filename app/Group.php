@@ -13,17 +13,17 @@ class Group extends Model
 {
     use HasFactory;
     protected $table = "groups";
-	protected $fillable = ['name', 'course_id'];  
-	  
+	protected $fillable = ['name', 'course_id'];
+
     /**
     *	Inverse of one-to-many relationship.
     *	The Course that this Group is in.
-    *	@return Course 
+    *	@return Course
     **/
     public function course() {
     	return $this->belongsTo('oval\Course');
     }
-    
+
     /**
     *	Many-to-many relationship.
     *	Get the Users that belong to this group
@@ -32,7 +32,7 @@ class Group extends Model
     public function members() {
     	return $this->belongsToMany('oval\User', 'group_members');
     }
-    
+
     /**
     *	Method to return students who belongs to this group
     *	@return collection of User objects
@@ -44,7 +44,7 @@ class Group extends Model
     	});
     	return $students;
     }
-    
+
     /**
     *	Method to return array containing User ID of students who belongs to this group
     *	@return array of int (user->id)
@@ -57,7 +57,7 @@ class Group extends Model
     	}
     	return $students_ids;
     }
-    
+
     /**
     *	Many-to-many relationship.
     *	Get the Videos that are assigned to this Group
@@ -68,9 +68,9 @@ class Group extends Model
     }
 
     /**
-    *   Method to return GroupVideos that are available to the user, 
+    *   Method to return GroupVideos that are available to the user,
     *   in ascending order of group_video.order.
-    *   If the user is student, this doesn't include ones 
+    *   If the user is student, this doesn't include ones
     *   that are set "hidden"
     *   @param User $user
     *   @return collection of GroupVideo objects
@@ -88,7 +88,7 @@ class Group extends Model
         }
         return $group_videos;
     }
-    
+
     /**
     *	Method to get all GroupVideo for this Group
     *	@return collection of GroupVideo objects
@@ -96,7 +96,7 @@ class Group extends Model
     public function group_videos() {
     	return GroupVideo::where("group_id", '=', $this->id)->get();
     }
-    
+
     /**
     *	Method to check if the video passed as parameter already belongs to this group
     *	@param Video $video
@@ -108,18 +108,18 @@ class Group extends Model
 			->whereVideoId($video->id)
 			->count() > 0;
     }
-    
+
     /**
     *	Method to assign a video to this group.
     *	First checks if the relationship already exists.
-    *	@param int id of Video 
+    *	@param int id of Video
     **/
     public function addVideo($video) {
     	if (!$this->checkIfAlreadyHasVideo($video)) {
     		$this->videos()->attach($video);
     	}
-    }	
-    
+    }
+
     /**
     *	Method to check if the user passed in as paremeter is a member of this group
     *	@param User $user
@@ -131,26 +131,26 @@ class Group extends Model
 			->whereUserId($user->id)
 			->count() > 0;
     }
-    
+
     /**
     *	Method to add User passed in as parameter to this Group
     *	@param User $user
     **/
     public function addMember($user) {
-    	$alreadyMember = $this->checkIfAlreadyMember($user);	
+    	$alreadyMember = $this->checkIfAlreadyMember($user);
     	if (!$alreadyMember) {
     		$this->members()->attach($user);
     	}
     }
-    
+
     /**
     *	Method to update the members of this group with array of user id passed in.
-    *	Checks if the user already belongs to this group, then add/remove 
+    *	Checks if the user already belongs to this group, then add/remove
     *	@param array of int (user->id)
     **/
     public function updateMembers($user_ids_array) {
     	$members = $this->members;
-    	
+
     	foreach ($user_ids_array as $updated) {
     		if ($members->where('id', $updated)->count() == 0) {
     			$this->addMember(User::find($updated));

@@ -7,6 +7,8 @@ use oval\GroupVideo;
 use oval\Http\Controllers\Controller;
 use oval\LtiRegistration;
 use oval\Services\Lti1p3\LtiService;
+use oval\Services\LtiLaunchService;
+use Packback\Lti1p3\LtiConstants;
 
 class ToolController extends Controller
 {
@@ -35,14 +37,34 @@ class ToolController extends Controller
         $launch_data = $launch->getLaunchData();
         \Log::debug($launch_data);
 
-        $group_video = GroupVideo::findOrFail(intval($request->query("resource_id")));
+        if (\Auth::user() == null) {
+            $this->ltiService->loginUser($launch_data);
+        }
+        $user = \Auth::user();
+
+        $resourceId = $request->query('resource_id');
+
+
+        $ltiLaunchService = new LtiLaunchService();
+        if (isset($launch_data[LtiConstants::CONTEXT])) {
+            $context = $launch_data[LtiConstants::CONTEXT];
+            $ltiLaunchService->updateOrCreateCourse($context['id'], $context['title']);
+            $ltiLaunchService->enrolUser($user, $this->ltiService->isInstructor($launch_data));
+        }
+
+        $resourceId = $request->query("resource_id");
+
+        if (empty($resourceId)) {
+            return redirect()->route('video_management');
+        }
+
+        $group_video = GroupVideo::findOrFail($resourceId);
+
+        $ltiLaunchService->addToGroup($user, $group_video->group());
 
         if ($launch->isDeepLinkLaunch()) {
             return redirect()->route('view', ['group_video_id' => $group_video->id]);
         } else {
-            if (\Auth::user() == null) {
-                $this->ltiService->loginUser($launch_data);
-            }
             return redirect()->route('group_videos.show.embed', ['id' => $group_video->id]);
         }
     }

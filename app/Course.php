@@ -14,7 +14,7 @@ class Course extends Model
 	use HasFactory;
 	protected $table = 'courses';
 	protected $fillable = ['name'];
-	
+
 	/**
 	*	Many to many relationship.
 	*	Returns enrolled users.
@@ -23,7 +23,7 @@ class Course extends Model
 	public function enrolledUsers() {
 		return $this->belongsToMany('oval\User', "enrollments");
 	}
-	
+
 	/**
 	*	Many-to-many relationship.
 	*	Returns instructors of this Course
@@ -32,16 +32,16 @@ class Course extends Model
 	public function instructors() {
 		return $this->belongsToMany('oval\User', 'enrollments')->wherePivot('is_instructor', 1);
 	}
-	
+
 	/**
 	*	One-to-many relationship.
 	*	Get Groups that belong to this course
 	*	@return collection of Group objects
-	**/	
+	**/
 	public function groups() {
 		return $this->hasMany('oval\Group');
 	}
-	
+
 	/**
 	*	Method to get the default group for this course
 	*	@return Group object
@@ -51,7 +51,7 @@ class Course extends Model
 					->where('moodle_group_id', null)
 					->first();
 	}
-	
+
 	/**
 	*	Method to return all videos related to this course.
 	*	This returns videos assigned to all groups in this course.
@@ -67,7 +67,7 @@ class Course extends Model
 					->get();
 		return $videos;
 	}
-	
+
 	/**
 	*	Method to return number of students enrolled in this course
 	*	@return int number of students in course
@@ -82,7 +82,7 @@ class Course extends Model
 		}
 		return $retVal;
 	}
-	
+
 	/**
 	*	Method to return enrolled students in a form of collection of User objects
 	*	@return collection of User objects

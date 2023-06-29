@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(ICache::class, LtiCache::class);
+        $this->app->bind(ICache::class, LtiCache::class);
         $this->app->bind(ICookie::class, LtiCookie::class);
         $this->app->bind(IDatabase::class, LtiDatabase::class);
         $this->app->bind(LtiService::class, function () {

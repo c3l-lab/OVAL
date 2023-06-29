@@ -16,7 +16,6 @@ class LtiProvider extends ToolProvider\ToolProvider
     public function __construct(DataConnector $data_connector)
     {
         parent::__construct($data_connector);
-        Log::debug('OvalLtiProvider initialized with NoDatabaseDataConnector');
     }
 
     function getDebugMode()

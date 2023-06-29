@@ -8,6 +8,7 @@ use Packback\Lti1p3\Interfaces\ICookie;
 use Packback\Lti1p3\Interfaces\IDatabase;
 use Packback\Lti1p3\Interfaces\ILtiServiceConnector;
 use Packback\Lti1p3\JwksEndpoint;
+use Packback\Lti1p3\LtiConstants;
 use Packback\Lti1p3\LtiDeepLinkResource;
 use Packback\Lti1p3\LtiMessageLaunch;
 use Packback\Lti1p3\LtiOidcLogin;
@@ -103,5 +104,14 @@ class LtiService
       $user->save();
     }
     \Auth::login($user);
+  }
+
+  public function isInstructor($launchData)
+  {
+    foreach ($launchData[LtiConstants::ROLES] as $role) {
+      if ($role == LtiConstants::INSTITUTION_INSTRUCTOR || $role == LtiConstants::SYSTEM_ADMINISTRATOR) {
+        return true;
+      }
+    }
   }
 }

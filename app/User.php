@@ -133,7 +133,7 @@ class User extends Authenticatable
     		echo "\nalready enrolled";
     		$this->enrolledCourses()->detach($course->id);
     	}
-    	$this->enrolledCourses()->save($course, ['isInstructor'=>true]);
+    	$this->enrolledCourses()->save($course, ['is_instructor'=>true]);
     }
 
     /**
