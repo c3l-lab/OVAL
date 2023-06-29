@@ -30,6 +30,7 @@ class ToolController extends Controller
         ]);
 
         $_SERVER['HTTPS'] = 'on';
+        $_SERVER['SERVER_PORT'] = '';
         $_SERVER['SERVER_NAME'] = $req->getHost();
 
         Log::debug("oauth query", ['query' => $query]);
