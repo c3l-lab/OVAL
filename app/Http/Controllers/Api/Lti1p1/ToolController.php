@@ -3,6 +3,7 @@
 namespace oval\Http\Controllers\Api\Lti1p1;
 
 use Illuminate\Http\Request;
+use IMSGlobal\LTI\OAuth\OAuthUtil;
 use oval\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -19,11 +20,10 @@ class ToolController extends Controller
     {
         global $_POST;
         $_POST = $req->all();
-        /**
-         * oauth_consumer_key is used to identify the LMS in a multi-tenant environment
-         * since we are not using a multi-tenant environment, we can hardcode the value
-         **/
-        // $_POST['oauth_consumer_key'] = 'lift.c3l.ai';
+
+        $query = OAuthUtil::build_http_query($_POST);
+
+        Log::debug("oauth query", ['query' => $query]);
 
         Log::debug('LTI launch request data', ['request_data' => $req->all()]);
 
