@@ -30,7 +30,7 @@ Route::get('/group/{group_id}', 'HomeController@group');
 
 Route::get('/view/{group_video_id?}', 'HomeController@view')->name('view');
 // Route::get('/view/{course_id?}/{group_id?}/{video_id?}', 'HomeController@view');
-Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])->name('group_videos.show.embed');
+Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])->name('group_videos.show.embed')->middleware('auth');
 
 Route::get('/video-management/{course_id?}/{group_id?}', 'HomeController@video_management')->name('video_management');
 

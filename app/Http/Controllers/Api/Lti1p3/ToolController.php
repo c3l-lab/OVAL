@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use oval\GroupVideo;
 use oval\Http\Controllers\Controller;
 use oval\LtiRegistration;
+use oval\Services\Lti1p3\LtiMessage;
 use oval\Services\Lti1p3\LtiService;
 use oval\Services\LtiLaunchService;
 use Packback\Lti1p3\LtiConstants;
@@ -35,21 +36,16 @@ class ToolController extends Controller
         \Log::debug($request->all());
         $launch = $this->ltiService->validateLaunch($request);
         $launch_data = $launch->getLaunchData();
+        $ltiMessage = new LtiMessage($launch_data);
         \Log::debug($launch_data);
 
-        if (\Auth::user() == null) {
-            $this->ltiService->loginUser($launch_data);
-        }
-        $user = \Auth::user();
+        $ltiLaunchService = new LtiLaunchService($ltiMessage);
 
-        $resourceId = $request->query('resource_id');
+        $ltiLaunchService->loginUser();
 
-
-        $ltiLaunchService = new LtiLaunchService();
-        if (isset($launch_data[LtiConstants::CONTEXT])) {
-            $context = $launch_data[LtiConstants::CONTEXT];
-            $ltiLaunchService->updateOrCreateCourse($context['id'], $context['title']);
-            $ltiLaunchService->enrolUser($user, $this->ltiService->isInstructor($launch_data));
+        if ($ltiMessage->getCourseId() && \Auth::user()) {
+            $ltiLaunchService->updateOrCreateCourse();
+            $ltiLaunchService->enrolUser();
         }
 
         $resourceId = $request->query("resource_id");
@@ -60,7 +56,9 @@ class ToolController extends Controller
 
         $group_video = GroupVideo::findOrFail($resourceId);
 
-        $ltiLaunchService->addToGroup($user, $group_video->group());
+        if (!empty($group_video->group()) && \Auth::user()) {
+            $ltiLaunchService->addUserToGroup($group_video->group());
+        }
 
         if ($launch->isDeepLinkLaunch()) {
             return redirect()->route('view', ['group_video_id' => $group_video->id]);

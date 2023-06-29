@@ -17,7 +17,5 @@ class DataConnector extends ToolProvider\DataConnector\DataConnector
       $consumer->updated = $now;
 
       return true;
-
   }
-
 }

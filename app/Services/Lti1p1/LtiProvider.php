@@ -2,77 +2,34 @@
 
 namespace oval\Services\Lti1p1;
 
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use IMSGlobal\LTI\ToolProvider;
-
-use oval\User;
 use oval\Services\Lti1p1\DataConnector;
-
-const LTI_PASSWORD = '[lti_password]';
 
 class LtiProvider extends ToolProvider\ToolProvider
 {
-    public function __construct(DataConnector $data_connector)
+    public function __construct(Request $request)
     {
+        $data_connector = new DataConnector(null);
         parent::__construct($data_connector);
-    }
 
-    function getDebugMode()
-    {
-        return $this->debugMode;
-    }
+        global $_POST;
+        $_POST = $request->all();
 
-    function onLaunch()
-    {
-        Log::debug('Starting onLaunch method');
+        /**
+         * oat-sa/imsglobal-lti requires these variables to verify the request
+         * from LTI consumer, but I don't know why these variables are either
+         * not set or incorrect on server, so I set them exipitly.
+         */
+        $_SERVER['HTTPS'] = 'on';
+        $_SERVER['SERVER_PORT'] = '';
+        $_SERVER['SERVER_NAME'] = $request->getHost();
 
-        try {
-            Log::debug('Attempting to save user');
-            $this->user->save();
-            Log::debug('User details', ['user' => $this->user]);
-
-            $user = User::where('email', '=', $this->user->email)->first();
-            if (empty($user)) {
-                Log::debug('Creating new user');
-                $user = new User;
-                $user->email = $this->user->email;
-                $user->first_name = $this->user->firstname;
-                $user->last_name = $this->user->lastname;
-                $user->role = $this->getOvalUserRole();
-                $user->password = bcrypt(LTI_PASSWORD);
-                $user->save();
-            }
-            Log::debug('Attempting to log in user');
-            if (\Auth::user() == null) {
-                Auth::login($user);
-            }
-            Log::debug('User logged in successfully');
-
-            // The LMS database connection and related code have been removed.
-            // You will need to find an alternative method to obtain or provide the course, enrollment, and group information.
-
-        } catch (\Exception $e) {
-            Log::debug('Exception during onLaunch: ' . $e->getMessage() . '; Stack trace: ' . $e->getTraceAsString());
-            $this->message->setError('Sorry, there was an error connecting you to the application.');
-        }
-    }
-
-
-    function getOvalUserRole()
-    {
-        if ($this->user->isAdmin())
-            return 'A';
-        return 'O';
-    }
-
-    function isInstructor()
-    {
-        if ($this->user->isAdmin())
-            return true;
-        if ($this->user->isStaff())
-            return true;
-        return false;
+        $this->setParameterConstraint('oauth_consumer_key', TRUE, 50, array('basic-lti-launch-request', 'ContentItemSelectionRequest', 'DashboardRequest'));
+        $this->setParameterConstraint('resource_link_id', TRUE, 50, array('basic-lti-launch-request'));
+        $this->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
+        $this->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
     }
 
     function onError()

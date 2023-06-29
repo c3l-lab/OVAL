@@ -24,16 +24,16 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
 	}
-	
+
 	/**
 	 * Method called from route /course/{$course_id}
-	 * 
+	 *
 	 * If the user is enrolled in the course whose id passed in,
 	 * find the first group in that course user belongs to,
 	 * redirect to /view to show first group_video for that group.
 	 * If any of above checks fail, show no-video error page.
-	 * 
-	 * @param Request $req 
+	 *
+	 * @param Request $req
 	 * @param string $course_id
 	 * @return Illuminate\Http\RedirectResponse or Illuminate\Support\Facades\View
 	 */
@@ -54,12 +54,12 @@ class HomeController extends Controller
 
 	/**
 	 * Method called from route /group/{$group_id}
-	 * 
+	 *
 	 * If the user belongs to the group whose id passed in as parameter,
 	 * find the first group_video for that group,
 	 * and redirect to /view with id of that group_video.
 	 * If any checks fail, show no-video error page.
-	 * 
+	 *
 	 * @param Request $req
 	 * @param string $group_id
 	 * @return Illuminate\Http\RedirectResponse or Illuminate\Support\Facades\View
@@ -78,10 +78,10 @@ class HomeController extends Controller
 
 	/**
 	 * Method called from route /view. This shows the home page of OVAL.
-	 * 
+	 *
 	 * Fetches data and sets up JavaScript variables.
-	 * Shows home page with group_video whose ID passed in. 
-	 * If no group_video_id is passed in, find the first group_video available for 
+	 * Shows home page with group_video whose ID passed in.
+	 * If no group_video_id is passed in, find the first group_video available for
 	 * the user that is currently logged in, and show home page with this.
 	 * If there is no group_video to show, returns no-video error page.
 	 * @param Request $req
@@ -95,7 +95,7 @@ class HomeController extends Controller
 		$group = null;
 		$group_video = null;
 		$group_video_id = intval($group_video_id);
-		
+
 		if (!empty($group_video_id)) {
 			$group_video = oval\GroupVideo::find($group_video_id);
 			if (!empty($group_video)) {
@@ -181,7 +181,7 @@ class HomeController extends Controller
 			$time = null;
 			foreach ($keywords as $k) {
 				if (($k->type == "keywords") || ($k->type == "concepts")) {
-					$analysis[] = ['text'=>$k->keyword, 'occurrences'=>$k->occurrences(), 'related'=>$k->related()];                
+					$analysis[] = ['text'=>$k->keyword, 'occurrences'=>$k->occurrences(), 'related'=>$k->related()];
 				}
 
 				//--construct array containing data for "current keywords"--
@@ -226,18 +226,18 @@ class HomeController extends Controller
 
 		// save current course id
 		session(['current-course' => $course->id]);
-		
+
 		return view('pages.home', compact('user', 'course', 'group', 'video', 'group_video', 'has_quiz'));
     }
 
 	/**
 	 * Method called from route /video-management
-	 * 
+	 *
 	 * Fetches data for the logged in instructor,
 	 * sets up JavaScript variables,
 	 * and shows video-managment page.
 	 * If the visitor is not an instructor, shows error page
-	 * 
+	 *
 	 * @param Request $req
 	 * @param string $course_id Default null
 	 * @param string $group_id Default null
@@ -282,12 +282,12 @@ class HomeController extends Controller
 
 	/**
 	 * Method called for /analytics route
-	 * 
+	 *
 	 * Sets up variables for the logged in instructor,
 	 * sets up variables for JavaScript,
 	 * and shows analytics page.
 	 * If the visitor isn't logged in instructor, shows error page.
-	 * 
+	 *
 	 * @param Request $req
 	 * @param string $course_id Default null
 	 * @param string $group_id Default null
@@ -325,7 +325,7 @@ class HomeController extends Controller
 
 	/**
 	 * Method called from /content-analysis route
-	 * 
+	 *
 	 * Fetches data for the logged in instructor,
 	 * sets up JavaScript variables,
 	 * and shows the content-analysis page.
@@ -363,13 +363,13 @@ class HomeController extends Controller
     		return view('pages.not-instructor', compact('user'));
     	}
 	}
-	
+
 	/**
 	 * Method called from /points-details route
-	 * 
+	 *
 	 * Shows points-details page with data for group_video whose id passed in.
 	 * If group_video isn't found, or visitor isn't instructor, shows error page.
-	 * 
+	 *
 	 * @param Request $req
 	 * @param string $group_video_id
 	 */
@@ -386,16 +386,16 @@ class HomeController extends Controller
 		}
 		else {
 			return view('pages.not-instructor', compact('user'));
-		}	
+		}
 	}
 
 	/**
 	 * Method called from /tracking-details/{group_video_id}
-	 * 
+	 *
 	 * Shows tracking-details page with data for group_video whose id passed in.
 	 * If the group_video doesn't exist, or the visitor isn't a logged-in instructor,
 	 * shows error page.
-	 * 
+	 *
 	 * @param Request $req
 	 * @param string $group_video_id
 	 * @return Illuminate\Support\Facades\View
@@ -418,10 +418,10 @@ class HomeController extends Controller
 
 	/**
 	 * Method called from /text-analysis-details route
-	 * 
+	 *
 	 * Shows text-analysis-details page with data fetched for video_id passed in.
 	 * If the visitor isn't a logged in instructor, shows error page.
-	 * 
+	 *
 	 * @param Request $req Request contains video_id.
 	 * @return Illuminate\Support\Facades\View
 	 */
@@ -433,22 +433,22 @@ class HomeController extends Controller
 			$group = $video->groups->first();
 			$group_id = $group->id;
 			$course_id = $group->course->id;
-			
+
 			return view('pages.text-analysis-details', compact('user', 'video', 'analysis', 'course_id', 'group_id'));
 		}
 		else {
 			return view('pages.not-instructor', compact('user'));
 		}
-		
+
 	}
 
 	/**
 	 * Method called from /select-video route, where instructor clicking LTI link is redirected to
 	 * if the link's resource_id isn't associated with any group_video.
-	 * 
+	 *
 	 * Shows instructor-video-selection page after setting up variables.
 	 * If the visitor isn't an instructor, shows error page.
-	 * 
+	 *
 	 * @param Request $req
 	 * @param string $link_id Resource_id of LTI request
 	 * @param string $group_video_id Default null.
@@ -478,16 +478,16 @@ class HomeController extends Controller
 		else {
 			return view('pages.not-instructor', compact('user'));
 		}
-		
+
 	}
 
 	/**
 	 * Method called from /manage-analysis-request route.
-	 * 
+	 *
 	 * Fetches analysis_request data, and shows admin-page for Administrator user.
 	 * If the visitor is not admin, shows error page.
-	 * 
-	 * @param Request $req 
+	 *
+	 * @param Request $req
 	 */
 	public function manage_analysis_requests (Request $req) {
 		$user = Auth::user();
@@ -509,9 +509,9 @@ class HomeController extends Controller
 			return view('pages.admin-page', compact('user', 'current_requests', 'rejected_requests', 'processed_requests', 'google_creds'));
 		}
 		else {
-			return view('pages.not-admin', compact('user')); 
+			return view('pages.not-admin', compact('user'));
 		}
-	} 
+	}
 
 	public function batch_upload (Request $req) {
 		$user = Auth::user();
@@ -519,13 +519,13 @@ class HomeController extends Controller
 			return view('pages.batch-upload');
 		}
 		else {
-			return view('pages.not-admin', compact('user')); 
+			return view('pages.not-admin', compact('user'));
 		}
 	}
 
 	/**
 	 * Method called from GET route /manage_lti_connections
-	 * 
+	 *
 	 * Show manage-lti page if the logged in user is admin,
 	 * error page if not.
 	 */
@@ -536,7 +536,7 @@ class HomeController extends Controller
 			return view('pages.manage-lti', compact('user', 'lti_connections'));
 		}
 		else {
-			return view('pages.not-admin', compact('user')); 
+			return view('pages.not-admin', compact('user'));
 		}
 	}
 
