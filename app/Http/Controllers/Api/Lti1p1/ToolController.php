@@ -29,6 +29,9 @@ class ToolController extends Controller
             'request_method' => $req->method(),
         ]);
 
+        $_SERVER['HTTPS'] = 'on';
+        $_SERVER['SERVER_NAME'] = $req->getHost();
+
         Log::debug("oauth query", ['query' => $query]);
 
         Log::debug('LTI launch request data', ['request_data' => $req->all()]);
