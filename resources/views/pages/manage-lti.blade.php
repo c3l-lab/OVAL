@@ -30,6 +30,8 @@
                         <th>NAME</th>
                         <th>LTI ID</th>
                         <th>PASSPORT</th>
+                        <th>KEY</th>
+                        <th>SECRET</th>
                         <th>DATE</th>
                         <th>EDIT</th>
                         <th>DELETE</th>
@@ -42,6 +44,8 @@
                         <td>{{$c->name}}</td>
                         <td>{{$c->consumer_pk}}</td>
                         <td>{{$c->passport()}}</td>
+                        <td>{{$c->consumer_key256}}</td>
+                        <td>{{$c->secret}}</td>
                         <td>
                             @isset($c->enable_from)
                             {{$c->enable_from}}<br />
@@ -120,40 +124,6 @@
 
                     </div><!-- col -->
 
-                    <div class="col-xs-12 col-md-6">
-                        <fieldset>
-                            <legend>Database Credential</legend>
-
-                            <div class="form-group col-xs-12">
-                                <label for="lti-db-type">DB type</label>
-                                <input id="lti-db-type" class="form-control gray-textbox" name="db_type">
-                            </div>
-                            <div class="form-group col-xs-12">
-                                <label for="lti-db-host">Host</label>
-                                <input id="lti-db-host" class="form-control gray-textbox" name="host">
-                            </div>
-                            <div class="form-group col-xs-12">
-                                <label for="lti-db-port">Port</label>
-                                <input id="lti-db-port" class="form-control gray-textbox" name="port">
-                            </div>
-                            <div class="form-group col-xs-12">
-                                <label for="lti-db-name">DB Name</label>
-                                <input id="lti-db-name" class="form-control gray-textbox" name="db_name">
-                            </div>
-                            <div class="form-group col-xs-12">
-                                <label for="lti-db-un">User Name</label>
-                                <input id="lti-db-un" class="form-control gray-textbox" name="user">
-                            </div>
-                            <div class="form-group col-xs-12">
-                                <label for="lti-db-pw">Password</label>
-                                <input id="lti-db-pw" class="form-control gray-textbox" name="pw">
-                            </div>
-                            <div class="form-group col-xs-12">
-                                <label for="lti-db-prefix">Table Prefix</label>
-                                <input id="lti-db-prefix" class="form-control gray-textbox" name="prefix">
-                            </div>
-                        </fieldset>
-                    </div><!-- col -->
                 </div><!-- row -->
 
                 <button type="submit" class="rectangle-button btn">
