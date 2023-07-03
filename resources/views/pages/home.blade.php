@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-	@include('group_videos._group_video', [
+	@include('group_videos.show._group_video', [
 		'user' => $user,
 		'course' => $course,
 		'group_video' => $group_video,

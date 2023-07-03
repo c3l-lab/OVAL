@@ -29,8 +29,15 @@ Route::get('/course/{course_id}', 'HomeController@course');
 Route::get('/group/{group_id}', 'HomeController@group');
 
 Route::get('/view/{group_video_id?}', 'HomeController@view')->name('view');
-// Route::get('/view/{course_id?}/{group_id?}/{video_id?}', 'HomeController@view');
-Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])->name('group_videos.show.embed')->middleware('auth');
+// Route::get('/view/{course_id?}/{group_id?}/{video_id?}', 'HomeController@view')
+Route::middleware(['auth'])->group(function () {
+	Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])
+		->name('group_videos.show.embed');
+	Route::post('/group_videos/{id}/toggle_comments', [GroupVideoController::class, 'toggleComments'])
+		->name('group_videos.toggle_comments');
+	Route::post('/group_videos/{id}/toggle_annotations', [GroupVideoController::class, 'toggleAnnotations'])
+		->name('group_videos.toggle_annotations');
+});
 
 Route::get('/video-management/{course_id?}/{group_id?}', 'HomeController@video_management')->name('video_management');
 

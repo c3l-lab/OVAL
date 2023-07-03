@@ -18,7 +18,7 @@ class GroupVideoController extends Controller
         $group = null;
         $group_video = null;
 
-        $group_video = GroupVideo::findOrFail($id);
+        $group_video = $this->getGroupVideo($id);
         $group = $group_video->group();
         $course = $group->course;
 
@@ -99,5 +99,25 @@ class GroupVideoController extends Controller
 
         return view('group_videos.embed', compact('user', 'course', 'group', 'video', 'group_video', 'has_quiz'));
 
+    }
+
+    public function toggleComments(Request $request, int $id)
+    {
+        $groupVideo = $this->getGroupVideo($id);
+        $groupVideo->show_comments = !$groupVideo->show_comments;
+        $groupVideo->save();
+        return response()->json(['success' => true]);
+    }
+
+    public function toggleAnnotations(Request $request, int $id)
+    {
+        $groupVideo = $this->getGroupVideo($id);
+        $groupVideo->show_annotations = !$groupVideo->show_annotations;
+        $groupVideo->save();
+        return response()->json(['success' => true]);
+    }
+
+    private function getGroupVideo($id) {
+        return GroupVideo::findOrFail($id);
     }
 }
