@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container group-video">
     @yield('content')
 
     @if ($user->isInstructorOf($course) && $group_video->hide == 1)
@@ -10,7 +10,7 @@
     @endif
 
     @if ($has_quiz)
-        <div class="alert alert-warning alert-dismissible fade in space-top" role="alert">
+        <div class="alert alert-warning alert-dismissible fade in" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
                     aria-hidden="true">×</span></button>
             <i class="fa fa-exclamation-circle"></i>&nbsp;

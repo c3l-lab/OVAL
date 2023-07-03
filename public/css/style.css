@@ -362,6 +362,11 @@ h4 {
 .annotations-buttons button.keyword-summary {
 	margin-top: 20px;
 }
+
+.container.group-video {
+	padding-top: 20px;
+}
+
 .container .dropdown-menu {
 	color: #474244;
 	left: 70px;
