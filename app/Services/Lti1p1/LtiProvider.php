@@ -32,6 +32,11 @@ class LtiProvider extends ToolProvider\ToolProvider
         $this->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
     }
 
+    function onLaunch()
+    {
+        Log::info("Launch successfull");
+    }
+
     function onError()
     {
         Log::error('Error in LTI handling', ['error_message' => $this->reason, 'details' => $this->details]);

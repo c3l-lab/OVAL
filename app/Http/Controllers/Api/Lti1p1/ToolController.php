@@ -44,10 +44,6 @@ class ToolController extends Controller
         }
 
         // if the request from studio, the user_id would be 'student'
-        if ($req->input('user_id') === 'student') {
-            return redirect()->route('view', ['group_video_id' => $group_video->id]);
-        } else {
-            return redirect()->route('group_videos.show.embed', ['id' => $group_video->id]);
-        }
+        return redirect()->route('group_videos.show.embed', ['id' => $group_video->id]);
     }
 }
