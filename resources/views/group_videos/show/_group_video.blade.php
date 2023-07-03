@@ -21,6 +21,15 @@
         </div>
     @endif
 
+    @if ($user->isInstructorOf($course))
+        <div class="alert alert-info alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+            <i class="fa fa-exclamation-circle"></i>&nbsp;
+            <strong>LTI Launch URL:</strong> {{ route('lti1p1.launch', ['resource_type' => 'group_video', 'resource_id' => $group_video->id]) }}
+        </div>
+    @endif
+
     <div id="left-side" class="{{ $group_video->show_comments ? "col-md-8" : "col-md-12" }}">
         <div id="video" class="video-width">
             <div id="player"></div>

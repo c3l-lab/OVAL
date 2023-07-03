@@ -9,7 +9,7 @@
 
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="annotations">
-        @include('group_videos._annotation_buttons')
+        @include('group_videos.show._annotation_buttons')
 
         <div class="">
             <canvas id="trends"></canvas>
