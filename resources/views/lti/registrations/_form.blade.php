@@ -51,7 +51,7 @@
                     <div class="form-group">
                         <label for="registration-auth-token-url">Access Token URL</label>
                         <input type="text" id="registration-auth-token-url" class="form-control gray-textbox"
-                            name="auth_token_url" required value="{{ isset($registration) ? $registration->auth_token_url : "" }}">
+                            name="auth_token_url" value="{{ isset($registration) ? $registration->auth_token_url : "" }}">
                     </div><!-- form-group -->
 
                     <div class="form-group">

@@ -28,7 +28,7 @@ Route::prefix('lti')->group(function () {
 
     Route::prefix('1.3')->group(function () {
         Route::get('/jwks', [Lti1p3\ToolController::class, 'jwks'])->name('lti1p3.jwks');
-        Route::get('/login', [Lti1p3\ToolController::class, 'login'])->name('lti1p3.login');
+        Route::match(['get', 'post'], '/login', [Lti1p3\ToolController::class, 'login'])->name('lti1p3.login');
         Route::post('/launch', [Lti1p3\ToolController::class, 'launch'])->name('lti1p3.launch');
     });
 });
