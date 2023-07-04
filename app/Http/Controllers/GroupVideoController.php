@@ -72,6 +72,7 @@ class GroupVideoController extends Controller
             'ALL' => 4,
             'user_id' => $user->id,
             'is_instructor' => $user->isInstructorOf($course),
+            'comment_instruction' => $group_video->comment_instruction ? $group_video->comment_instruction->description : null,
             'user_fullname' => $user->fullName(),
             'course_id' => $course->id,
             'course_name' => $course->name,

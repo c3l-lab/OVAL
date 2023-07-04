@@ -122,7 +122,7 @@ function formatComments() {
 	    $.each(comments, function(index, value) {
 	        var description = value.description;
 	        description = $("<div/>").text(unescapeHtml(description)).html();
-				
+
 	        // var commentDate = dateStringFromSqlTimestamp(value.updated_at);
 	        var commentID = value.id;
 	        var divClass = (description.length > 100) ? " comment-summary" : "";
@@ -284,7 +284,7 @@ function layoutAnnotations(mode) {
 		mode = ALL;
 	}
 	var anno_list = $("#annotations-list");
-	
+
 	if (annotations.length == 0) {
 		var noAnnotationText = "<br/>There is no annotation for this video yet.<br/>Add annotations as you find points of interest so you can review them later!</br> ";
 		anno_list.html("<div class=\"no-annotation\">"+noAnnotationText+"</div>");
@@ -296,7 +296,7 @@ function layoutAnnotations(mode) {
 		var placed = [];
 		var actual_width = anno_list.width()-iconsize/2;
 		var paddingX = 7;
-	
+
 		anno_list.html("");
 		$.each(annotations, function(i, a) {
 			if ((mode == MINE && !a.mine) || (mode == STUDENTS && a.by_instructor) || (mode == INSTRUCTORS && !a.by_instructor)) {
@@ -365,7 +365,7 @@ function populateNominatedStudentList(nominated) {
 	});
 	list.val(selectedItems);
 	list.multiSelect('refresh');
-	
+
 }
 
 function saveFeedbacksAndConfidenceLevel (comment) {
@@ -406,11 +406,11 @@ $(document).ready (
 
 		getAllAnnotations();
 		getComments();
-		
+
 		$("#course-name").text(course_name);
 		$("#group-name").text(group_name);
 		$("#video-name").text(unescapeHtml(video_name));
-		
+
 		$("#right-side").height($("#left-side").height());
 		$(".comments-box").height($("#left-side").height()-$("#related-videos").height()-$("#comments .header").height());
 
@@ -438,7 +438,7 @@ $(document).ready (
 			$(this).removeClass("comment-full");
 			$(this).addClass("comment-summary");
 		});
-		
+
 		/*$("#search-box").on("submit", function(e) {
 			e.preventDefault();
 			console.log("Search");		//////
@@ -452,7 +452,7 @@ $(document).ready (
 			// todo: implement search method /////////////////
 
 		}); */
-		
+
 		$(".add-annotation").on("click", function(e) {
 			e.preventDefault();
 			item = null;
@@ -512,7 +512,7 @@ $(document).ready (
 		});
 		$(".edit-annotation-button").on("click", function(e) {
 			e.preventDefault();
-			if ($("#preview").is(":visible")) {	
+			if ($("#preview").is(":visible")) {
 				$("#preview").hide();
 			}
 			modal.find("#modalLabel").text("EDIT ANNOTATION");
@@ -568,7 +568,7 @@ $(document).ready (
 		});
 		$(".comments-box").on("click", ".edit-comment-button", function(e) {
 			e.preventDefault();
-			
+
 			modal.find("#modalLabel").text("EDIT COMMENT");
 			var comment_id = $(this).attr("id");
 			var match = $.grep(comments, function(e){return e.id==comment_id;});
@@ -639,7 +639,7 @@ $(document).ready (
 					save_button.html('<i class="fa fa-save" aria-hidden="true"></i>');
 				}
 			}
-			
+
 		});
 
 		modal.on("change", "input[name=privacy-radio]", function() {
@@ -690,7 +690,7 @@ $(document).ready (
 
 			modal.find("#annotation-form").validator('validate');
 			if(modal.find("#annotation-form").find('.has-error').length) {
-				if((modal.find("#annotation-description").data('bs.validator.errors').length>0) 
+				if((modal.find("#annotation-description").data('bs.validator.errors').length>0)
 					|| ((privacy==="nominated") && modal.find("#nominated-students-list").data('bs.validator.errors').length>0)){
 					return false;
 				}
@@ -917,7 +917,7 @@ $(document).ready (
 		});
 		$("#feedback").on("click", "#re-enter-comment", function() {
 			saveFeedbacksAndConfidenceLevel(item);
-				
+
 			modal.find("#modalLabel").text("EDIT COMMENT");
 			$("#annotation-description").val(unescapeHtml(item.description));
 			var tags = "";
@@ -929,7 +929,7 @@ $(document).ready (
 				}
 			}
 			modal.find("#tags").val(tags);
-			
+
 			if (is_instructor) {
 				modal.find(".edit-instruction").show();
 			}
@@ -972,7 +972,7 @@ $(document).ready (
 				url: '/download_annotations',
 				// data: {filter: filter, group_video_id: group_video_id, course_id: course_id},
 				data: {group_video_id: group_video_id, course_id: course_id},
-				
+
 				success: function(data) {
 					var a = document.createElement('a');
 					a.href = "data:attachment/csv;charset=utf-8," + encodeURIComponent(data);
@@ -993,12 +993,12 @@ $(document).ready (
 			layoutAnnotations(parseInt(mode));
 		});
 		$('#annotations-list').on('click', '.annotation-button', function(e) {
-// 			saveTracking({event: "click", target: '.annotation-button', info: 'View an annotation', event_time: Date.now()});	
+// 			saveTracking({event: "click", target: '.annotation-button', info: 'View an annotation', event_time: Date.now()});
 
 			var preview = $("#preview");
 			if (preview.is(':visible')) {
 				preview.hide();
-			}		
+			}
 			var annotationID = $(this).data('id');
 			var matches = $.grep(annotations, function(e){return e.id==annotationID;});
 			var annotation = matches[0];
@@ -1031,7 +1031,7 @@ $(document).ready (
 			else {
 				preview.find(".edit-annotation-button").hide();
 			}
-			
+
 			var posX = e.pageX + previewOffsetX;
 			var posY = e.pageY + previewOffsetY;
 			var previewWidth = preview.width();
@@ -1069,7 +1069,7 @@ $(document).ready (
 			function populateRelatedResources(searchTermArray) {
 				console.log("populateRelatedResoruces - "+searchTermArray);	/////
 				console.table(searchTermArray);/////
-				
+
 				var related_ul = $("#related-ul");
 				related_ul.html("");
 				var html = "";
@@ -1079,9 +1079,9 @@ $(document).ready (
 					$.each(text_analysis, function(i, word) {
 						if ((word.text.indexOf(searchTerm) == 0) && (word['related'])){
 							var trigger = 0;
-	
+
 							$.each(word['related'], function(j, related) {
-								// html = '"'+word.text+'" in <span class="video-link">'+related.title+'</span> <span class="related-time">@'+secondsToMinutesAndSeconds(related.time)+'</span>';	
+								// html = '"'+word.text+'" in <span class="video-link">'+related.title+'</span> <span class="related-time">@'+secondsToMinutesAndSeconds(related.time)+'</span>';
 								// $('<li/>', {
 								// 	// class: 'video-link',
 								// 	html: html,
@@ -1089,11 +1089,11 @@ $(document).ready (
 								// 	"data-time-url": related.time_url,
 								// 	"data-time": related.time
 								// }).appendTo(related_ul);
-	
+
 								if(trigger === 0){
 									if(temp_url_arr.length === 0){
 										temp_url_arr.push(related.url);
-										html = '<span class="video-link">'+related.title+'</span>';	
+										html = '<span class="video-link">'+related.title+'</span>';
 										$('<li/>', {
 											// class: 'video-link',
 											html: html,
@@ -1104,7 +1104,7 @@ $(document).ready (
 									}else{
 										if(temp_url_arr.indexOf(related.url) === -1){
 											temp_url_arr.push(related.url);
-											html = '<span class="video-link">'+related.title+'</span>';	
+											html = '<span class="video-link">'+related.title+'</span>';
 											$('<li/>', {
 												// class: 'video-link',
 												html: html,
@@ -1137,7 +1137,7 @@ $(document).ready (
 				var html = word['text'];
 				if (word['occurrences']) {
 					$.each(word['occurrences'], function(j, val) {
-						html += '<span class="related-time" data-time="'+val+'">@'+secondsToMinutesAndSeconds(val)+'</span>';	
+						html += '<span class="related-time" data-time="'+val+'">@'+secondsToMinutesAndSeconds(val)+'</span>';
 					});
 					$("<li/>", {
 						html: html
@@ -1147,7 +1147,7 @@ $(document).ready (
 			$("#keyword-list").getNiceScroll().resize();
 
 			populateRelatedResources(['']);
-			
+
 
 			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 				var target = $(e.target).attr("href");
@@ -1166,7 +1166,7 @@ $(document).ready (
 					$("#related-links").getNiceScroll().resize();
 				}
 			});
-			
+
 
 			$("#topic-search-textbox").autoComplete({
 				minChars: 1,
@@ -1203,25 +1203,25 @@ $(document).ready (
 			$("#topic-search-form").on("submit", function(e) {
 				e.preventDefault();
 				populateRelatedResources([$("#topic-search-textbox").val()]);
-			});	
+			});
 		}
 		else {
 			$(".no-keyword-msg").text("There are no keywords.");
 			$("#related-links").text("There are no related videos.");
 		}
-		
+
 		// $(".video-link").on("click", function(e) {
-		// 	pauseVideo();		
+		// 	pauseVideo();
 		// 	$("#modal-iframe").attr('src', $(this).data("url"));
 		// 	$("#video-modal").modal('show');
 		// });
 		$("#related-videos").on("click", ".video-link", function() {
-			pauseVideo();		
+			pauseVideo();
 			$("#modal-iframe").attr('src', $(this).parent().data("url"));
 			$("#video-modal").modal('show');
 		});
 		$("#related-videos").on("click", ".related-time", function() {
-			pauseVideo();		
+			pauseVideo();
 			$("#modal-iframe").attr('src', $(this).parent().data("time-url"));
 			$("#video-modal").modal('show');
 		});
@@ -1259,7 +1259,7 @@ $(document).ready (
 						}).appendTo(body);
 						var comment_header = $("<div/>", {
 							'class':'comment-header',
-						}).appendTo(comment_div);	
+						}).appendTo(comment_div);
 						$("<div/>", {
 							'class': 'username',
 							'html': v.name
@@ -1309,7 +1309,7 @@ $(document).ready (
 						}).appendTo(body);
 						var comment_header = $("<div/>", {
 							'class':'comment-header',
-						}).appendTo(comment_div);	
+						}).appendTo(comment_div);
 						$("<div/>", {
 							'class': 'username',
 							'html': v.name
