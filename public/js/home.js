@@ -1040,11 +1040,14 @@ $(document).ready (
 				posX = windowWidth - previewWidth;
 			}
 			preview.css({'top': posY+"px", 'left': posX+"px"});
-			var footer = $(".footer").parent();
-			var windowBottom = footer.position().top+footer.height();
-			var previewBottom = posY + preview.height();
-			if (windowBottom < previewBottom) {
-				$(".canvas").height(previewBottom);
+			var $footer = $(".footer");
+			if ($footer.length > 0) {
+				var $footerContainer = $footer.parent();
+				var windowBottom = $footerContainer.position().top + $footer.height();
+				var previewBottom = posY + preview.height();
+				if (windowBottom < previewBottom) {
+					$(".canvas").height(previewBottom);
+				}
 			}
 			preview.show();
 		});
