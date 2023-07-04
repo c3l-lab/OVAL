@@ -132,6 +132,7 @@
                     <table class="table table-striped" name="unassiged">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>TITLE</th>
                                 <th>DESCRIPTION</th>
                                 <th>DURATION</th>
@@ -144,6 +145,7 @@
                         <tbody>
                             @foreach ($videos_without_group as $video)
                                 <tr>
+                                    <td>{{ $video->id }}</td>
                                     <td class="img-cel">
                                         <img class="video-thumbnail" src="{{ $video->thumbnail_url }}">
                                         <br />
@@ -237,6 +239,7 @@
                 <table class="table table-striped" name="assiged">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>TITLE</th>
                             <th>DESCRIPTION</th>
                             <th>VIDEO ACCESS CONTROL</th>
@@ -254,6 +257,7 @@
                     <tbody>
                         @foreach ($group_videos as $gv)
                             <tr id="v-{{ $gv->video()->id }}">
+                                <td>{{ $gv->id }}</td>
                                 <td class="img-cel">
                                     <a href="/view/{{ $gv->id }}">
                                         <img class="video-thumbnail" src="{{ $gv->video()->thumbnail_url }}">
