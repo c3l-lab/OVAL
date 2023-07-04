@@ -27,7 +27,7 @@ class ToolController extends Controller
     public function login(Request $request)
     {
         \Log::debug($request->all());
-        $redirectUrl = $this->ltiService->login($request);
+        $redirectUrl = $this->ltiService->login($request, $request->input('target_link_uri'));
         return redirect($redirectUrl);
     }
 

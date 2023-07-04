@@ -63,10 +63,10 @@ class LtiService
    *
    * @throws Packback\Lti1p3\OidcException
    */
-  public function login(Request $request): string
+  public function login(Request $request, string $redirectUrl): string
   {
     return LtiOidcLogin::new($this->db, $this->cache, $this->cookie)
-      ->doOidcLoginRedirect($this->launchUrl, $request->all())
+      ->doOidcLoginRedirect($redirectUrl, $request->all())
       ->getRedirectUrl();
   }
 
