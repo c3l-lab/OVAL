@@ -16,8 +16,8 @@
 			<li><a href="/batch-upload">Batch Upload</a></li>
 			<li><a href="/manage-lti-connections">Manage LTI 1.1 Connections</a></li>
 			<li><a href="/lti/registrations">Manage LTI 1.3 Registrations</a></li>
-  			<li class="space-top"><a href="/logout">Logout</a></li>
 			@endif
+  			<li class="space-top"><a href="/logout">Logout</a></li>
   		</ul>
   		<div class="nav-footer">
 			<p>You are currently using the Beta version of OVAL; designed to allow teachers and students to experience Oval in the final stages of development. We appreciate feedback on your OVAL experience and suggestions for improvement. Please email your feedback using the following link.</p>
