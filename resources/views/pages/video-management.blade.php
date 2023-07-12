@@ -371,7 +371,7 @@
                                         title="Manage points"><i class="fa fa-pencil-square-o group-icon"></i></button>
                                 </td>
                                 <td>
-                                    <button type="button" videoid="{{ $gv->video()->id }}"
+                                    <button id="set-quiz-btn" type="button" videoid="{{ $gv->video()->id }}"
                                         class="quiz btn btn-link assign-grp-button" title="Set quiz"><i
                                             class="fa fa-comment-o"></i></button>
                                     <br />

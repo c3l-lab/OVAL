@@ -58,17 +58,19 @@ $(document).ready(function () {
                     var link = $(this).first().find('img').attr('src').split('/');
                     var link_tag = link[2];
 
+                    $quizButton = $('#set-quiz-btn');
+
                     switch (link_tag) {
                         case "img.youtube.com":
 
                             var video_key = link[4];
 
                             /*------ store data into tag ------*/
-                            $(this).find('td').eq(7).find('button').attr("identifier", video_key);
-                            $(this).find('td').eq(7).find('button').attr("media_type", "youtube");
+                            $quizButton.attr("identifier", video_key);
+                            $quizButton.attr("media_type", "youtube");
 
                             /*------ bind click event to tag ------*/
-                            $(this).find('td').eq(7).find('button').on('click', function () {
+                            $quizButton.on('click', function () {
                                 var identifier = $(this).attr("identifier");
                                 var media_type = $(this).attr("media_type");
 
@@ -142,11 +144,11 @@ $(document).ready(function () {
                             var video_key = link[4].split(".")[0];
 
                             /*------ store data into tag ------*/
-                            $(this).find('td').eq(7).find('button').attr("identifier", video_key);
-                            $(this).find('td').eq(7).find('button').attr("media_type", "helix");
+                            $quizButton.attr("identifier", video_key);
+                            $quizButton.attr("media_type", "helix");
 
                             /*------ bind click event to tag ------*/
-                            $(this).find('td').eq(7).find('button').on('click', function () {
+                            $quizButton.on('click', function () {
                                 var identifier = $(this).attr("identifier");
                                 var media_type = $(this).attr("media_type");
 
