@@ -847,6 +847,7 @@ $(document).ready (
 			modal.find("#annotation-description").val("");
 			modal.find(".privacy-icon").html("");
 			modal.find("#annotation-form").validator("destroy");
+			playVideo();
 		});
 		$("#comment-instruction-modal").on("show.bs.modal", function() {
 			if (comment_instruction) {
