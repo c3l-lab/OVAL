@@ -21,12 +21,12 @@ class LtiMessage extends AbstractLtiMessage
 
   public function getUserFirstName()
   {
-    return $this->launchData['preferred_username'] ?? 'Unknow';
+    return $this->launchData['given_name'] ?? $this->launchData['preferred_username'] ?? 'student';
   }
 
   public function getUserLastName()
   {
-    return 'student';
+    return $this->launchData['family_name'] ?? 'Unknow';
   }
 
   public function isUserInstructor()
