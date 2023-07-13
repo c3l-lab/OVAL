@@ -8,6 +8,7 @@
 
 ### Setting up LTI app in Canvas
 
+1. Log into Canvas as an admin and navigate to Admin section.
 1. Navigate to Settings in the admin navigation.
 1. Click **Apps > +App**.
 1. Choose **Manual Entry** and fill in the form and click **Submit**.
@@ -27,7 +28,7 @@
 
 1. Log into Canvas as an admin and navigate to Admin section.
 1. Navigate to Developer Keys in the navigation.
-1. Add an LTI Key by clicking + Developer Key and choose LTI Key.
+1. Add an LTI Key by clicking **+ Developer Key** and choose LTI Key.
 1. Fill in Key Settings information.
 
     - **Key Name**: set your preferred name
@@ -76,10 +77,12 @@
 1. Select the tool you just set up in previous steps.
 1. Fill in URL filed:
 
-  - **Video Management**: https://oval-dev.c3l.ai/api/lti/1.1/launch?resource_type=group_video
-  - **Video**: https://oval-dev.c3l.ai/api/lti/1.1/launch?resource_type=group_video&resouce_id=12
+    - **LTI 1.1 Video Management URL**: https://oval-dev.c3l.ai/api/lti/1.1/launch?resource_type=group_video
+    - **LTI 1.1 Video URL**: https://oval-dev.c3l.ai/api/lti/1.1/launch?resource_type=group_video&resouce_id=12
+    - **LTI 1.3 Video Management URL**: https://oval-dev.c3l.ai/api/lti/1.3/launch?resource_type=group_video
+    - **LTI 1.3 Video URL**: https://oval-dev.c3l.ai/api/lti/1.3/launch?resource_type=group_video&resouce_id=12
 
 1. Fill in other fileds as you like.
 1. Click **Add Item**.
 
-![Canvas LTI Module](./images/canvas-lti-module.png)
+        ![Canvas LTI Module](./images/canvas-lti-module.png)
