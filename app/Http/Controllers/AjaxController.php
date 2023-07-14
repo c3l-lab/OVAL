@@ -480,6 +480,7 @@ class AjaxController extends Controller
 			\Log::debug('env: ', [ 'environment' => app()->environment() ]);
 			\Log::debug('$_ENV', [ '$_ENV' => $_ENV ]);
 			\Log::debug('YOUTUBE_API_KEY: ' . env('YOUTUBE_API_KEY'));
+			\Log::debug('MAIL_FROM: ' . env('MAIL_FROM'));
 
 			//--get video data from API
 			$proxy_url = env('CURL_PROXY_URL', '');
