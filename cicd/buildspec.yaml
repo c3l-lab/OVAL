@@ -23,6 +23,8 @@ phases:
   build:
     commands:
       - npm run $ENVIRONMENT_TYPE
+      - php artisan config:cache
+      - php artisan config:clear
       - php artisan migrate --force
 artifacts:
   files:
