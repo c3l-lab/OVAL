@@ -9,6 +9,7 @@ var player;
 window.onYouTubeIframeAPIReady = function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
 		width: '100%',
+		height: '100%',
 		videoId: video_identifier,
 		playerVars: {
 			wmode: "transparent",

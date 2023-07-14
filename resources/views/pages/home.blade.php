@@ -13,16 +13,17 @@
 	@include('parts.selectionbar')
 @endsection
 
-@section('content')
-	@include('group_videos.show._group_video', [
-		'user' => $user,
-		'course' => $course,
-		'group_video' => $group_video,
-		'has_quiz' => $has_quiz,
-		'video' => $video,
-	])
-@endsection
-
+	@section('content')
+		<div class="container group-video">
+				@include('group_videos.show._group_video', [
+					'user' => $user,
+					'course' => $course,
+					'group_video' => $group_video,
+					'has_quiz' => $has_quiz,
+					'video' => $video,
+				])
+		</div><!-- .container (main content area) -->
+	@endsection
 
 @section('javascript')
 

@@ -7,33 +7,40 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.css">
     @endif
     <style>
-      .links {
-        margin-top: 16px;
-      }
+    .links {
+        padding: 0 8px
+    }
+
+    #left-side {
+        padding: 0px;
+    }
+
+    .group-video {
+        padding: 0 8px;
+    }
     </style>
 @endsection
 
 @section('content')
     @if ($user->isInstructorOf($course))
-    <div class="container">
         <div class="links">
             <a href="/video-management" target="_blank">Video Management</a>
         </div>
-    </div>
     @endif
 
-    @include('group_videos.show._group_video', [
-        'user' => $user,
-        'course' => $course,
-        'group_video' => $group_video,
-        'has_quiz' => $has_quiz,
-        'video' => $video,
-    ])
+    <div class="group-video">
+        @include('group_videos.show._group_video', [
+            'user' => $user,
+            'course' => $course,
+            'group_video' => $group_video,
+            'has_quiz' => $has_quiz,
+            'video' => $video,
+        ])
+    </div><!-- .container (main content area) -->
 @endsection
 
 
 @section('javascript')
-
     <script type="text/javascript" src="{{ URL::secureAsset('js/home.js') }}"></script>
     <script type="text/javascript" src="{{ URL::secureAsset('js/jquery.multi-select.js') }}"></script>
     <script type="text/javascript"

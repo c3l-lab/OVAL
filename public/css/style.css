@@ -2,7 +2,7 @@
 
 body {
 	margin: 0;
-	background-color: #231E20;
+	background: #000000;
 	font-family: 'Source Sans Pro', sans-serif;
 }
 
@@ -288,9 +288,12 @@ h4 {
 
 /* -------- Video Player -------- */
 .video-width {
-	width: 98%;
-	max-width: 640px;
 	margin: 0 auto;
+}
+
+#player {
+	aspect-ratio: 16 / 9;
+	width: 100%;
 }
 
 /* -------- Content Tabs -------- */
