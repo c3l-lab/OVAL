@@ -477,8 +477,8 @@ class AjaxController extends Controller
 		if (empty($v)) {
 			$v = new oval\Video;
 
-			\Log::debug('env: ', app()->environment());
-			\Log::debug('$_ENV', $_ENV);
+			\Log::debug('env: ', [ 'environment' => app()->environment() ]);
+			\Log::debug('$_ENV', [ '$_ENV' => $_ENV ]);
 			\Log::debug('YOUTUBE_API_KEY: ' . env('YOUTUBE_API_KEY'));
 
 			//--get video data from API
