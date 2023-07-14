@@ -19,7 +19,7 @@ class VideoFactory extends Factory
             'description' => $this->faker->optional()->sentence,
             'duration' => $this->faker->randomNumber,
             'thumbnail_url' => $this->faker->url,
-            'media_type' => 'helix',
+            'media_type' => 'youtube',
             'added_by' => function () {
                 return User::factory()->create()->id;
             },

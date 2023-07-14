@@ -478,71 +478,43 @@ class AjaxController extends Controller
 			$v = new oval\Video;
 
 			//--get video data from API
-			if($req->media_type == "helix") {
-				$wsdl = env('HELIX_API_HOST', 'https://helix.example.com') . '/Api/HmlApi.svc?wsdl';
-				$trace = true;
-				$exceptions = false;
-				try {
-					$client = new \SoapClient($wsdl, array('trace'=>$trace, 'exceptions'=>$exceptions));
-					$xml_array['mediaId'] = $req->video_id;
-					$response = $client->GetMediaListing($xml_array);
-				}
-				catch (Exception $e) {
-					echo "Error - ".$e->getMessage."<br />";
-					echo "Last Response = ".$client->__getLastResponse();
-				}
-				$metadata = $response->GetMediaListingResult;
-
-				$v = oval\Video::firstOrNew([
-					'identifier' => $metadata->Video->Url,
-					'media_type' => $req->media_type
-				]);
-
-				// $v->identifier = $metadata->Video->Url;
-				$v->thumbnail_url = $metadata->ThumbnailUrl;
-				$v->title = $metadata->Video->Title;
-				$v->description = $metadata->Video->Description;
-				$v->duration = $this->ISO8601ToSeconds($metadata->Video->Duration);
+			$proxy_url = env('CURL_PROXY_URL', '');
+			$proxy_user = env('CURL_PROXY_USER', '');
+			$proxy_pass = env('CURL_PROXY_PASS', '');
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=[youtube_api_key]');
+			if (!empty($proxy_url)) {
+				curl_setopt($ch, CURLOPT_PROXY, $proxy_url);
 			}
-			else if ($req->media_type == "youtube") {
-				$proxy_url = env('CURL_PROXY_URL', '');
-				$proxy_user = env('CURL_PROXY_USER', '');
-				$proxy_pass = env('CURL_PROXY_PASS', '');
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=[youtube_api_key]');
-				if (!empty($proxy_url)) {
-					curl_setopt($ch, CURLOPT_PROXY, $proxy_url);
-				}
-				if (!empty($proxy_user)) {
-					curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_user . ':' . $proxy_pass);
-				}
-				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				$response = curl_exec($ch);
-
-				if ($errno = curl_errno($ch))
-				{
-					$error_message = curl_strerror($errno);
-					error_log('error ' . $errno . ': ' . $error_message);
-					return ['error'=>$errno];
-				}
-				$result = json_decode($response);
-
-				$v = oval\Video::firstOrNew([
-					'identifier' => $req->video_id,
-					'media_type' => $req->media_type
-				]);
-
-				// $v->identifier = $req->video_id;
-				$v->title = $result->items[0]->snippet->title;
-				$desc = $result->items[0]->snippet->description;
-				$v->description = strlen($desc)>507 ? substr($desc, 0, 510) : $desc;
-				$v->thumbnail_url = "https://img.youtube.com/vi/".$req->video_id."/1.jpg";
-				$v->duration = $this->ISO8601ToSeconds($result->items[0]->contentDetails->duration);
-
-				curl_close($ch);
+			if (!empty($proxy_user)) {
+				curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_user . ':' . $proxy_pass);
 			}
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			$response = curl_exec($ch);
+
+			if ($errno = curl_errno($ch))
+			{
+				$error_message = curl_strerror($errno);
+				error_log('error ' . $errno . ': ' . $error_message);
+				return ['error'=>$errno];
+			}
+			$result = json_decode($response);
+
+			$v = oval\Video::firstOrNew([
+				'identifier' => $req->video_id,
+				'media_type' => $req->media_type
+			]);
+
+			// $v->identifier = $req->video_id;
+			$v->title = $result->items[0]->snippet->title;
+			$desc = $result->items[0]->snippet->description;
+			$v->description = strlen($desc)>507 ? substr($desc, 0, 510) : $desc;
+			$v->thumbnail_url = "https://img.youtube.com/vi/".$req->video_id."/1.jpg";
+			$v->duration = $this->ISO8601ToSeconds($result->items[0]->contentDetails->duration);
+
+			curl_close($ch);
 
 			// $v->media_type = $req->media_type;
 			$v->added_by = Auth::user()->id;

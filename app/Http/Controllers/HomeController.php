@@ -221,8 +221,6 @@ class HomeController extends Controller
 			'group_video_id'=>$group_video->id,
 			'points'=>$group_video->relatedPoints(),
 			'api_token'=>$api_token,
-			'helix_server_host'=>env('HELIX_SERVER_HOST', 'https://helix.example.com'),
-			'helix_js_host'=>env('HELIX_JS_HOST', 'https://helix.example.com'),
 		]);
 
 		// save current course id
@@ -268,8 +266,6 @@ class HomeController extends Controller
 					'group_id'=>$group->id,
 					'group_name'=>$group->name,
 					'api_token'=>$api_token,
-					'helix_server_host'=>env('HELIX_SERVER_HOST', 'https://helix.example.com'),
-					'helix_js_host'=>env('HELIX_JS_HOST', 'https://helix.example.com'),
 				]);
 
 				// save current course id

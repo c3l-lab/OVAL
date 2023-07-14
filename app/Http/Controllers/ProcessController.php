@@ -9,7 +9,6 @@ use oval\Classes\YoutubeDataHelper;
 use Illuminate\Support\Facades\Auth;
 use oval\AnalysisRequest;
 use oval\Jobs\AnalyzeTranscript;
-use oval\Jobs\DownloadHelixFile;
 use Illuminate\Support\Facades\Storage;
 
 use IMSGlobal\LTI\ToolProvider;
@@ -50,32 +49,12 @@ class ProcessController extends Controller
 	}
 
 	/**
-	 * Private method to process text analysis request for Helix video.
-	 * 
-	 * @param Video $video
-	 * @param array $user_ids Array of int containig ids of users who requested for analysis
-	 * @return string Message to display
-	 */
-	private function process_helix_analysis ($video, $user_ids) {
-		$video_url = env('HELIX_SERVER_HOST', 'http://helix.example.com') . '/flash/' . $video->identifier . '_lo.mp4';
-
-		// Send analyse transcript job to queue
-		$this->dispatch(new DownloadHelixFile([
-			'url' => $video_url,
-			'videoId' => $video->id,
-			'userIds' => $user_ids
-		]));
-
-		return $this->please_wait;
-	}
-
-	/**
 	 * Private method to download caption for Youtube video.
-	 * 
+	 *
 	 * Uses Google credentials stored in database if any exist, to call YoutubeData API to get caption.
 	 * If no caption can be obtained, check if there are public caption for the video.
 	 * Method then saves transcript and returns the text.
-	 * 
+	 *
 	 * @param Video $video Video oject with media_type='youtube'
 	 * @return string String containing transcript text.
 	 */
@@ -95,10 +74,10 @@ class ProcessController extends Controller
             foreach ($credentials as $cred) {
                 $helper = new YoutubeDataHelper($cred->client_id, $cred->client_secret);
                 $helper->handle_access_token_refresh($cred);
-                
+
 				$track_id = $helper->get_caption_track_id($video->identifier);
 				if(!empty($track_id)) {
-					$caption_array = $helper->download_caption($track_id);				
+					$caption_array = $helper->download_caption($track_id);
 				}
                 if (!empty($caption_array)) {
 					break;
@@ -130,7 +109,7 @@ class ProcessController extends Controller
                     foreach ($cc->text as $item) {
                         $line = "{";
                         $time = 0;
-                        foreach ($item->attributes() as $key=>$val) {				
+                        foreach ($item->attributes() as $key=>$val) {
                             if ($key == "start") {
                                 $time = floatval($val);
                                 $line .= '"start":'.$time.', ';
@@ -140,7 +119,7 @@ class ProcessController extends Controller
                                 $line .= '"end":'.$time.', ';
                                 $time = 0;
                             }
-						}	
+						}
 						$text .= $item;
                         $line .= '"transcript":"'.$item.'"}';
                         $caption_array[] = $line;
@@ -158,7 +137,7 @@ class ProcessController extends Controller
 
 	/**
 	 * Private method to process text analysis of YouTube video.
-	 * 
+	 *
 	 * Get the caption for the video, then dispatch analysis job to queue
 	 * and returns message letting user know it is being processed.
 	 * If no transcript is available, returns eerror message.
@@ -185,30 +164,30 @@ class ProcessController extends Controller
 		else {
 			// Change status to 'processed'
 			AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processed']);
-			
+
 			return $this->no_transcript;
 		}
-		
+
 		// Send analyse transcript job to queue
 		$this->dispatch(new AnalyzeTranscript([
 			'videoId'    => $video->id,
 			'transcript' => $text,
 			'userIds'    => $user_ids
 		]));
-		
+
 		return  $this->please_wait;
 	}
 
 	/**
 	 * Method called from route /request_text_analysis
 	 * (php form on /manage-analysis-request page)
-	 * 
+	 *
 	 * This method sets the status of the AnalysisRequest to "processing",
 	 * fetches ids of user who requested it,
 	 * then calls private method to process the request depending on media_type of the video,
 	 * which returns message to display letting user know what is happening,
 	 * then redirect back to /manage-analysis-requests page showing the message.
-	 * 
+	 *
 	 * @param Request $req Request contains analysis_request_id
 	 * @return Illuminate\Http\RedirectResponse
 	 */
@@ -218,26 +197,20 @@ class ProcessController extends Controller
 
 		// Change status to 'processing'
 		AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processing']);
-		
+
 		$user_ids = $analysis_request->requestorsIds();
 		array_push($user_ids, Auth::user()->id);
-		$msg = "";
-		if ($video->media_type == "helix") {
-			$msg = $this->process_helix_analysis($video, $user_ids);
-		}
-		else {
-			$msg = $this->process_youtube_analysis($video, $user_ids);
-		}
-    	return back()->with('msg', $msg);
+		$msg = $this->process_youtube_analysis($video, $user_ids);
+    return back()->with('msg', $msg);
 	}
 
 	/**
-	 * Method called from route /reject_text_analysis_request 
+	 * Method called from route /reject_text_analysis_request
 	 * (php form on /manage-analysis-request page)
-	 * 
+	 *
 	 * Updates status of AnalysisRequest for the video whose ID passed in
 	 * to "rejected", then redirects back to /manage-analysis-request page.
-	 * 
+	 *
 	 * @param Request $req Request contains video_id
 	 * @return Illuminate\Http\RedirectResponse
 	 */
@@ -251,10 +224,10 @@ class ProcessController extends Controller
 	/**
 	 * Method called from /recover_text_analysis_request route.
 	 * (php form on /manage-analysis-request page)
-	 * 
+	 *
 	 * Updates status of AnalysisRequest for the video whose ID passed in
 	 * to "pending", then redirects back to /manage-analysis-request page.
-	 * 
+	 *
 	 * @param Request $req Request contains video_id
 	 * @return Illuminate\Http\RedirectResponse
 	 */
@@ -268,10 +241,10 @@ class ProcessController extends Controller
 	/**
 	 * Method called from route /delete_text_analysis_request
 	 * (php form on /manage-analysis-request page)
-	 * 
+	 *
 	 * Updates status of AnalysisRequest for the video whose ID passed in
 	 * to "deleted", then redirects back to /manage-analysis-request page.
-	 * 
+	 *
 	 * @param Request $req Request contains video_id
 	 * @return Illuminate\Http\RedirectResponse
 	 */
@@ -285,12 +258,12 @@ class ProcessController extends Controller
 	/**
 	 * Method called from route /send_all_text_analysis_requests
 	 * (php form on /manage-analysis-request page that just has one button)
-	 * 
+	 *
 	 * Find videos that have AnanlysisRequests with status "pending",
 	 * and call private method to process analysis request
 	 * depending on media_type for each video,
 	 * then redirect back to /manage-analysis-request page
-	 * 
+	 *
 	 * @param Request $req
 	 * @return Illuminate\Http\RedirectResponse
 	 */
@@ -300,12 +273,7 @@ class ProcessController extends Controller
 						->toArray();
 		$videos = oval\Video::find($video_ids);
 		foreach ($videos as $v) {
-			if($v->media_type=="helix") {
-				$this->process_helix_analysis($v->id);
-			}
-			else {
-				$this->process_youtube_analysis($v->id);
-			}
+			$this->process_youtube_analysis($v->id);
 		}
 		return back();
 	}
@@ -313,10 +281,10 @@ class ProcessController extends Controller
 	/**
 	 * Method called from route /reject_all_text_analysis_requests
 	 * (php form on /manage-analysis-request page that just has one button)
-	 * 
-	 * Change status of AnalysisRequests from "pending" to "rejected", 
+	 *
+	 * Change status of AnalysisRequests from "pending" to "rejected",
 	 * then redirect back to /manage-analysis-request page.
-	 * 
+	 *
 	 * @param Request $req
 	 * @return Illuminate\Http\RedirectResponse
 	 */
@@ -329,10 +297,10 @@ class ProcessController extends Controller
 	/**
 	 * Method called from route /recover_all_rejected_text_analysis_requests
 	 * (php form on /manage-analysis-request page that just has one button)
-	 * 
-	 * Change status of AnalysisRequests from "rejected" to "pending", 
+	 *
+	 * Change status of AnalysisRequests from "rejected" to "pending",
 	 * then redirect back to /manage-analysis-request page.
-	 * 
+	 *
 	 * @param Request $req
 	 * @return Illuminate\Http\RedirectResponse
 	 */
@@ -345,10 +313,10 @@ class ProcessController extends Controller
 	/**
 	 * Method called from route /delete_all_rejected_text_analysis_requests
 	 * (php form on /manage-analysis-request page that just has one button)
-	 * 
-	 * Change status of AnalysisRequests from "rejected" to "deleted", 
+	 *
+	 * Change status of AnalysisRequests from "rejected" to "deleted",
 	 * then redirect back to /manage-analysis-request page.
-	 * 
+	 *
 	 * @param Request $req
 	 * @return Illuminate\Http\RedirectResponse
 	 */
@@ -360,12 +328,12 @@ class ProcessController extends Controller
 
 	/**
 	 * Private method to add Youtube Video by passing its identifier.
-	 * 
+	 *
 	 * This method was copied and adopted from AjaxController.
 	 * TODO:: move it somewhere else
 	 * Method calls YoutubeData API to get video metadata,
 	 * and inserts a record in Videos table.
-	 * 
+	 *
 	 * @param string $identifier
 	 * @return Video The video that was just added
 	 */
@@ -411,19 +379,19 @@ class ProcessController extends Controller
 	}
 
 	/**
-	 * Method called from /batch_data_insert to upload json file to insert transcripts data and 
+	 * Method called from /batch_data_insert to upload json file to insert transcripts data and
 	 * send text analysis request.
-	 * 
+	 *
 	 * JSON being uploaded may have array containing transcript objects or video identifiers.
 	 * If Transcripts are uploaded, save these then fire off text analysis jobs.
 	 * If Identifiers are uploaded, get info for the video, save it then trigger text analysis.
 	 * The method then redirects back to originating page with message to display.
-	 * 
+	 *
 	 * @uses insert_youtube_video()
 	 * @uses AnalyzeTranscript
-	 * 
+	 *
 	 * @param Request $req Request contains file
-	 * @return Illuminate\Http\RedirectResponse 
+	 * @return Illuminate\Http\RedirectResponse
 	 */
 	public function batch_data_insert (Request $req) {
 		$file = $req->file;
@@ -457,7 +425,7 @@ class ProcessController extends Controller
 					$obj = json_decode($jsonstr);
 					$text .= $obj->transcript." ";
 				}
-				
+
 				// Send analyse transcript job to queue
 				$this->dispatch(new AnalyzeTranscript([
 					'videoId'    => $v->id,
@@ -486,10 +454,10 @@ class ProcessController extends Controller
 
 	/**
 	 * Method called from route /add_lti_connection (manage-lti page)
-	 * 
+	 *
 	 * This method adds new LTI tool consumer with values passed in as parameter.
 	 * It also adds LtiCredential if values are passed for this in parameter.
-	 * 
+	 *
 	 * @param Request $req Contains name, key, secret, db_type, host, db_name, user, password, prefix
 	 * @return Illuminate\Http\RedirectResponse Redirect object with message
 	 */
@@ -498,7 +466,7 @@ class ProcessController extends Controller
 			$db_config = DB::getConfig();
 			$conn_str = $db_config['driver'] . ':host=' . $db_config['host'] . ';port=' . $db_config['port'] . ';dbname=' . $db_config['database'];
 			$pdo = new \PDO($conn_str, $db_config['username'], $db_config['password']);
-		} 
+		}
 		catch (PDOException $e) {
 			return 'Connection failed: ' . $e->getMessage();
 		}
@@ -512,7 +480,7 @@ class ProcessController extends Controller
 		$consumer = oval\LtiConsumer::where('consumer_key256', '=', $req->key)->first();
 		$success = false;
 
-		if(!empty($req->db_type) && !empty($req->host) && !empty($req->db_name) && !empty($req->user) && !empty($req->pw)) {			
+		if(!empty($req->db_type) && !empty($req->host) && !empty($req->db_name) && !empty($req->user) && !empty($req->pw)) {
 			$cred = new oval\LtiCredential;
 			$cred->consumer_id = $consumer->consumer_pk;
 			$cred->db_type = $req->db_type;
@@ -522,7 +490,7 @@ class ProcessController extends Controller
 			$cred->username = $req->user;
 			$cred->password = $req->pw;
 			$cred->prefix = $req->prefix;
-			$success = $cred->save();			
+			$success = $cred->save();
 		}
 		if($success){
 			$msg = "Connection and database credential was saved.";

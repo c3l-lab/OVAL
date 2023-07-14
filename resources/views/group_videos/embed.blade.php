@@ -38,11 +38,7 @@
     <script type="text/javascript" src="{{ URL::secureAsset('js/jquery.multi-select.js') }}"></script>
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
-    @if ($video->media_type == 'youtube')
-        <script type="text/javascript" src="{{ URL::secureAsset('js/media/youtube-functions.js') }}"></script>
-    @elseif ($video->media_type == 'helix')
-        <script type="text/javascript" src="{{ URL::secureAsset('js/media/jwplayer-functions.js') }}"></script>
-    @endif
+    <script type="text/javascript" src="{{ URL::secureAsset('js/media/youtube-functions.js') }}"></script>
     @if (count($video->keywords) > 0)
         <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js"></script>

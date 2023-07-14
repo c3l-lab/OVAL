@@ -23,24 +23,6 @@
             <form id="add-video-form" name="add-video-form" action="" method="POST" role="form"
                 data-toggle="validator">
                 <fieldset class="form-group">
-                    <legend>Video Source</legend>
-                    <div class="radio-inline">
-                        <label><input type="radio" name="source-radio" id="helix" value="helix" checked>UniSA Media
-                            Library</label>
-                    </div><!-- .radio-inline -->
-                    <div class="radio-inline">
-                        <label><input type="radio" name="source-radio" id="youtube" value="youtube">YouTube</label>
-                    </div><!-- .radio-inline -->
-                    <span class="space-left-right">
-                        <a href="{{ env('HELIX_JS_HOST', 'https://helix.example.com') }}" target="_blank" id="open-link"
-                            class="btn btn-link" title="Open UniSA Media Library in new window">
-                            <i class="fa fa-external-link" aria-hidden="true"></i>
-                            Open
-                        </a>
-                    </span>
-                </fieldset>
-
-                <fieldset class="form-group">
                     <legend>Video URL</legend>
                     <input class="form-control gray-textbox" type="url" id="video-url" required>
                     <div class="instruction">Please enter full URL of the video</div>
@@ -293,59 +275,31 @@
                                     </button>
                                 </td>
                                 <td>
-                                    @if ($gv->video()->media_type == 'helix')
-                                        <div class="text-center">N/A</div>
-                                    @else
-                                        <button type="button" class="btn btn-link text-analysis-button"
-                                            data-toggle="modal" data-target="#text-analysis-modal"
-                                            data-id="{{ $gv->id }}" data-show="{{ $gv->show_analysis }}"
-                                            title="Edit visibility of text analysis">
-                                            @if ($gv->show_analysis == true)
-                                                Visible
-                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                            @else
-                                                Hidden
-                                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
-                                            @endif
-                                        </button>
-                                        <br />
+                                   <button type="button" class="btn btn-link text-analysis-button"
+                                       data-toggle="modal" data-target="#text-analysis-modal"
+                                       data-id="{{ $gv->id }}" data-show="{{ $gv->show_analysis }}"
+                                       title="Edit visibility of text analysis">
+                                       @if ($gv->show_analysis == true)
+                                           Visible
+                                           <i class="fa fa-eye" aria-hidden="true"></i>
+                                       @else
+                                           Hidden
+                                           <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                       @endif
+                                   </button>
+                                   <br />
 
-                                        @if ($gv->video()->keywords->count() > 0)
-                                            <button type="button" class="btn btn-link text-analysis-button"
-                                                data-toggle="modal" data-target="#edit-keywords-modal"
-                                                data-vid="{{ $gv->video()->id }}"
-                                                data-keywords="{{ $gv->video()->keywords_for_edits() }}"
-                                                title="Edit keywords">
-                                                <i class="fa fa-info-pencil" aria-hidden="true"></i>
-                                                Edit
-                                            </button>
-                                            <br />
-                                        @endif
-                                        {{-- allow editing instead of below
-								@if (!empty($gv->video()->transcript->analysis))
-								<a href="/text-analysis-details/{{$gv->video()->id}}" role="button" class="btn btn-link text-analysis">
-									<i class="fa fa-info-circle" aria-hidden="true"></i>
-									Details
-								</a>
-								<br />
-								@else
-								<button type="button" class="btn btn-link request-analysis" title="Request content analysis" data-id="{{$gv->video()->id}}">
-									<i class="fa fa-plus" aria-hidden="true"></i>
-									Request<br />
-								</button>
-								@endif
---}}
-                                        {{--
-								@if (!empty($gv->video()->transcript))
-									Transcript is on system
-								@endif
-
-								<button type="button" class="btn btn-link new-transcript" data-toggle="modal" data-target="#transcript-form" data-id="{{$gv->video()->id}}" title="Upload transcript">
-									<i class="fa fa-upload" aria-hidden="true"></i>
-									Upload Transcript
-								</button>
---}}
-                                    @endif {{-- if helix/youtube --}}
+                                   @if ($gv->video()->keywords->count() > 0)
+                                       <button type="button" class="btn btn-link text-analysis-button"
+                                           data-toggle="modal" data-target="#edit-keywords-modal"
+                                           data-vid="{{ $gv->video()->id }}"
+                                           data-keywords="{{ $gv->video()->keywords_for_edits() }}"
+                                           title="Edit keywords">
+                                           <i class="fa fa-info-pencil" aria-hidden="true"></i>
+                                           Edit
+                                       </button>
+                                       <br />
+                                   @endif
                                 </td>
                                 <td>{{ $gv->video()->formattedDuration() }}</td>
                                 <td>

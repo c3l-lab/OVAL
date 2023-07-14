@@ -14,7 +14,7 @@ class Video extends Model
     use HasFactory;
     protected $table = "videos";
     protected $fillable = ['identifier', 'title', 'description', 'duration', 'thumbnail_url', 'media_type', 'added_by'];
-    
+
     /**
     *	One-to-Many relationship (inverse).
     *	Get the User that added this Video.
@@ -23,7 +23,7 @@ class Video extends Model
     public function addedBy() {
     	return $this->belongsTo('oval\User', 'added_by');
     }
-    
+
     /**
     *	Many-to-many relationship.
     *	Get the groups this video is assigned to
@@ -42,7 +42,7 @@ class Video extends Model
     public function groupsInCourse($course_id) {
     	return $this->groups->where('course_id', '=', $course_id);
     }
-    
+
     /**
     *	Utility method to check if this Video belongs to Group passed in
     *	@param Group $group
@@ -54,20 +54,20 @@ class Video extends Model
 			->whereGroupId($group->id)
 			->count() > 0;
     }
-    
+
     /**
     *	Method to assign this video to the group passed in as parameter
-    *   
-    *   Use this method instead of calling $video->attach($group); 
+    *
+    *   Use this method instead of calling $video->attach($group);
     *   because Eloquent doesn't check for existance and duplicate may be inserted,
     *   as well as we need to set default values for GroupVideo by calling new
     *   instead of attach()
-    *	@param Group 
+    *	@param Group
     **/
     public function assignToGroup($group) {
     	if (!$this->checkIfAssignedTo($group)) {
             // $this->groups()->attach($group);
-            //-- in order for the "default values" to be set, instantiate it 
+            //-- in order for the "default values" to be set, instantiate it
             //-- rather than attaching it
             $group_video = new GroupVideo;
             $group_video->group_id = $group->id;
@@ -75,7 +75,7 @@ class Video extends Model
             $group_video->save();
     	}
     }
-    
+
     /**
     *	One-to-Many relationship.
     *	Returns Annotations for this Video
@@ -84,7 +84,7 @@ class Video extends Model
     public function annotations() {
     	return $this->hasManyThrough('oval\Annotation', 'oval\GroupVideo');
     }
-    
+
     /**
     *   One-to-One relationship
     *   @return Transcript object
@@ -104,7 +104,7 @@ class Video extends Model
     public function keywords_for_edits() {
         $keywords = $this->keywords
                     ->filter(function($kw) {
-                        return ($kw->type=="keywords" || $kw->type=="concepts"); 
+                        return ($kw->type=="keywords" || $kw->type=="concepts");
                     })
                     ->pluck('keyword')
                     ->unique();
@@ -116,14 +116,7 @@ class Video extends Model
     *   @return string
     **/
     public function video_url() {
-        $url = "";
-        if ($this->media_type == "helix") {
-            $url = "https://helix.example.com/flash/".$this->identifier."_lo.mp4";
-        }
-        else if ($this->media_type == "youtube") {
-            $url = "https://youtube.com/embed/".$this->identifier;
-        }
-        return $url;
+       return "https://youtube.com/embed/".$this->identifier;
     }
 
     /**
@@ -158,7 +151,7 @@ class Video extends Model
         else {
             $retVal = $sec." seconds";
         }
-        
+
         return $retVal;
     }
     protected static function newFactory()

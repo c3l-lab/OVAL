@@ -48,7 +48,7 @@ class AnalyzeTranscript implements ShouldQueue
     public function handle()
     {
         // echo json_encode($this->opt) . "\n";
-        
+
         $IBM_WATSON_NLU_URL = env('IBM_WATSON_NLU_URL', 'https://gateway.watsonplatform.net/natural-language-understanding/api/v1');
         $IBM_WATSON_NLU_VERSION = env('IBM_WATSON_NLU_VERSION', '2017-02-27');
         $IBM_WATSON_NLU_USER = env('IBM_WATSON_NLU_USER', '');
@@ -163,7 +163,7 @@ class AnalyzeTranscript implements ShouldQueue
                                 'endTime' => round($vt->end, 2),
                                 'type' => $vk->type
                             ))->first();
-                            
+
                             if (empty($key)) {
                                 $new_key = new Keyword;
                                 $new_key->videoId = $video_id;

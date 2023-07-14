@@ -30,37 +30,7 @@ class VideosTableSeeder extends Seeder
         	'media_type' => 'youtube',
         	'added_by' => 2,
         	'created_at' => date("Y-m-d H:i:s")
-      
-        ]);
-        DB::table('videos')->insert([
-        	'identifier' => '58617517',
-        	'title' => 'Wayne testing 27 Jul',
-        	'description' => 'Test',
-        	'duration' => 30,
-        	'thumbnail_url' => 'https://helix.example.com/thumbnails/58617517.jpg',
-        	'media_type' => 'helix',
-        	'added_by' => 2,
-        	'created_at' => date("Y-m-d H:i:s")
-        ]);
-        DB::table('videos')->insert([
-        	'identifier' => '51245241',
-        	'title' => 'Blooms Applying Verbs',
-        	'description' => 'Narrated animation Blooms Applying Verbs',
-        	'duration' => 36,
-        	'thumbnail_url' => 'https://helix.example.com/thumbnails/51245241.jpg',
-        	'media_type' => 'helix',
-        	'added_by' => 2,
-        	'created_at' => date("Y-m-d H:i:s")
-        ]);
-        DB::table('videos')->insert([
-        	'identifier' => '30336809',
-        	'title' => 'PubMed 1 : Navigating to Pubmed',
-        	'description' => 'Navigating to pubmed from the student portal',
-        	'duration' => 48,
-        	'thumbnail_url' => 'https://helix.example.com/thumbnails/30336809.jpg',
-        	'media_type' => 'helix',
-        	'added_by' => 2,
-        	'created_at' => date("Y-m-d H:i:s")
+
         ]);
         DB::table('videos')->insert([
 			'identifier' => 'ZuQJbne0ifU',
@@ -82,36 +52,6 @@ class VideosTableSeeder extends Seeder
         	'added_by' => 2,
     		'created_at' => date("Y-m-d H:i:s")
       	]);
-      	DB::table('videos')->insert([
-			'identifier' => '16682974',
-        	'title' => 'PubMed 5 : Evaluating Search Results and Full Text',
-        	'description' => 'Evaluating search results found in Pubmed, locating Full Text and exporting to citation manager or saving citations',
-        	'duration' => '105',
-        	'thumbnail_url' => 'https://helix.example.com/thumbnails/16682974.jpg',
-        	'media_type' => 'helix',
-        	'added_by' => 2,
-    		'created_at' => date("Y-m-d H:i:s")
-        ]);
-        DB::table('videos')->insert([
-			'identifier' => '73247170',
-        	'title' => 'PubMed 2 : Searching PubMed | Searching Pubmed',
-        	'description' => 'Searching Pubmed',
-        	'duration' => '115',
-        	'thumbnail_url' => 'https://helix.example.com/thumbnails/73247170.jpg',
-        	'media_type' => 'helix',
-        	'added_by' => 2,
-    		'created_at' => date("Y-m-d H:i:s")
-        ]);
-		DB::table('videos')->insert([
-			'identifier' => '89277314',
-        	'title' => 'PubMed 4 : Pubmed&#039;s Search History',
-        	'description' => 'Search history feature of PubMed',
-        	'duration' => '91',
-        	'thumbnail_url' => 'https://helix.example.com/thumbnails/89277314.jpg',
-        	'media_type' => 'helix',
-        	'added_by' => 2,
-    		'created_at' => date("Y-m-d H:i:s")
-        ]);
         DB::table('videos')->insert([
 			'identifier' => '2Q5gw5bWYWY',
         	'title' => 'UniSA and DXC Technology Dandelion Project',
@@ -122,7 +62,7 @@ class VideosTableSeeder extends Seeder
         	'added_by' => 2,
     		'created_at' => date("Y-m-d H:i:s")
         ]);
-        
+
 
 
 /*        DB::table('videos')->insert([
