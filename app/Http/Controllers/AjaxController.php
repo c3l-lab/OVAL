@@ -482,7 +482,7 @@ class AjaxController extends Controller
 			$proxy_user = env('CURL_PROXY_USER', '');
 			$proxy_pass = env('CURL_PROXY_PASS', '');
 			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=[youtube_api_key]');
+			curl_setopt($ch, CURLOPT_URL, 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=' . env('YOUTUBE_API_KEY'));
 			if (!empty($proxy_url)) {
 				curl_setopt($ch, CURLOPT_PROXY, $proxy_url);
 			}
