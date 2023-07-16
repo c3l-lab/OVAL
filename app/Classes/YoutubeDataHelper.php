@@ -18,12 +18,12 @@ class YoutubeDataHelper {
 
     /**
      * Constructor to set up client with ID & secret for OAuth
-     * 
+     *
      * Sets up the Google_Client object with the parameter passed in,
      * with scope of youtube.force-ssl
-     * and redirect url (where browser is redirected after authentication with google). 
+     * and redirect url (where browser is redirected after authentication with google).
      * Needs *client id* and *secret* from Google Cloud Console ({@link https://cloud.google.com/console})
-     * 
+     *
      * @param string $client_id
      * @param string $secret
      */
@@ -47,11 +47,11 @@ class YoutubeDataHelper {
 
     /**
      * This method returns the auth url of the client object
-     * 
+     *
      * Returned URL is the path to authenticate with Google credentials.
-     * Sets option to get Google permission screen 
+     * Sets option to get Google permission screen
      * and receive refresh token again if the authentication was already established.
-     * 
+     *
      * @return string auth url (the google login page)
      */
     public function get_auth_url() {
@@ -62,7 +62,7 @@ class YoutubeDataHelper {
 
     /**
      * This method saves the newly authenticated google credential to database
-     * 
+     *
      * @param string $code param passed when coming back after authentication by google
      */
     public function handle_auth_redirect($code) {
@@ -72,7 +72,7 @@ class YoutubeDataHelper {
         //-- get channel id & channel name from api call
         $service = new Google_Service_YouTube($this->client);
         $response = $service->channels->listChannels('id,snippet', array('mine'=>true));
-    
+
         $google_cred = oval\GoogleCredential::where('client_id', '=', $this->client->getClientId())
                                             ->first();
         if (empty($google_cred)) {
@@ -96,16 +96,16 @@ class YoutubeDataHelper {
         $this->client->setAccessToken($existing_token);
         if ($this->client->isAccessTokenExpired()) {
             $cred->access_token = json_encode($this->client->refreshToken(json_decode($existing_token)->refresh_token));
-            $cred->save(); 
+            $cred->save();
         }
     }
 
     /**
      * Method to get caption track list from Youtube Data API
      * @link https://developers.google.com/youtube/v3/docs/captions/list
-     * 
+     *
      * @param string $video_identifier video id of the google video
-     * 
+     *
      * @return array returned by Youtube Data API
      */
     public function get_captions($video_identifier) {
@@ -115,18 +115,18 @@ class YoutubeDataHelper {
     }
 
     /**
-     * Method to get id of caption track with preferred language 
-     * 
+     * Method to get id of caption track with preferred language
+     *
      * @uses get_captions to get array of caption tracks
-     * 
+     *
      * @param string $video_identifier video id of the google video
-     * 
+     *
      * @return string id of the caption track
-     * 
+     *
      */
     public function get_caption_track_id($video_identifier) {
         $captions = $this->get_captions($video_identifier);
-        $langs = config('youtube_transcript_lang');
+        $langs = config('youtube.transcript_lang');
         $track_id = null;
         foreach ($captions as $c) {
             if (in_array($c['snippet']['language'], $langs)) {
@@ -139,13 +139,13 @@ class YoutubeDataHelper {
 
     /**
      * This method calls Youtube Data API to download caption whose id is passed in
-     * 
+     *
      * Call to Youtube Data API's caption.download method returns stream.
      * The stream is converted to string using Guzzle
      * @see http://docs.guzzlephp.org/en/stable/psr7.html
-     * 
+     *
      * @param string $track_id caption track's id
-     * 
+     *
      * @return array containing json object with keys: start, end, transcript
      */
     public function download_caption($track_id) {
@@ -168,15 +168,15 @@ class YoutubeDataHelper {
                 $number = $item[0];
                 $time = $item[1];
                 $times = explode(" --> ", $time);
-                
+
                 $start_time = $times[0];
                 $start_parts = explode(":", $start_time);
                 $start = intval($start_parts[0])*3600 + intval($start_parts[1])*60 + floatval(str_replace(',', '.', $start_parts[2]));
-                
+
                 $end_time = $times[1];
                 $end_parts = explode(":", $end_time);
                 $end = intval($end_parts[0])*3600 + intval($end_parts[1])*60 + floatval(str_replace(',', '.', $end_parts[2]));
-            
+
                 $text = "";
                 for ($i=2; $i<count($item); $i++) {
                     $text .= str_replace('\n', ' ', $item[$i]);

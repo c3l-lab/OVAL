@@ -11,7 +11,7 @@ use Exception;
 
 /**
  * This class handles requests relating to Youtube Data API
- * @uses app\Classes\YoutubeDataHelper  
+ * @uses app\Classes\YoutubeDataHelper
  */
 class GoogleAPIController extends Controller
 {
@@ -24,7 +24,7 @@ class GoogleAPIController extends Controller
 
     /**
      * Method called from /add_google_cred web route
-     * 
+     *
      * This method redirects to Google's auth URL
      * @uses app/Classes/YoutubeDataHelper::get_auth_url() to get Google auth URL
      * @param Request $req Request contains client_id, secret
@@ -42,13 +42,13 @@ class GoogleAPIController extends Controller
 
     /**
      * Method called from /youtube_auth_redirect path
-     * 
+     *
      * This is the return path after successful authentication at Google Auth page.
      * If successfully authenticated, redirects to /
-     * 
+     *
      * @uses oval\Classes\YoutubeDataHelper::handle_auth_redirect()
      * @param Request $req Request contains code, session with cid and s
-     * @return Illuminate\Http\RedirectResponse 
+     * @return Illuminate\Http\RedirectResponse
      */
     public function youtube_auth_redirect (Request $req) {
         if(!$req->has('code')) {
@@ -69,41 +69,41 @@ class GoogleAPIController extends Controller
 
     /**
      * Method called from /get_caption_track_id
-     * 
-     * This method returns track id for video via Youtube Data API 
+     *
+     * This method returns track id for video via Youtube Data API
      * using GoogleCredential stored in database.
      * @uses oval\Classes\YoutubeDataHelper::handle_access_token_refresh()
      * @uses oval\Classes\YoutubeDataHelper::get_caption+track_id()
      * @param string $video_identifier Video ID for Youtube Video
-     * @return string $track_id 
+     * @return string $track_id
      */
     private function get_caption_track_id ($video_identifier) {
-        $langs = config('youtube_transcript_lang');
+        $langs = config('youtube.transcript_lang');
         $credentials = oval\GoogleCredential::all();
         $track_id = null;
         if (!empty($credentials) && count($credentials)>0) {
             foreach ($credentials as $cred) {
                 $helper = new YoutubeDataHelper($cred->client_id, $cred->client_secret);
                 $helper->handle_access_token_refresh($cred);
-                
+
                 $track_id = $helper->get_caption_track_id($video_identifier);
                 if (!empty($track_id)) {
                     break;
                 }
             }
         }
-        return $track_id;  
+        return $track_id;
     }
 
     /**
-     * Method called from /check_youtube_caption route 
+     * Method called from /check_youtube_caption route
      * to check if we can get caption for the video.
-     * 
-     * If there is google credential stored in database, 
+     *
+     * If there is google credential stored in database,
      * we check if we can get caption id with it.
      * If that is not successful, check if there is caption in language(s) set in config
      * that is publicly available.
-     * 
+     *
      * @param Request $req Request contains video_id(identifier)
      * @uses /config/youtube_transcript_lang.php
      * @uses GoogleAPIController::get_caption_track_id()
@@ -112,8 +112,8 @@ class GoogleAPIController extends Controller
     public function check_youtube_caption (Request $req) {
         $video_id = $req->video_id;
         $caption_available = false;
-        $langs = config('youtube_transcript_lang');
-  
+        $langs = config('youtube.transcript_lang');
+
         //-- check if google credentials we have can get caption
         $caption_id = $this->get_caption_track_id($video_id);
         if (!empty($caption_id)) {
@@ -122,7 +122,7 @@ class GoogleAPIController extends Controller
         //--if no caption from creds we have, check if there's public non-auto-generated transcript
         else {
             $response = "";
-            
+
             $proxy_url = env('CURL_PROXY_URL', '');
             $proxy_user = env('CURL_PROXY_USER', '');
             $proxy_pass = env('CURL_PROXY_PASS', '');
@@ -150,5 +150,5 @@ class GoogleAPIController extends Controller
     }
 
 
-    
+
 }

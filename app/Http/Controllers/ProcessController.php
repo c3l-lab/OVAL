@@ -66,7 +66,7 @@ class ProcessController extends Controller
             $transcript->video_id = $video->id;
         }
 
-        $langs = config('youtube_transcript_lang');
+        $langs = config('youtube.transcript_lang');
 		$credentials = oval\GoogleCredential::all();
 		$track_id = null;
         $caption_array = null;

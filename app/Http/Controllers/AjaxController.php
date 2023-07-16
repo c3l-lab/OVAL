@@ -482,7 +482,7 @@ class AjaxController extends Controller
 			$proxy_user = env('CURL_PROXY_USER', '');
 			$proxy_pass = env('CURL_PROXY_PASS', '');
 			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=' . env('YOUTUBE_API_KEY'));
+			curl_setopt($ch, CURLOPT_URL, 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=' . config('youtube.api_key'));
 			if (!empty($proxy_url)) {
 				curl_setopt($ch, CURLOPT_PROXY, $proxy_url);
 			}
@@ -617,7 +617,7 @@ class AjaxController extends Controller
             $transcript->video_id = $video->id;
         }
 
-        $langs = config('youtube_transcript_lang');
+        $langs = config('youtube.transcript_lang');
 		$credentials = oval\GoogleCredential::all();
 		$track_id = null;
         $caption_array = null;
