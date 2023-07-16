@@ -477,8 +477,6 @@ class AjaxController extends Controller
 		if (empty($v)) {
 			$v = new oval\Video;
 
-			\Log::debug('YOUTUBE_API_KEY: ' . env('YOUTUBE_API_KEY'));
-
 			//--get video data from API
 			$proxy_url = env('CURL_PROXY_URL', '');
 			$proxy_user = env('CURL_PROXY_USER', '');
