@@ -8,16 +8,18 @@
     </div>
 @endif
 
-@if ($has_quiz)
-    <div class="alert alert-warning alert-dismissible fade in" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                aria-hidden="true">×</span></button>
-        <i class="fa fa-exclamation-circle"></i>&nbsp;
-        If the video pauses while viewing in full screen, it is due to a quiz question appearing that you are asked
-        to answer.
-        When this happens, please click the <strong>Esc</strong> key to come out of full screen mode to see the quiz
-        question.
-    </div>
+@if (false)
+    @if ($has_quiz)
+        <div class="alert alert-warning alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+            <i class="fa fa-exclamation-circle"></i>&nbsp;
+            If the video pauses while viewing in full screen, it is due to a quiz question appearing that you are asked
+            to answer.
+            When this happens, please click the <strong>Esc</strong> key to come out of full screen mode to see the quiz
+            question.
+        </div>
+    @endif
 @endif
 
 <div id="left-side" class="{{ $group_video->show_comments ? "col-md-8" : "col-md-12" }}">
