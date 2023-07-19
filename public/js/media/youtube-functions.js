@@ -212,7 +212,6 @@ function show_quiz_modal(data, cb) {
 		})
 
 		$("#quiz_modal").on("hidden.bs.modal", function () {
-			playVideo();
 			flag = false;
 		});
 
@@ -444,6 +443,12 @@ function show_feedback_modal(feedback_array) {
 	}
 
 	$("#feedback_dialog").modal('show');
+
+	$("#feedback_dialog").on("hidden.bs.modal", function () {
+		if (player.getPlayerState() === 2) {
+			playVideo();
+		}
+	});
 }
 
 /*------ end quiz client plugin for youtube ------*/

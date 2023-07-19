@@ -642,6 +642,13 @@ $(document).ready (
 
 		});
 
+		$("#annotation-modal").on("hidden.bs.modal", function () {
+				if (player.getPlayerState() === 2) {
+					playVideo();
+				}
+		});
+
+
 		modal.on("change", "input[name=privacy-radio]", function() {
 			type = "";
 			if($("#modalLabel:contains('ANNOTATION')").length>0) {
@@ -847,9 +854,6 @@ $(document).ready (
 			modal.find("#annotation-description").val("");
 			modal.find(".privacy-icon").html("");
 			modal.find("#annotation-form").validator("destroy");
-			if (player.getPlayerState() === 2) {
-				playVideo();
-			}
 		});
 		$("#comment-instruction-modal").on("show.bs.modal", function() {
 			if (comment_instruction) {
