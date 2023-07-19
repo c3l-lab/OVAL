@@ -284,6 +284,9 @@ function layoutAnnotations(mode) {
 		mode = ALL;
 	}
 	var anno_list = $("#annotations-list");
+	if (anno_list.length == 0) {
+		return;
+	}
 
 	if (annotations.length == 0) {
 		var noAnnotationText = "<br/>There is no annotation for this video yet.<br/>Add annotations as you find points of interest so you can review them later!</br> ";
