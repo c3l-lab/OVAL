@@ -23,9 +23,9 @@
             <form id="add-video-form" name="add-video-form" action="" method="POST" role="form"
                 data-toggle="validator">
                 <fieldset class="form-group">
-                    <legend>Video URL</legend>
+                    <legend>YouTube URL</legend>
                     <input class="form-control gray-textbox" type="url" id="video-url" required>
-                    <div class="instruction">Please enter full URL of the video</div>
+                    <div class="instruction">Please enter full URL of the YouTube video</div>
                     <div class="help-block with-errors"></div>
                 </fieldset>
 
