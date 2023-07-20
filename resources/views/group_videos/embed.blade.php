@@ -7,17 +7,17 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.css">
     @endif
     <style>
-    .links {
-        padding: 0 8px
-    }
+        .links {
+            padding: 0 8px
+        }
 
-    #left-side {
-        padding: 0px;
-    }
+        #left-side {
+            padding: 0px;
+        }
 
-    .group-video {
-        padding: 0 8px;
-    }
+        .group-video {
+            padding: 0 8px;
+        }
     </style>
 @endsection
 

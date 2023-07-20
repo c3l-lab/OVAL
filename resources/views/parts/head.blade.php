@@ -14,8 +14,9 @@
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="{{ URL::secureAsset('css/navmenu-reveal.css') }}">
 		@yield('additional-css')
+    <link rel="stylesheet" type="text/css" href="{{ URL::secureAsset('css/theme.css') }}">
 		<link rel="stylesheet" type="text/css" href="{{ URL::secureAsset('css/style.css') }}">
-		
+
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 		<!--[if lt IE 9]>

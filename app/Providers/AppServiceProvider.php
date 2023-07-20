@@ -51,7 +51,9 @@ class AppServiceProvider extends ServiceProvider
 
         view()->composer('*', function($view){
             $user = \Auth::user();
-            $view->with('user', $user);
+            $theme = $_COOKIE['theme'] ?? 'light';
+            $view->with('user', $user)
+                ->with('theme', $theme);
         });
     }
 }

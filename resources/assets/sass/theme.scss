@@ -1,0 +1,51 @@
+:root {
+  --primary-background-color: #fff;
+  --secondary-background-color: #f7f7f9;
+  --hover-background-color: #f7f7f9;
+
+  --primary-font-color: #333;
+  --secondary-font-color: #333;
+
+  --btn-border-color: #ccc;
+  --input-background-color: #fff;
+  --input-border-color: #ccc;
+
+  --table-header-background-color: #fff;
+  --table-odd-row-background-color: #f9f9f9;
+  --table-even-row-background-color: #fff;
+  --table-border-color: #ddd;
+
+  --menu-border-color: #333;
+}
+
+.dark {
+  --primary-background-color: #000;
+  --secondary-background-color: #474244;
+  --hover-background-color: #393939;
+
+  --primary-font-color: #fff;
+  --secondary-font-color: #EBEBEB;
+  --tertiary-font-color: #333;
+
+  --btn-border-color: #fff;
+  --input-background-color: #737373;
+  --input-border-color: #737373;
+
+  --table-header-background-color: #231E20;
+  --table-odd-row-background-color: #9B9B9B;
+  --table-even-row-background-color: #585858;
+  --table-border-color: #231E20;
+
+  --menu-border-color: #fff;
+}
+
+
+.theme-switch {
+  font-size: 16px;
+  display: flex;
+  align-items: stretch;
+
+  .glyphicon {
+    margin-right: 4px;
+  }
+}

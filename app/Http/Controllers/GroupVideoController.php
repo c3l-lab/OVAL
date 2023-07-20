@@ -96,7 +96,14 @@ class GroupVideoController extends Controller
         // save current course id
         session(['current-course' => $course->id]);
 
-        return view('group_videos.embed', compact('user', 'course', 'group', 'video', 'group_video', 'has_quiz'));
+        return view('group_videos.embed', [
+            'user' => $user,
+            'course' => $course,
+            'group' => $group,
+            'video' => $video,
+            'group_video' => $group_video,
+            'has_quiz' => $has_quiz,
+        ]);
 
     }
 

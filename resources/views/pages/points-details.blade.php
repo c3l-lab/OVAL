@@ -7,7 +7,7 @@
 <div class="container-fluid">
 	<div class="page-title"><i class="fa fa-list-alt" aria-hidden="true"></i>
 ANALYTICS ON POINTS</div>
-	
+
 	<div class="admin-page-section-header">
 		<h2>{{$group_video->video()->title}}</h2>
 	</div><!-- admin-page-section-header -->
@@ -25,15 +25,15 @@ ANALYTICS ON POINTS</div>
 				</ol>
 			</div><!-- col-xs-10 -->
 		</div><!-- row -->
-		
+
 		<table class="table table-striped">
 			<thead>
-				<tr style="border-bottom:1px solid black">
+				<tr style="border-bottom:1px solid var(--table-border-color)">
 					<th>Point Description</th>
 					<th>Number of users included this point in summary</th>
 				</tr>
 			</thead>
-			<tbody>	
+			<tbody>
 				@foreach ($group_video->points as $p)
 				<tr>
 					<td>{{$p->description}}</td>

@@ -5,7 +5,7 @@
     @include('parts.head')
 </head>
 
-<body>
+<body class="light">
 
     <div class="canvas">
 

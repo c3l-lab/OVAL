@@ -31,7 +31,7 @@
 
                 <fieldset class="form-group">
                     <legend>Group</legend>
-                    <span class="white-text">Assign this video to the default group of</span>
+                    <span>Assign this video to the default group of</span>
                     <select id="course-to-assign" name="course-to-assign">
                         @foreach ($user->coursesTeaching() as $c)
                             <option value="{{ $c->id }}">{{ $c->name }}</option>
@@ -49,7 +49,7 @@
                 <fieldset class="form-group" id="points">
                     <legend>Key Points</legend>
                     <div>
-                        <span class="white-text">Do you want to add points to your video?</span>
+                        <span>Do you want to add points to your video?</span>
                         <div class="radio-inline">
                             <label><input type="radio" name="points-radio" id="yes" value="true">Yes</label>
                         </div><!-- .radio-inline -->
