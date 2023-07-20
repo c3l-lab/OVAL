@@ -8,7 +8,6 @@
     "production": "mix --production"
   },
   "devDependencies": {
-    "jquery": "^3.6.4",
     "laravel-mix": "^6.0.6",
     "resolve-url-loader": "^4.0.0",
     "sass": "^1.34.1",
