@@ -17,8 +17,6 @@ phases:
       - cp ".env.example" .env
       - composer install
       - npm install
-      # - npm install --global cross-env
-      # - chmod +x .platform/hooks/prebuild/*.sh
       - chmod +x .platform/hooks/postdeploy/*.sh
   build:
     commands:
