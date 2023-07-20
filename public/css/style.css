@@ -597,7 +597,7 @@ h4 {
   cursor: pointer;
 }
 .comment-tag {
-  background: #3b3b3b;
+  background: var(--tag-background-color);
 }
 .edit-comment-button {
   font-size: 21px;
