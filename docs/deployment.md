@@ -8,6 +8,7 @@ https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-cfg-software
 
 The following environment variables are required:
 
+- APP_URL
 - APP_KEY
 - DB_HOST
 - DB_DATABASE
@@ -15,3 +16,9 @@ The following environment variables are required:
 - DB_USERNAME
 - DB_PASSWORD
 - YOUTUBE_API_KEY
+
+Optional environment variables:
+
+- APP_ENV
+- APP_DEBUG
+- APP_LOG_LEVEL
