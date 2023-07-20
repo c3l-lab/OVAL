@@ -13,6 +13,7 @@ phases:
       - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   pre_build:
     commands:
+      - echo "Current env: ${ENVIRONMENT_TYPE}"
       - cp ".env.example" .env
       - composer install
       - npm install
