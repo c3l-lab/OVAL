@@ -13,7 +13,7 @@ phases:
       - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   pre_build:
     commands:
-      - cp ".env.${ENVIRONMENT_TYPE}" .env
+      - cp ".env.example" .env
       - composer install
       - npm install
       - chmod +x .platform/hooks/postdeploy/*.sh
