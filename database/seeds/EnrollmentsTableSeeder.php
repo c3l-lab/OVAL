@@ -11,29 +11,29 @@ class EnrollmentsTableSeeder extends Seeder
      */
     public function run()
     {
-    	$c1 = oval\Course::find(10000000);
-    	$c2 = oval\Course::find(10000001);
-    	
-    	$minniemouse = oval\User::where([
+    	$c1 = oval\Models\Course::find(10000000);
+    	$c2 = oval\Models\Course::find(10000001);
+
+    	$minniemouse = oval\Models\User::where([
     		['first_name', 'Minnie'], ['last_name', 'Mouse']
     	])->first();
-    	$mickeymouse = oval\User::where([
+    	$mickeymouse = oval\Models\User::where([
     		['first_name', 'Mickey'], ['last_name', 'Mouse']
     	])->first();
-		$donald = oval\User::where('first_name', 'Donald')->first();
-		$daisy = oval\User::where('first_name', 'Daisy')->first();
-        $janesmith = oval\User::where([
+		$donald = oval\Models\User::where('first_name', 'Donald')->first();
+		$daisy = oval\Models\User::where('first_name', 'Daisy')->first();
+        $janesmith = oval\Models\User::where([
         	['first_name','Jane'], ['last_name', 'Smith']
         ])->first();
-        $johndoe = oval\User::where([
+        $johndoe = oval\Models\User::where([
         	['first_name', 'John'], ['last_name', 'Doe']
         ])->first();
-		$edward = oval\User::where('first_name', 'Edward')->first();
-		$billy = oval\User::where('first_name', 'Billy')->first();
-		$kerry = oval\User::where('first_name', 'Kerry')->first();
-		$alex = oval\User::where('first_name', 'Alex')->first();
-		$steve = oval\User::where('first_name', 'Steve')->first();
-      
+		$edward = oval\Models\User::where('first_name', 'Edward')->first();
+		$billy = oval\Models\User::where('first_name', 'Billy')->first();
+		$kerry = oval\Models\User::where('first_name', 'Kerry')->first();
+		$alex = oval\Models\User::where('first_name', 'Alex')->first();
+		$steve = oval\Models\User::where('first_name', 'Steve')->first();
+
         DB::table('enrollments')->insert([
         	['course_id'=>$c1->id, 'user_id'=>$janesmith->id, 'is_instructor'=>false],
         	['course_id'=>$c2->id, 'user_id'=>$janesmith->id, 'is_instructor'=>false],

@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +19,6 @@ class quiz_creation extends Model
     protected $table = 'quiz_creation';
 
     protected $fillable = ['creator_id', 'identifier', 'media_type', 'quiz_data','visable'];
-    
+
 
 }

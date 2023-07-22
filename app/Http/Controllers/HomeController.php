@@ -39,7 +39,7 @@ class HomeController extends Controller
 	 */
 	public function course(Request $req, $course_id) {
 		$user = Auth::user();
-		$course = oval\Course::find(intval($course_id));
+		$course = oval\Models\Course::find(intval($course_id));
 		if (!empty($course)&&$user->checkIfEnrolledIn($course)==true) {
 			$group = $user->groupMemberOf->where('course_id', '=', $course->id)->first();
 			if(!empty($group)) {
@@ -66,7 +66,7 @@ class HomeController extends Controller
 	 */
 	public function group(Request $req, $group_id) {
 		$user = Auth::user();
-		$group = oval\Group::find(intval($group_id));
+		$group = oval\Models\Group::find(intval($group_id));
 		if (!empty($group) && $user->checkIfInGroup($group)==true) {
 			$group_videos = $group->availableGroupVideosForUser($user);
 			if($group_videos->count()>0) {
@@ -97,7 +97,7 @@ class HomeController extends Controller
 		$group_video_id = intval($group_video_id);
 
 		if (!empty($group_video_id)) {
-			$group_video = oval\GroupVideo::find($group_video_id);
+			$group_video = oval\Models\GroupVideo::find($group_video_id);
 			if (!empty($group_video)) {
 				$group = $group_video->group();
 				$course = $group->course;
@@ -144,7 +144,7 @@ class HomeController extends Controller
 
 		// Log every user views
 		if (!empty($user) && !empty($video)) {
-			$tracking = new oval\Tracking;
+			$tracking = new oval\Models\Tracking;
 			$tracking->group_video_id = $group_video->id;
 			$tracking->user_id = $user->id;
 			$tracking->event = "View";
@@ -195,7 +195,7 @@ class HomeController extends Controller
 			}
 		}
 
-		$quizzes = oval\quiz_creation::where('identifier', '=', $video->identifier)->get();
+		$quizzes = oval\Models\quiz_creation::where('identifier', '=', $video->identifier)->get();
 		$has_quiz = $quizzes->count() ? true : false;
 
 		JavaScript::put([
@@ -248,15 +248,15 @@ class HomeController extends Controller
     	if ($user->isAnInstructor()) {
 				$courses_teaching = $user->coursesTeaching();
 				$course_id = $course_id ? $course_id : $req->session()->get('current-course', 0);
-				$course = $course_id ? oval\Course::find($course_id) : $user->enrolledCourses->first();
+				$course = $course_id ? oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
 				if (!$user->isInstructorOf($course)) {
 					foreach ($courses_teaching as $c) {
 						$course = $c;
 						break;
 					}
 				}
-				$group = $group_id ? oval\Group::find($group_id) : $course->groups->first();
-				$videos_without_group = oval\Video::doesntHave('groups')->get();
+				$group = $group_id ? oval\Models\Group::find($group_id) : $course->groups->first();
+				$videos_without_group = oval\Models\Video::doesntHave('groups')->get();
 				$group_videos = $group->group_videos()->where('status', 'current');
 
 				JavaScript::put([
@@ -295,14 +295,14 @@ class HomeController extends Controller
     	if($user->isAnInstructor()) {
     		$courses = $user->coursesTeaching();
 			$course_id = $course_id ? $course_id : $req->session()->get('current-course', 0);
-    		$course = $course_id ? oval\Course::find($course_id) : $user->enrolledCourses->first();
+    		$course = $course_id ? oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
 			if (!$user->isInstructorOf($course)) {
 				foreach ($courses as $c) {
 					$course = $c;
 					break;
 				}
 			}
-			$group = $group_id ? oval\Group::find($group_id) : $course->groups->first();
+			$group = $group_id ? oval\Models\Group::find($group_id) : $course->groups->first();
 			JavaScript::put([
 				'course_id'=>$course->id,
 				'course_name'=>$course->name,
@@ -337,14 +337,14 @@ class HomeController extends Controller
 		$courses = $user->coursesTeaching();
 		if($user->isAnInstructor()) {
 			$course_id = $course_id ? $course_id : $req->session()->get('current-course', 0);
-    		$course = $course_id ? oval\Course::find($course_id) : $user->enrolledCourses->first();
+    		$course = $course_id ? oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
 			if (!$user->isInstructorOf($course)) {
 				foreach ($courses as $c) {
 					$course = $c;
 					break;
 				}
 			}
-			$group = $group_id ? oval\Group::find($group_id) : $course->groups->first();
+			$group = $group_id ? oval\Models\Group::find($group_id) : $course->groups->first();
 			$videos = $group->videos;
 			JavaScript::put([
 				'user_id'=>$user->id,
@@ -373,7 +373,7 @@ class HomeController extends Controller
 	public function points_details (Request $req, $group_video_id) {
 		$user= Auth::user();
 		if($user->isAnInstructor()) {
-			$group_video = oval\GroupVideo::find($group_video_id);
+			$group_video = oval\Models\GroupVideo::find($group_video_id);
 			if(!empty($group_video)) {
 				return view('pages.points-details', compact('user', 'group_video'));
 			}
@@ -400,7 +400,7 @@ class HomeController extends Controller
 	public function tracking_details (Request $req, $group_video_id) {
 		$user= Auth::user();
 		if($user->isAnInstructor()) {
-			$group_video = oval\GroupVideo::find($group_video_id);
+			$group_video = oval\Models\GroupVideo::find($group_video_id);
 			if(!empty($group_video)) {
 				return view('pages.tracking-details', compact('user', 'group_video'));
 			}
@@ -425,7 +425,7 @@ class HomeController extends Controller
 	public function text_analysis_details (Request $req) {
 		$user= Auth::user();
 		if($user->isAnInstructor()) {
-			$video = oval\Video::find(intval($req->video_id));
+			$video = oval\Models\Video::find(intval($req->video_id));
 			$analysis = json_decode($video->transcript->analysis, true);
 			$group = $video->groups->first();
 			$group_id = $group->id;
@@ -489,20 +489,20 @@ class HomeController extends Controller
 	public function manage_analysis_requests (Request $req) {
 		$user = Auth::user();
 		if ($user->role == 'A') {
-			$current_requests = oval\AnalysisRequest::where('status', '=', 'pending')
+			$current_requests = oval\Models\AnalysisRequest::where('status', '=', 'pending')
 									->orderBy('created_at')
 									->get()
 									->unique('video_id');
-			$rejected_requests = oval\AnalysisRequest::where('status', '=', 'rejected')
+			$rejected_requests = oval\Models\AnalysisRequest::where('status', '=', 'rejected')
 									->orderBy('created_at')
 									->get()
 									->unique('video_id');
-			$processed_requests = oval\AnalysisRequest::where('status', '=', 'processed')
+			$processed_requests = oval\Models\AnalysisRequest::where('status', '=', 'processed')
 									->orWhere('status', '=', 'processing')
 									->orderBy('created_at')
 									->get()
 									->unique('video_id');
-			$google_creds = oval\GoogleCredential::all();
+			$google_creds = oval\Models\GoogleCredential::all();
 			return view('pages.admin-page', compact('user', 'current_requests', 'rejected_requests', 'processed_requests', 'google_creds'));
 		}
 		else {
@@ -529,7 +529,7 @@ class HomeController extends Controller
 	public function manage_lti_connections (Request $req) {
 		$user = Auth::user();
 		if ($user->role == 'A') {
-			$lti_connections = oval\LtiConsumer::all();
+			$lti_connections = oval\Models\LtiConsumer::all();
 			return view('pages.manage-lti', compact('user', 'lti_connections'));
 		}
 		else {

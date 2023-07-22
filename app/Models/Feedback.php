@@ -1,12 +1,12 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Model class for table 'feedbacks'.
- * 
+ *
  * Feedback contains value selected for "Point" (question checking if certain things were written about in comment).
  * This only exists for comment on group_video that has Point attached to it.
  */
@@ -20,7 +20,7 @@ class Feedback extends Model
     *   @return collection of Point objects
     **/
     public function forPoint() {
-        return $this->belongsTo('oval\Point');
+        return $this->belongsTo('oval\Models\Point');
     }
 
     /**
@@ -28,7 +28,7 @@ class Feedback extends Model
     *   @return Comment object
     **/
     public function forComment() {
-        return $thtis->belongsTo('oval\Comment');
+        return $this->belongsTo('oval\Models\Comment');
     }
-    
+
 }

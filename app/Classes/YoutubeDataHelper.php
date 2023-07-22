@@ -73,10 +73,10 @@ class YoutubeDataHelper {
         $service = new Google_Service_YouTube($this->client);
         $response = $service->channels->listChannels('id,snippet', array('mine'=>true));
 
-        $google_cred = oval\GoogleCredential::where('client_id', '=', $this->client->getClientId())
+        $google_cred = oval\Models\GoogleCredential::where('client_id', '=', $this->client->getClientId())
                                             ->first();
         if (empty($google_cred)) {
-            $google_cred = new oval\GoogleCredential;
+            $google_cred = new oval\Models\GoogleCredential;
             $google_cred->client_id = $this->client->getClientId();
         }
         $google_cred->client_secret = $this->client->getClientSecret();
@@ -89,9 +89,9 @@ class YoutubeDataHelper {
 
     /**
      * This method checks if access token is expired for credential passed in and refreshes it if expired
-     * @param oval\GoogleCredential $cred
+     * @param oval\Models\GoogleCredential $cred
      */
-    public function handle_access_token_refresh(oval\GoogleCredential $cred) {
+    public function handle_access_token_refresh(oval\Models\GoogleCredential $cred) {
         $existing_token = $cred['access_token'];
         $this->client->setAccessToken($existing_token);
         if ($this->client->isAccessTokenExpired()) {

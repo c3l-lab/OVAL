@@ -2,7 +2,7 @@
 namespace oval\Services\Lti1p3;
 
 use Packback\Lti1p3;
-use oval\LtiRegistration;
+use oval\Models\LtiRegistration;
 
 class LtiDatabase implements Lti1p3\Interfaces\IDatabase
 {

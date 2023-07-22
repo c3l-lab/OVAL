@@ -3,10 +3,10 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use oval\GroupVideo;
-use oval\Group;
-use oval\Video;
-use oval\User;
+use oval\Models\GroupVideo;
+use oval\Models\Group;
+use oval\Models\Video;
+use oval\Models\User;
 
 class GroupVideoFactory extends Factory
 {

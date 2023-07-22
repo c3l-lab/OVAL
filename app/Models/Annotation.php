@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +10,7 @@ class Annotation extends Model
 	use HasFactory;
 	protected $tablename = 'annotations';
 	protected $fillable = ['group_video_id','user_id','start_time'];
-	
+
 	/**
 	*	One-to-many(inverse) relationship
 	*
@@ -18,17 +18,17 @@ class Annotation extends Model
 	*	@return User object
 	**/
 	public function writtenBy() {
-		return $this->belongsTo('oval\User');
+		return $this->belongsTo('oval\Models\User');
 	}
-	
+
 	/**
 	*	One-to-many(inverse) relationship
 	*
 	*	Returns the GroupVideo this Annotation belongs to
 	*	@return GroupVideo ojbect
-	**/	
+	**/
 	public function groupVideo() {
-		return $this->belongsToMany('oval\GroupVideo');
+		return $this->belongsToMany('oval\Models\GroupVideo');
 	}
 
 	/**
@@ -38,7 +38,7 @@ class Annotation extends Model
 	*	@return collection of Tag objects
 	**/
 	public function tags() {
-		return $this->belongsToMany('oval\Tag', 'annotation_tags')->withTimeStamps();
+		return $this->belongsToMany('oval\Models\Tag', 'annotation_tags')->withTimeStamps();
 	}
 	protected static function newFactory()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +44,7 @@ class GroupVideo extends Model
 	*	@return collection of Annotation objects
 	**/
 	public function annotations() {
-		return $this->hasMany('oval\Annotation');
+		return $this->hasMany('oval\Models\Annotation');
 	}
 
 	/**
@@ -53,7 +53,7 @@ class GroupVideo extends Model
 	*	@return collection of Comment objects
 	**/
 	public function comments() {
-		return $this->hasMany('oval\Comment');
+		return $this->hasMany('oval\Models\Comment');
 	}
 
 	/**
@@ -61,7 +61,7 @@ class GroupVideo extends Model
 	*	@return CommentInstruction object
 	**/
 	public function comment_instruction() {
-		return $this->hasOne('oval\CommentInstruction');
+		return $this->hasOne('oval\Models\CommentInstruction');
 	}
 
 	public function lti_registration() {
@@ -93,7 +93,7 @@ class GroupVideo extends Model
 	*	@return collection of Point objects
 	**/
 	public function points() {
-		return $this->hasMany('oval\Point');
+		return $this->hasMany('oval\Models\Point');
 	}
 
 	/**
@@ -181,7 +181,7 @@ class GroupVideo extends Model
     *	@return PointInstruction object
     **/
     public function point_instruction() {
-    	return $this->hasOne('oval\PointInstruction');
+    	return $this->hasOne('oval\Models\PointInstruction');
 	}
 
 	public function relatedPointInstruction() {
@@ -199,7 +199,7 @@ class GroupVideo extends Model
     *	@return collection of Tracking objects
     **/
     public function trackings() {
-    	return $this->hasMany('oval\Tracking');
+    	return $this->hasMany('oval\Models\Tracking');
     }
 
 

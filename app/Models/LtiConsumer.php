@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +16,7 @@ class LtiConsumer extends Model
     const UPDATED_AT = 'updated';
 
     public function credential() {
-        return $this->hasOne('oval\LtiCredential', 'consumer_id', 'consumer_pk');
+        return $this->hasOne('oval\Models\LtiCredential', 'consumer_id', 'consumer_pk');
     }
 
     public function passport()

@@ -17,10 +17,10 @@ class FileController extends Controller
 
     /**
      * Method called from /upload_transcript
-     * 
-     * This is called when user clicks "upload" button on upload transcript modal 
+     *
+     * This is called when user clicks "upload" button on upload transcript modal
      * in video-management page.
-     * 
+     *
      * @param Request $req Request contains video_id, file
      * @return Illuminate\Http\RedirectResponse redirects to video-management page
      */
@@ -56,16 +56,16 @@ class FileController extends Controller
         }
         $text = rtrim($text, ",").']';
 
-        $video = oval\Video::find($video_id);
+        $video = oval\Models\Video::find($video_id);
 
-        $transcript = oval\Transcript::find($video_id);
+        $transcript = oval\Models\Transcript::find($video_id);
         if (empty($transcript)) {
-            $transcript = new oval\Transcript;
+            $transcript = new oval\Models\Transcript;
         }
         $transcript->video_id = $video_id;
         $transcript->transcript = $text;
         $transcript->save();
-        
+
         Storage::delete($path);
 
 		return redirect('video-management');

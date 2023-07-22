@@ -3,9 +3,9 @@
 namespace oval\Http\Controllers;
 
 use Illuminate\Http\Request;
-use oval\GroupVideo;
-use oval\quiz_creation;
-use oval\Tracking;
+use oval\Models\GroupVideo;
+use oval\Models\quiz_creation;
+use oval\Models\Tracking;
 
 class GroupVideoController extends Controller
 {

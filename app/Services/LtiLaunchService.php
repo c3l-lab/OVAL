@@ -2,9 +2,9 @@
 
 namespace oval\Services;
 
-use oval\Course;
-use oval\Group;
-use oval\User;
+use oval\Models\Course;
+use oval\Models\Group;
+use oval\Models\User;
 
 const LTI_PASSWORD = '[lti_password]';
 

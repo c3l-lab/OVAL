@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -91,7 +91,7 @@ class User extends Authenticatable
     *	@return collection of Course objects
     **/
     public function enrolledCourses() {
-    	return $this->belongsToMany('oval\Course', "enrollments")->withPivot('is_instructor');
+    	return $this->belongsToMany('oval\Models\Course', "enrollments")->withPivot('is_instructor');
     }
 
     /**
@@ -141,7 +141,7 @@ class User extends Authenticatable
     *	@return collection of Group objects
     **/
     public function groupMemberOf() {
-    	return $this->belongsToMany('oval\Group', "group_members");
+    	return $this->belongsToMany('oval\Models\Group', "group_members");
     }
 
     /**
@@ -192,7 +192,7 @@ class User extends Authenticatable
      *	@return collection of Annotation objects
      **/
     public function annotations() {
-    	return $this->hasMany('oval\Annotation');
+    	return $this->hasMany('oval\Models\Annotation');
     }
 
     /**
@@ -201,7 +201,7 @@ class User extends Authenticatable
     *	@return collection of Comment objects
     **/
     public function comments() {
-    	return $this->hasMany('oval\Comment');
+    	return $this->hasMany('oval\Models\Comment');
     }
 
     /**
@@ -209,7 +209,7 @@ class User extends Authenticatable
      *	@return collection of Video objects
      **/
     public function videosAdded() {
-    	return $this->hasMany('oval\Video', 'added_by');
+    	return $this->hasMany('oval\Models\Video', 'added_by');
     }
 
     /**
@@ -218,7 +218,7 @@ class User extends Authenticatable
     *	@return collection of Video objects
     **/
     public function videosViewed() {
-    	return $this->belongsToMany('oval\Video', 'videos_viewed_by');
+    	return $this->belongsToMany('oval\Models\Video', 'videos_viewed_by');
     }
 
     /**
@@ -227,7 +227,7 @@ class User extends Authenticatable
     *	@return collection of Annotation objects
     **/
     public function annotationViewed() {
-    	return $this->belongsToMany('oval\Annotation', 'annotation_viewed_by');
+    	return $this->belongsToMany('oval\Models\Annotation', 'annotation_viewed_by');
     }
 
     /**
@@ -236,7 +236,7 @@ class User extends Authenticatable
     *	@return collection of Feedback objects
     **/
     public function feedbacks() {
-    	return $this->hasMany('oval\Feedback');
+    	return $this->hasMany('oval\Models\Feedback');
     }
 
     /**
@@ -258,7 +258,7 @@ class User extends Authenticatable
     *	@return collection of Tracking objects
     **/
     public function trackings() {
-    	return $this->hasMany('oval\Tracking');
+    	return $this->hasMany('oval\Models\Tracking');
     }
 
     /**
@@ -266,7 +266,7 @@ class User extends Authenticatable
     *   @return collection of AnalysisRequest objects
     **/
     public function analysis_request() {
-        return $this->hasMany('oval\AnalysisRequest');
+        return $this->hasMany('oval\Models\AnalysisRequest');
     }
     protected static function newFactory()
     {

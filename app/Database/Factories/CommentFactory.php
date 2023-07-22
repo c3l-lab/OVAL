@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use oval\Comment;
-use oval\User;
-use oval\GroupVideo;
+use oval\Models\Comment;
+use oval\Models\User;
+use oval\Models\GroupVideo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CommentFactory extends Factory

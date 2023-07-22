@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use oval\Annotation;
+use oval\Models\Annotation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AnnotationFactory extends Factory

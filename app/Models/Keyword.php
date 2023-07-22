@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,7 +20,7 @@ class Keyword extends Model
     *   @return Video object
     **/
     public function video() {
-        return $this->belongsTo('oval\Video', 'videoId');
+        return $this->belongsTo('oval\Models\Video', 'videoId');
     }
 
     /**

@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use oval\Group;
-use oval\Course;
+use oval\Models\Group;
+use oval\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class GroupFactory extends Factory

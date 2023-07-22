@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,36 +13,36 @@ class Comment extends Model
     use HasFactory;
     /** @var array Table name */
     protected $table = 'comments';
-    
+
     /** @var array The attributes that are mass assignable.*/
     protected $fillable = [
     	'group_video_id', 'user_id', 'description', 'tags', 'is_private'
     ];
-    
+
     /**
     *	One-to-Many relationship (inverse).
     *	Returns the User that wrote this Comment.
     *	@return User
     **/
     public function user() {
-    	return $this->belongsTo('oval\User');
+    	return $this->belongsTo('oval\Models\User');
     }
-    
+
     /**
     *   One-to-Many relationship (inverse).
     *	Returns the groupvideo this comment belongs to.
     *	@return GroupVideo object
     **/
-    public function groupVideo() {    	
-		$this->belongsToMany('oval\GroupVideo');
-    }	
+    public function groupVideo() {
+		$this->belongsToMany('oval\Models\GroupVideo');
+    }
 
     /**
     *   One-to-One relationship.
     *   @return Feedback object
     **/
     public function feedback() {
-        return $this->hasOne('oval\Feedback');
+        return $this->hasOne('oval\Models\Feedback');
     }
 
     /**
@@ -50,7 +50,7 @@ class Comment extends Model
     *   @return ConfidenceLevel object
     **/
     public function confidenceLevel() {
-        return $this->hasOne('oval\ConfidenceLevel');
+        return $this->hasOne('oval\Models\ConfidenceLevel');
     }
 
     /**
@@ -58,7 +58,7 @@ class Comment extends Model
     *   @return collection of Tag objects
     **/
     public function tags() {
-        return $this->belongsToMany('oval\Tag', 'comment_tags')->withTimeStamps();
+        return $this->belongsToMany('oval\Models\Tag', 'comment_tags')->withTimeStamps();
     }
     protected static function newFactory()
     {

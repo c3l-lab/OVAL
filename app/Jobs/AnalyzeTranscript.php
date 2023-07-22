@@ -7,11 +7,11 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use oval\AnalysisRequest;
-use oval\Keyword;
-use oval\Transcript;
-use oval\User;
-use oval\Video;
+use oval\Models\AnalysisRequest;
+use oval\Models\Keyword;
+use oval\Models\Transcript;
+use oval\Models\User;
+use oval\Models\Video;
 use Exception;
 
 /**

@@ -79,7 +79,7 @@ class GoogleAPIController extends Controller
      */
     private function get_caption_track_id ($video_identifier) {
         $langs = config('youtube.transcript_lang');
-        $credentials = oval\GoogleCredential::all();
+        $credentials = oval\Models\GoogleCredential::all();
         $track_id = null;
         if (!empty($credentials) && count($credentials)>0) {
             foreach ($credentials as $cred) {

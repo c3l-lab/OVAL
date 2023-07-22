@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,7 +17,7 @@ class Tag extends Model
     *   @return collection of Comment objects
     **/
     public function comments() {
-        return $this->belongsToMany('oval\Comment')->withTimeStamps();
+        return $this->belongsToMany('oval\Models\Comment')->withTimeStamps();
     }
 
     /**
@@ -25,6 +25,6 @@ class Tag extends Model
     *   @return collection of Annotation objects
     **/
     public function annotations() {
-        return $this->belongsToMany('oval\Annotation')->withTimeStamps();
+        return $this->belongsToMany('oval\Models\Annotation')->withTimeStamps();
     }
 }

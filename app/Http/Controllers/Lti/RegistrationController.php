@@ -4,7 +4,7 @@ namespace oval\Http\Controllers\Lti;
 
 use Illuminate\Http\Request;
 use oval\Http\Controllers\Controller;
-use oval\LtiRegistration;
+use oval\Models\LtiRegistration;
 
 class RegistrationController extends Controller
 {

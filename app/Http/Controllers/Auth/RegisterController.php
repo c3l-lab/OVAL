@@ -2,7 +2,7 @@
 
 namespace oval\Http\Controllers\Auth;
 
-use oval\User;
+use oval\Models\User;
 use Validator;
 use oval\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;

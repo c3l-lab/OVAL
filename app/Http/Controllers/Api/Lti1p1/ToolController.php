@@ -7,7 +7,7 @@ use oval\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 
 
-use oval\GroupVideo;
+use oval\Models\GroupVideo;
 
 use oval\Services\Lti1p1\LtiMessage;
 use oval\Services\Lti1p1\LtiProvider;

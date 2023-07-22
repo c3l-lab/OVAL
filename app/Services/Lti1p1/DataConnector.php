@@ -2,7 +2,7 @@
 namespace oval\Services\Lti1p1;
 
 use IMSGlobal\LTI\ToolProvider;
-use oval\LtiConsumer;
+use oval\Models\LtiConsumer;
 
 class DataConnector extends ToolProvider\DataConnector\DataConnector
 {

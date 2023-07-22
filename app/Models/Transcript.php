@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +17,6 @@ class Transcript extends Model
      * @return Video
      */
     public function video() {
-        return $this->belongsTo("oval\Video");
+        return $this->belongsTo("oval\Models\Video");
     }
 }

@@ -118,7 +118,7 @@ class AjaxController extends Controller
 	 * @return collection collection of Annotation objects visible to the user
 	 */
 	private function get_all_annotations($user_id, $group_video_id) {
-		$all_annotations = oval\Annotation::where([
+		$all_annotations = oval\Models\Annotation::where([
 								['group_video_id', "=", $group_video_id],
 								['status', '=', 'current']
 							])
@@ -155,10 +155,10 @@ class AjaxController extends Controller
 	 */
 	public function get_annotations(Request $req) {
 		$user = Auth::user();
-		$course = oval\Course::find(intval($req->course_id));
+		$course = oval\Models\Course::find(intval($req->course_id));
 		$video_id = intval($req->video_id);
 		$group_id = intval($req->group_id);
-		$group_video_id = oval\GroupVideo::where([
+		$group_video_id = oval\Models\GroupVideo::where([
 								['group_id', '=', $group_id],
 								['video_id', '=', $video_id]
 							])
@@ -168,7 +168,7 @@ class AjaxController extends Controller
 		$annotations = [];
 
 		foreach ($all_annotations as $a) {
-			$author = oval\User::find($a->user_id);
+			$author = oval\Models\User::find($a->user_id);
 			if (empty($author)) {
 				$instructor = false;
 				$mine = false;
@@ -208,13 +208,13 @@ class AjaxController extends Controller
 	 * @return array Array of array with keys - id, user_id, name, description, tags, is_mine, privacy, updated_at, created_at
 	 */
 	private function get_all_comments ($user_id, $group_video_id) {
-		$mine = oval\Comment:: where ([
+		$mine = oval\Models\Comment:: where ([
 						['user_id', '=', $user_id],
 						['group_video_id', '=', $group_video_id],
 						['status', '=', 'current']
 					])
 					->get();
-		$others = oval\Comment:: where ([
+		$others = oval\Models\Comment:: where ([
 						['user_id', '<>', $user_id],
 						['group_video_id', '=', $group_video_id],
 						['privacy', '<>', 'private'],
@@ -234,9 +234,9 @@ class AjaxController extends Controller
 		$all_comments = $mine->merge($others)->sortByDesc('updated_at')->values()->all();
 
 		$comments = [];
-		$course = oval\GroupVideo::find($group_video_id)->course();
+		$course = oval\Models\GroupVideo::find($group_video_id)->course();
 		foreach ($all_comments as $c) {
-			$user = oval\User::find($c->user_id);
+			$user = oval\Models\User::find($c->user_id);
 			if (empty($user)) {
 				$name = "Unknown User";
 				$mine = false;
@@ -290,7 +290,7 @@ class AjaxController extends Controller
 	 * @return array array with keys [id, user_id, userr_fullname, description, tags, is_mine, privacy, updated_at]
 	 */
 	public function add_comment(Request $req) {
-		$comment = new oval\Comment;
+		$comment = new oval\Models\Comment;
 		$comment->group_video_id = intval($req->group_video_id);
 		$comment->user_id = Auth::user()->id;
 		$comment->description = htmlspecialchars($req->description, ENT_QUOTES);
@@ -301,7 +301,7 @@ class AjaxController extends Controller
 		$tags = $req->tags;
 		foreach ($tags as $t) {
 			$t = htmlspecialchars($t, ENT_QUOTES);
-			$tag = oval\Tag::firstOrCreate(['tag'=>$t]);
+			$tag = oval\Models\Tag::firstOrCreate(['tag'=>$t]);
 			$comment->tags()->attach($tag);
 		}
 		$comment->save();
@@ -327,7 +327,7 @@ class AjaxController extends Controller
 	 * @return array Array with key [result] containing boolean value - true if successfully inserted, false if not.
 	 */
 	public function add_annotation(Request $req) {
-		$annotation = oval\Annotation::firstOrNew([
+		$annotation = oval\Models\Annotation::firstOrNew([
 			'group_video_id' => intval($req->group_video_id),
 			'user_id' => Auth::user()->id,
 			'start_time' => $req->start_time,
@@ -343,7 +343,7 @@ class AjaxController extends Controller
 		$tags = $req->tags;
 		foreach ($tags as $t) {
 			$t = htmlspecialchars($t, ENT_QUOTES);
-			$tag = oval\Tag::firstOrCreate(['tag'=>$t]);
+			$tag = oval\Models\Tag::firstOrCreate(['tag'=>$t]);
 			$annotation->tags()->attach($tag);
 		}
 		$result = $annotation->save();
@@ -361,12 +361,12 @@ class AjaxController extends Controller
 	 * @return array Array with key [result] containing boolean value - true if successfully updated, false if not.
 	 */
 	public function edit_annotation(Request $req) {
-		$old = oval\Annotation::findOrFail(intVal($req->annotation_id));
+		$old = oval\Models\Annotation::findOrFail(intVal($req->annotation_id));
 		if(!empty($old)) {
 			$old->status = "archived";
 			$old->save();
 		}
-		$annotation = new oval\Annotation;
+		$annotation = new oval\Models\Annotation;
 		$annotation->group_video_id = $old->group_video_id;
 		$annotation->user_id = Auth::user()->id;
 		$annotation->start_time = $req->start_time;
@@ -378,7 +378,7 @@ class AjaxController extends Controller
 		$tags = $req->tags;
 		foreach ($tags as $t) {
 			$t = htmlspecialchars($t, ENT_QUOTES);
-			$tag = oval\Tag::firstOrCreate(['tag'=>$t]);
+			$tag = oval\Models\Tag::firstOrCreate(['tag'=>$t]);
 			$annotation->tags()->attach($tag);
 		}
 		$result = $annotation->save();
@@ -396,12 +396,12 @@ class AjaxController extends Controller
 	 * @return array Array with keys: id, user_id, user_fullname, description, tags, is_mine, privacy, updated_at
 	 */
 	public function edit_comment(Request $req) {
-		$old = oval\Comment::findOrFail(intVal($req->comment_id));
+		$old = oval\Models\Comment::findOrFail(intVal($req->comment_id));
 		if (!empty($old)) {
 			$old->status = "archived";
 			$old->save();
 		}
-		$comment = new oval\Comment;
+		$comment = new oval\Models\Comment;
 		$comment->group_video_id = $old->group_video_id;
 		$comment->user_id = Auth::user()->id;
 		$comment->description = htmlspecialchars($req->description, ENT_QUOTES);
@@ -413,7 +413,7 @@ class AjaxController extends Controller
 		$tags = $req->tags;
 		foreach ($tags as $t) {
 			$t = htmlspecialchars($t, ENT_QUOTES);
-			$tag = oval\Tag::firstOrCreate(['tag'=>$t]);
+			$tag = oval\Models\Tag::firstOrCreate(['tag'=>$t]);
 			$comment->tags()->attach($tag);
 		}
 		$comment->save();
@@ -439,7 +439,7 @@ class AjaxController extends Controller
 	 * @return void
 	 */
 	public function delete_annotation (Request $req) {
-		$annotation = oval\Annotation::findOrFail(intval($req->annotation_id));
+		$annotation = oval\Models\Annotation::findOrFail(intval($req->annotation_id));
 		$annotation->status = "deleted";
 		$annotation->save();
 	}
@@ -453,7 +453,7 @@ class AjaxController extends Controller
 	 * @return void
 	 */
 	public function delete_comment (Request $req) {
-		$comment = oval\Comment::findOrFail(intval($req->comment_id));
+		$comment = oval\Models\Comment::findOrFail(intval($req->comment_id));
 		$comment->status = "deleted";
 		$comment->save();
 	}
@@ -472,10 +472,10 @@ class AjaxController extends Controller
 	 * @return array Array with keys: course_id, video_id
 	 */
 	public function add_video (Request $req) {
-		$v = oval\Video::where(['identifier'=>$req->video_id])
+		$v = oval\Models\Video::where(['identifier'=>$req->video_id])
 				->first();
 		if (empty($v)) {
-			$v = new oval\Video;
+			$v = new oval\Models\Video;
 
 			//--get video data from API
 			$proxy_url = env('CURL_PROXY_URL', '');
@@ -502,7 +502,7 @@ class AjaxController extends Controller
 			}
 			$result = json_decode($response);
 
-			$v = oval\Video::firstOrNew([
+			$v = oval\Models\Video::firstOrNew([
 				'identifier' => $req->video_id,
 				'media_type' => $req->media_type
 			]);
@@ -524,10 +524,10 @@ class AjaxController extends Controller
 
 		$course_id = intval($req->course_id);
 		if (!empty($course_id)) {
-			$group = oval\Course::find($course_id)
+			$group = oval\Models\Course::find($course_id)
 						->defaultGroup();
 			$v->assignToGroup($group);
-			$group_video = oval\GroupVideo::firstOrCreate([
+			$group_video = oval\Models\GroupVideo::firstOrCreate([
 								"group_id"=>$group->id,
 								"video_id"=>$v->id
 							]);
@@ -537,7 +537,7 @@ class AjaxController extends Controller
 		//--automatically fire off job for text analysis if youtube...
 		//if ($req->request_analysis) {
 		if ($v->keywords->count()==0 && $v->media_type=="youtube") {
-			$ar = new oval\AnalysisRequest;
+			$ar = new oval\Models\AnalysisRequest;
 			$ar->video_id = $v->id;
 			$ar->user_id = $v->added_by;
 			$ar->save();
@@ -552,10 +552,10 @@ class AjaxController extends Controller
 	 * for AnalysisRequest object passed in as parameter.
 	 * TODO: move this somewhere ... This was copied from another controller.
 	 *
-	 * @param oval\AnalysisRequest $analysis_request
+	 * @param oval\Models\AnalysisRequest $analysis_request
 	 * @return void
 	 */
-	private function process_youtube_text_analysis(oval\AnalysisRequest $analysis_request) {
+	private function process_youtube_text_analysis(oval\Models\AnalysisRequest $analysis_request) {
 		//--exit if this video already as result--
 		$requests = $analysis_request->requestsForSameVideo();
 		foreach ($requests as $r) {
@@ -567,7 +567,7 @@ class AjaxController extends Controller
 		$video = $analysis_request->video;
 
 		// Change status to 'processing'
-		oval\AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processing']);
+		oval\Models\AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processing']);
 
 		$user_ids = $analysis_request->requestorsIds();
 		array_push($user_ids, Auth::user()->id);
@@ -588,7 +588,7 @@ class AjaxController extends Controller
 		}
 		else {
 			// Change status to 'processed'
-			oval\AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processed']);
+			oval\Models\AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processed']);
 			return "no transcript";
 		}
 
@@ -609,16 +609,16 @@ class AjaxController extends Controller
 	 * @param Video $video
 	 * @return string caption text
 	 */
-	private function download_youtube_caption(oval\Video $video) {
+	private function download_youtube_caption(oval\Models\Video $video) {
 		$text = "";
 		$transcript = $video->transcript;
         if (empty($transcript)) {
-            $transcript = new oval\Transcript;
+            $transcript = new oval\Models\Transcript;
             $transcript->video_id = $video->id;
         }
 
         $langs = config('youtube.transcript_lang');
-		$credentials = oval\GoogleCredential::all();
+		$credentials = oval\Models\GoogleCredential::all();
 		$track_id = null;
         $caption_array = null;
         if (!empty($credentials) && count($credentials)>0) {
@@ -687,7 +687,7 @@ class AjaxController extends Controller
 	 * @return array Array with key [result] containing boolean value - true if successfully deleted, false if not
 	 */
 	public function delete_video (Request $req) {
-		$result = oval\Video::destroy(intval($req->video_id));
+		$result = oval\Models\Video::destroy(intval($req->video_id));
 		return ['result'=>$result];
 	}
 
@@ -701,7 +701,7 @@ class AjaxController extends Controller
 	 */
 	public function get_groups(Request $req) {
 		$course_id = $req->course_id;
-		$groups = oval\Course::find($course_id)->groups;
+		$groups = oval\Models\Course::find($course_id)->groups;
 		return compact('groups');
 	}
 
@@ -719,8 +719,8 @@ class AjaxController extends Controller
 		$course_id = intval($req->course_id);
 		$video_id = intval($req->video_id);
 		$user_id = intval($req->user_id);
-		$all_groups = oval\Course::find($course_id)->groups;
-		$assigned_groups = oval\Video::find($video_id)
+		$all_groups = oval\Models\Course::find($course_id)->groups;
+		$assigned_groups = oval\Models\Video::find($video_id)
 							->groups;
 		$unassigned_groups = $all_groups->reject(function($val) use($assigned_groups) {
 									return $assigned_groups->contains($val);
@@ -746,40 +746,40 @@ class AjaxController extends Controller
 		$copy_points = $req->copy_points;
 		$copy_quiz = $req->copy_quiz;
 
-		$video = oval\Video::find($video_id);
-		$copy_origin = $copy_from_group_id == -1 ? null : oval\GroupVideo::where([['group_id', '=', $copy_from_group_id], ['video_id', '=', $video_id]])->first();
+		$video = oval\Models\Video::find($video_id);
+		$copy_origin = $copy_from_group_id == -1 ? null : oval\Models\GroupVideo::where([['group_id', '=', $copy_from_group_id], ['video_id', '=', $video_id]])->first();
 
 		if (count($group_ids) > 0) {
 			foreach($group_ids as $gid) {
-				$group = oval\Group::find($gid);
+				$group = oval\Models\Group::find($gid);
 				$video->assignToGroup($group);
 			}
 		}
 		if(!empty($copy_origin)) {
 			foreach($group_ids as $gid) {
-				$gv = oval\GroupVideo::where([
+				$gv = oval\Models\GroupVideo::where([
 						['group_id', '=', $gid],
 						['video_id', '=', $video_id]
 					])
 					->first();
 				if($copy_comment_instruction == "true") {
-					$comment_instruction = oval\CommentInstruction::where('group_video_id', '=', $gv->id)->first();
+					$comment_instruction = oval\Models\CommentInstruction::where('group_video_id', '=', $gv->id)->first();
 					if (empty($comment_instruction)){
-						$comment_instruction = new oval\CommentInstruction;
+						$comment_instruction = new oval\Models\CommentInstruction;
 						$comment_instruction->group_video_id = $gv->id;
 					}
-					$comment_instruction->description = oval\CommentInstruction::where('group_video_id', '=', $copy_origin->id)->first()->description;
+					$comment_instruction->description = oval\Models\CommentInstruction::where('group_video_id', '=', $copy_origin->id)->first()->description;
 					$comment_instruction->save();
 				}
 
 				if($copy_points == "true") {
-					$points = oval\Point::where('group_video_id', '=', $gv->id)->get();
+					$points = oval\Models\Point::where('group_video_id', '=', $gv->id)->get();
 					if($points->count() > 0) {
 						//delete them
 					}
-					$copy_points = oval\Point::where('group_video_id', '=', $copy_origin->id)->get();
+					$copy_points = oval\Models\Point::where('group_video_id', '=', $copy_origin->id)->get();
 					foreach ($copy_points as $cp) {
-						$p = new oval\Point;
+						$p = new oval\Models\Point;
 						$p->group_video_id = $gv->id;
 						$p->description = $cp->description;
 						$p->save();
@@ -896,13 +896,13 @@ class AjaxController extends Controller
 		$level = intval($req->confidence_level);
 		$answers = $req->answers;
 		foreach ($answers as $a) {
-			$feedback = new oval\Feedback;
+			$feedback = new oval\Models\Feedback;
 			$feedback->comment_id = $comment_id;
 			$feedback->point_id= $a['point_id'];
 			$feedback->answer = $a['answer'];
 			$feedback->save();
 		}
-		$confidence_level = new oval\ConfidenceLevel;
+		$confidence_level = new oval\Models\ConfidenceLevel;
 		$confidence_level->comment_id = $comment_id;
 		$confidence_level->level = $level;
 		$confidence_level->save();
@@ -918,7 +918,7 @@ class AjaxController extends Controller
 	 * @return array array with key [videos] whose value contains collection of Video objects
 	 */
 	public function get_videos_for_course (Request $req) {
-		$course = oval\Course::find(intval($req->course_id));
+		$course = oval\Models\Course::find(intval($req->course_id));
 		$videos = $course->videos();
 		return compact('videos');
 	}
@@ -932,7 +932,7 @@ class AjaxController extends Controller
 	 * @return array Array with key "groups" - containing collection of Group objects
 	 */
 	public function get_groups_for_video (Request $req) {
-		$video = oval\Video::find(intval($req->video_id));
+		$video = oval\Models\Video::find(intval($req->video_id));
 		$groups = $video->groups;
 		return compact('groups');
 	}
@@ -946,11 +946,11 @@ class AjaxController extends Controller
 	 * @return array Array with key is_course_wide. The value is true if it is course wide, false if not.
 	 */
 	public function check_if_course_wide_points (Request $req) {
-		$course = oval\Course::find(intval($req->course_id));
-		$video = oval\Video::find(intval($req->video_id));
+		$course = oval\Models\Course::find(intval($req->course_id));
+		$video = oval\Models\Video::find(intval($req->video_id));
 		$is_course_wide = false;
 		$default_group = $course->defaultGroup();
-		$group_video = oval\GroupVideo::where([
+		$group_video = oval\Models\GroupVideo::where([
 							['group_id', '=', $default_group->id],
 							['video_id', '=', $video->id]
 						])
@@ -981,7 +981,7 @@ class AjaxController extends Controller
 	public function add_trackings (Request $req) {
 		$records = $req->data;
 		foreach ($records as $record) {
-			$tracking = new oval\Tracking;
+			$tracking = new oval\Models\Tracking;
 			$tracking->group_video_id = intval($req->group_video_id);
 			$tracking->user_id = Auth::user()->id;
 			$tracking->event = $record['event'];
@@ -1004,7 +1004,7 @@ class AjaxController extends Controller
 		$video_id = intval($req->video_id);
 		$user_id = intval($req->user_id);
 		$msg = "";
-		$ar = oval\AnalysisRequest::where([
+		$ar = oval\Models\AnalysisRequest::where([
 					['video_id', '=', $video_id],
 					['user_id', '=', $user_id]
 				])
@@ -1013,7 +1013,7 @@ class AjaxController extends Controller
 			$msg = "Request for this video already exists. Please wait for OVAL administrator to approve it.";
 		}
 		else {
-			$ar = new oval\AnalysisRequest;
+			$ar = new oval\Models\AnalysisRequest;
 			$ar->video_id = $video_id;
 			$ar->user_id = $user_id;
 			$res = $ar->save();
@@ -1042,11 +1042,11 @@ class AjaxController extends Controller
 		$item_id = intval($req->item_id);
 		$nominated = [];
 		if ($item == "annotation") {
-			$annotation = oval\Annotation::find($item_id);
+			$annotation = oval\Models\Annotation::find($item_id);
 			$nominated = json_decode($annotation->visible_to);
 		}
 		else if ($item == "comment") {
-			$comment = oval\Comment::find($item_id);
+			$comment = oval\Models\Comment::find($item_id);
 			$nominated = json_decode($comment->visible_to);
 		}
 		return compact('nominated');
@@ -1063,10 +1063,10 @@ class AjaxController extends Controller
 	 */
 	public function edit_comment_instruction (Request $req) {
 		$group_video_id = intval($req->group_video_id);
-		$comment_instruction = oval\CommentInstruction::where('group_video_id', '=', $group_video_id)
+		$comment_instruction = oval\Models\CommentInstruction::where('group_video_id', '=', $group_video_id)
 								->first();
 		if (empty($comment_instruction)) {
-			$comment_instruction = new oval\CommentInstruction;
+			$comment_instruction = new oval\Models\CommentInstruction;
 		}
 		$comment_instruction->group_video_id = $group_video_id;
 		$comment_instruction->description = htmlspecialchars($req->description, ENT_QUOTES);
@@ -1084,7 +1084,7 @@ class AjaxController extends Controller
 	 */
 	public function delete_comment_instruction (Request $req) {
 		$group_video_id = intval($req->group_video_id);
-		$comment_instruction = oval\CommentInstruction::where('group_video_id', '=', $group_video_id);
+		$comment_instruction = oval\Models\CommentInstruction::where('group_video_id', '=', $group_video_id);
 		$comment_instruction->delete();
 	}
 
@@ -1098,10 +1098,10 @@ class AjaxController extends Controller
 	 */
 	public function get_comments_for_tag (Request $req) {
 		$user = Auth::user();
-		$group_video = oval\GroupVideo::find(intval($req->group_video_id));
+		$group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
 		$course = $group_video->course();
 		$tag = $req->tag;
-		$comments = oval\Comment::where([
+		$comments = oval\Models\Comment::where([
 						['status', '=', 'current'],
 						['group_video_id', '=', $group_video->id]
 					])
@@ -1112,7 +1112,7 @@ class AjaxController extends Controller
 					->get();
 		$retval = [];
 		foreach ($comments as $c) {
-			$u = oval\User::find($c->user_id);
+			$u = oval\Models\User::find($c->user_id);
 			$mine = $user->id == $u->id ? true : false;
 			$date = empty($c->updated_at) ? null:$c->updated_at->format('g:iA d M, Y');
 			$instructor = $u->isInstructorOf($course);
@@ -1142,10 +1142,10 @@ class AjaxController extends Controller
 	 */
 	public function get_annotations_for_tag (Request $req) {
 		$user = Auth::user();
-		$group_video = oval\GroupVideo::find(intval($req->group_video_id));
+		$group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
 		$course = $group_video->course();
 		$tag = $req->tag;
-		$annotations = oval\Annotation::where([
+		$annotations = oval\Models\Annotation::where([
 							['status', '=', 'current'],
 							['group_video_id', '=', $group_video->id]
 						])
@@ -1156,7 +1156,7 @@ class AjaxController extends Controller
 						->get();
 		$retval = [];
 		foreach ($annotations as $a) {
-			$u = oval\User::find($a->user_id);
+			$u = oval\Models\User::find($a->user_id);
 			$mine = $user->id == $u->id ? true : false;
 			$date = empty($a->updated_at) ? null:$a->updated_at->format('g:iA d M, Y');
 			$instructor = $u->isInstructorOf($course);
@@ -1178,7 +1178,7 @@ class AjaxController extends Controller
 
 	/*------ quiz ajax function ------*/
 	public function get_quiz (Request $req){
-		$quiz = oval\quiz_creation::where('identifier', $req->identifier)
+		$quiz = oval\Models\quiz_creation::where('identifier', $req->identifier)
 									->orderBy('created_at', 'desc')
 									->first();
 
@@ -1187,7 +1187,7 @@ class AjaxController extends Controller
 
 	public function store_quiz (Request $req){
 
-		$quiz = new oval\quiz_creation;
+		$quiz = new oval\Models\quiz_creation;
 		$quiz->creator_id = intval($req->creator_id);
 		$quiz->identifier = (string)($req->identifier);
 		$quiz->media_type = (string)($req->media_type);
@@ -1200,7 +1200,7 @@ class AjaxController extends Controller
 
 	public function submit_ans (Request $req){
 
-		$quiz_ans = new oval\quiz_result;
+		$quiz_ans = new oval\Models\quiz_result;
 		$quiz_ans->user_id = intval($req->user_id);
 		$quiz_ans->identifier = (string)($req->identifier);
 		$quiz_ans->media_type = (string)($req->media_type);
@@ -1226,7 +1226,7 @@ class AjaxController extends Controller
 	/*------ analysis ajax function ------*/
 
 	public function get_student_view (Request $req){
-		$group_video = oval\GroupVideo::find(intval($req->group_video_id));
+		$group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
 		$users = $group_video->usersWhoAccessed();
 
 		$result_arr = [];
@@ -1365,7 +1365,7 @@ class AjaxController extends Controller
 	}
 
 	public function get_annotations_column (Request $req){
-		$group_video = oval\GroupVideo::find(intval($req->group_video_id));
+		$group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
 		$users = $group_video->usersWhoAccessed();
 
 		$result_arr = [];
@@ -1461,7 +1461,7 @@ class AjaxController extends Controller
 	}
 
 	public function get_comment_column (Request $req){
-		$group_video = oval\GroupVideo::find(intval($req->group_video_id));
+		$group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
 		$users = $group_video->usersWhoAccessed();
 
 		$result_arr = [];
@@ -1572,7 +1572,7 @@ class AjaxController extends Controller
 	// }
 
 	public function get_key_point (Request $req){
-		$group_video = oval\GroupVideo::find(intval($req->group_video_id));
+		$group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
 		$users = $group_video->usersWhoAccessed();
 
 		$result_arr = [];
@@ -1603,7 +1603,7 @@ class AjaxController extends Controller
 	}
 
 	public function get_quiz_question (Request $req){
-		$group_video = oval\GroupVideo::find(intval($req->group_video_id));
+		$group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
 		$users = $group_video->usersWhoAccessed();
 
 		$result_arr = [];
@@ -1842,7 +1842,7 @@ class AjaxController extends Controller
 		$group_video_id = intval($req->group_video_id);
 		$vis = intval($req->visibility);
 
-		$group_video = oval\GroupVideo::find($group_video_id);
+		$group_video = oval\Models\GroupVideo::find($group_video_id);
 		$group_video->hide = $vis;
 		$group_video->save();
 	}
@@ -1858,7 +1858,7 @@ class AjaxController extends Controller
 		$group_video_ids = $req->group_video_ids;
 		$i = 1;
 		foreach ($group_video_ids as $gv_id) {
-			$group_video = oval\GroupVideo::find($gv_id);
+			$group_video = oval\Models\GroupVideo::find($gv_id);
 			$group_video->order = $i;
 			$group_video->save();
 			$i++;
@@ -1878,7 +1878,7 @@ class AjaxController extends Controller
 		$group_video_id = intval($req->group_video_id);
 		$show = intval($req->visibility);
 
-		$group_video = oval\GroupVideo::find($group_video_id);
+		$group_video = oval\Models\GroupVideo::find($group_video_id);
 		$group_video->show_analysis = $show;
 		$group_video->save();
 	}
@@ -1898,7 +1898,7 @@ class AjaxController extends Controller
 		// reset old resource_link
 		DB::table('group_videos')->where('moodle_resource_id', $link_id)->update(['moodle_resource_id' => NULL]);
 
-		$group_video = oval\GroupVideo::find($group_video_id);
+		$group_video = oval\Models\GroupVideo::find($group_video_id);
 		$group_video->moodle_resource_id = $link_id;
 		return ['result'=>$group_video->save()];
 	}
@@ -1914,7 +1914,7 @@ class AjaxController extends Controller
 	 */
 	public function check_student_activity (Request $req) {
 		$group_video_id = intval($req->group_video_id);
-		$group_video = oval\GroupVideo::find($group_video_id);
+		$group_video = oval\Models\GroupVideo::find($group_video_id);
 
 		$has_quiz_answers = false;//todo: implement this
 
@@ -1934,7 +1934,7 @@ class AjaxController extends Controller
 	 * @return array Array with key "result", value is true if saved successfully, false if not.
 	 */
 	public function archive_group_video (Request $req) {
-		$group_video = oval\GroupVideo::find(intval($req->group_video_id));
+		$group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
 		$group_video->status = "archived";
 		$result = $group_video->save();
 		return compact('result');
@@ -1949,18 +1949,18 @@ class AjaxController extends Controller
 	 * @return array Array with key:result, value:true if successfully deleted, false if not.
 	 */
 	public function delete_group_video (Request $req) {
-		$result = oval\GroupVideo::destroy(intval($req->group_video_id));
+		$result = oval\Models\GroupVideo::destroy(intval($req->group_video_id));
 		return compact('result');
 	}
 
 	public function delete_keywords (Request $req) {
 		$words = $req->words;
 		$video_id = intval($req->video_id);
-		$deletes = oval\Keyword::whereIn('keyword', $words)
+		$deletes = oval\Models\Keyword::whereIn('keyword', $words)
 							->where('videoId', '=', $video_id)
 							->pluck('id')
 							->all();
-		oval\Keyword::destroy($deletes);
+		oval\Models\Keyword::destroy($deletes);
 
 		return $deletes;
 	}
@@ -1976,7 +1976,7 @@ class AjaxController extends Controller
 	 */
 	public function get_groups_with_video (Request $req) {
 		$video_id = intval($req->video_id);
-		$the_groups = oval\Group::whereIn("id", function($q) use ($video_id) {
+		$the_groups = oval\Models\Group::whereIn("id", function($q) use ($video_id) {
 							$q->select('group_id')
 								->from('group_videos')
 								->where('video_id', '=', $video_id)
@@ -1986,13 +1986,13 @@ class AjaxController extends Controller
 		$groups = collect();
 
 		foreach($the_groups as $g) {
-			$group_video = oval\GroupVideo::where([
+			$group_video = oval\Models\GroupVideo::where([
 								['video_id', '=', $video_id],
 								['group_id', '=', $g->id]
 							])
 							->first();
 			$points = $group_video->relatedPoints();
-			$quiz = oval\quiz_creation::where('identifier', '=', oval\Video::find($video_id)->identifier)
+			$quiz = oval\Models\quiz_creation::where('identifier', '=', oval\Models\Video::find($video_id)->identifier)
 						->first();
 
 			$group = [
@@ -2025,7 +2025,7 @@ class AjaxController extends Controller
 	 */
 	public function get_video_info (Request $req) {
 		$video_id = intval($req->video_id);
-		$video = oval\Video::find($video_id);
+		$video = oval\Models\Video::find($video_id);
 		$thumbnail_url = $video->thumbnail_url;
 		$title = $video->title;
 		return compact('thumbnail_url', 'title');
@@ -2039,7 +2039,7 @@ class AjaxController extends Controller
 	 * @return array Array containing boolean value for key "result"
 	 */
 	public function delete_lti_connection (Request $req) {
-		$result = oval\LtiConsumer::find(intval($req->id))->delete();
+		$result = oval\Models\LtiConsumer::find(intval($req->id))->delete();
 		return compact('result');
 	}
 
@@ -2052,7 +2052,7 @@ class AjaxController extends Controller
 	 * @return array Array
 	 */
 	public function get_lti_connection_detail (Request $req) {
-		$consumer = oval\LtiConsumer::find(intval($req->id));
+		$consumer = oval\Models\LtiConsumer::find(intval($req->id));
 		$cred = $consumer->credential;
 
 		$retval = [
@@ -2081,7 +2081,7 @@ class AjaxController extends Controller
 	 * @param Request $req Contains name, key, secret, from, to, dbtype, host, port, db, un, pw, prefix
 	 */
 	public function edit_lti_connection (Request $req) {
-		$consumer = oval\LtiConsumer::find(intval($req->id));
+		$consumer = oval\Models\LtiConsumer::find(intval($req->id));
 		$consumer->name = $req->name;
 		$consumer->consumer_key256 = $req->key;
 		$consumer->secret = $req->secret;
@@ -2093,7 +2093,7 @@ class AjaxController extends Controller
 			$result = false;
 			$cred = $consumer->credential;
 			if (empty($cred)) {
-				$cred = new oval\LtiCredential;
+				$cred = new oval\Models\LtiCredential;
 				$cred->consumer_id = $consumer->consumer_pk;
 			}
 			$cred->db_type = $req->dbtype;

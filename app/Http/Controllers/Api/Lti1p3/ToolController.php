@@ -3,9 +3,9 @@
 namespace oval\Http\Controllers\Api\Lti1p3;
 
 use Illuminate\Http\Request;
-use oval\GroupVideo;
+use oval\Models\GroupVideo;
 use oval\Http\Controllers\Controller;
-use oval\LtiRegistration;
+use oval\Models\LtiRegistration;
 use oval\Services\Lti1p3\LtiMessage;
 use oval\Services\Lti1p3\LtiService;
 use oval\Services\LtiLaunchService;

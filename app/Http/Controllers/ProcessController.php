@@ -7,7 +7,7 @@ use oval;
 use DB;
 use oval\Classes\YoutubeDataHelper;
 use Illuminate\Support\Facades\Auth;
-use oval\AnalysisRequest;
+use oval\Models\AnalysisRequest;
 use oval\Jobs\AnalyzeTranscript;
 use Illuminate\Support\Facades\Storage;
 
@@ -62,12 +62,12 @@ class ProcessController extends Controller
 		$text = "";
 		$transcript = $video->transcript;
         if (empty($transcript)) {
-            $transcript = new oval\Transcript;
+            $transcript = new oval\Models\Transcript;
             $transcript->video_id = $video->id;
         }
 
         $langs = config('youtube.transcript_lang');
-		$credentials = oval\GoogleCredential::all();
+		$credentials = oval\Models\GoogleCredential::all();
 		$track_id = null;
         $caption_array = null;
         if (!empty($credentials) && count($credentials)>0) {
@@ -192,7 +192,7 @@ class ProcessController extends Controller
 	 * @return Illuminate\Http\RedirectResponse
 	 */
 	public function request_text_analysis(Request $req) {
-		$analysis_request = oval\AnalysisRequest::find(intval($req->analysis_request_id));
+		$analysis_request = oval\Models\AnalysisRequest::find(intval($req->analysis_request_id));
 		$video = $analysis_request->video;
 
 		// Change status to 'processing'
@@ -216,7 +216,7 @@ class ProcessController extends Controller
 	 */
 	public function reject_text_analysis_request (Request $req) {
 		$video_id = intval($req->video_id);
-		oval\AnalysisRequest::where('video_id', $video_id)
+		oval\Models\AnalysisRequest::where('video_id', $video_id)
 			->update(['status'=>'rejected']);
 		return back();
 	}
@@ -233,7 +233,7 @@ class ProcessController extends Controller
 	 */
 	public function recover_text_analysis_request (Request $req) {
 		$video_id = intval($req->video_id);
-		oval\AnalysisRequest::where('video_id', $video_id)
+		oval\Models\AnalysisRequest::where('video_id', $video_id)
 			->update(['status'=>'pending']);
 		return back();
 	}
@@ -250,7 +250,7 @@ class ProcessController extends Controller
 	 */
 	public function delete_text_analysis_request (Request $req) {
 		$video_id = intval($req->video_id);
-		oval\AnalysisRequest::where('video_id', $video_id)
+		oval\Models\AnalysisRequest::where('video_id', $video_id)
 			->update(['status'=>'deleted']);
 		return back();
 	}
@@ -268,10 +268,10 @@ class ProcessController extends Controller
 	 * @return Illuminate\Http\RedirectResponse
 	 */
 	public function send_all_text_analysis_requests(Request $req) {
-		$video_ids = oval\AnalysisRequest::where('status', 'pending')
+		$video_ids = oval\Models\AnalysisRequest::where('status', 'pending')
 						->pluck('video_id')
 						->toArray();
-		$videos = oval\Video::find($video_ids);
+		$videos = oval\Models\Video::find($video_ids);
 		foreach ($videos as $v) {
 			$this->process_youtube_analysis($v->id);
 		}
@@ -289,7 +289,7 @@ class ProcessController extends Controller
 	 * @return Illuminate\Http\RedirectResponse
 	 */
 	public function reject_all_text_analysis_requests(Request $req) {
-		oval\AnalysisRequest::where('status', 'pending')
+		oval\Models\AnalysisRequest::where('status', 'pending')
 			->update(['status'=>'rejected']);
 		return back();
 	}
@@ -305,7 +305,7 @@ class ProcessController extends Controller
 	 * @return Illuminate\Http\RedirectResponse
 	 */
 	public function recover_all_rejected_text_analysis_requests (Request $req) {
-		oval\AnalysisRequest::where('status', 'rejected')
+		oval\Models\AnalysisRequest::where('status', 'rejected')
 			->update(['status'=>'pending']);
 		return back();
 	}
@@ -321,7 +321,7 @@ class ProcessController extends Controller
 	 * @return Illuminate\Http\RedirectResponse
 	 */
 	public function delete_all_rejected_text_analysis_requests(Request $req) {
-		oval\AnalysisRequest::where('status', 'rejected')
+		oval\Models\AnalysisRequest::where('status', 'rejected')
 			->update(['status'=>'deleted']);
 		return back();
 	}
@@ -363,7 +363,7 @@ class ProcessController extends Controller
 		}
 		$result = json_decode($response);
 
-		$v = new oval\Video;
+		$v = new oval\Models\Video;
 		$v->identifier = $identifier;
 		$v->title = $result->items[0]->snippet->title;
 		$desc = $result->items[0]->snippet->description;
@@ -406,13 +406,13 @@ class ProcessController extends Controller
 			foreach ($transcripts as $entry) {
 				//-- check for existane of video, if not in db, call data api to fetch data & insert
 				$identifier = $entry->identifier;
-				$v = oval\Video::where('identifier', '=', $identifier)->first();
+				$v = oval\Models\Video::where('identifier', '=', $identifier)->first();
 				if (empty($v)) {
 					$v = $this->insert_youtube_video($identifier);
 				}
-				$t = oval\Transcript::where('video_id', '=', $v->id)->first();
+				$t = oval\Models\Transcript::where('video_id', '=', $v->id)->first();
 				if (empty($t)) {
-					$t = new oval\Transcript;
+					$t = new oval\Models\Transcript;
 					$t->video_id = $v->id;
 				}
 				$t->transcript = json_encode($entry->transcript);
@@ -440,7 +440,7 @@ class ProcessController extends Controller
 			$identifiers = $json->identifiers;
 
 			foreach ($identifiers as $i) {
-				$v = oval\Video::where('identifier', '=', $i)->first();
+				$v = oval\Models\Video::where('identifier', '=', $i)->first();
 				if (empty($v)) {
 					$v = $this->insert_youtube_video($i);
 				}
@@ -477,11 +477,11 @@ class ProcessController extends Controller
 		$consumer->enabled = true;
 		$consumer->save();
 
-		$consumer = oval\LtiConsumer::where('consumer_key256', '=', $req->key)->first();
+		$consumer = oval\Models\LtiConsumer::where('consumer_key256', '=', $req->key)->first();
 		$success = false;
 
 		if(!empty($req->db_type) && !empty($req->host) && !empty($req->db_name) && !empty($req->user) && !empty($req->pw)) {
-			$cred = new oval\LtiCredential;
+			$cred = new oval\Models\LtiCredential;
 			$cred->consumer_id = $consumer->consumer_pk;
 			$cred->db_type = $req->db_type;
 			$cred->host = $req->host;

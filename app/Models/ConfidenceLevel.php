@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +21,6 @@ class ConfidenceLevel extends Model
     *   @return Comment object
     **/
     public function forComment() {
-        return $this->belongsTo('oval\Comment');
+        return $this->belongsTo('oval\Models\Comment');
     }
 }

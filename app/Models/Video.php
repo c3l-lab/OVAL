@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ class Video extends Model
     *	@return User
     **/
     public function addedBy() {
-    	return $this->belongsTo('oval\User', 'added_by');
+    	return $this->belongsTo('oval\Models\User', 'added_by');
     }
 
     /**
@@ -30,7 +30,7 @@ class Video extends Model
     *	@return collection of Group objects
     **/
     public function groups() {
-    	return $this->belongsToMany('oval\Group', 'group_videos')->withTimestamps();
+    	return $this->belongsToMany('oval\Models\Group', 'group_videos')->withTimestamps();
     }
 
     /**
@@ -82,7 +82,7 @@ class Video extends Model
     *	@return collection of Annotation objects
     **/
     public function annotations() {
-    	return $this->hasManyThrough('oval\Annotation', 'oval\GroupVideo');
+    	return $this->hasManyThrough('oval\Models\Annotation', 'oval\Models\GroupVideo');
     }
 
     /**
@@ -90,7 +90,7 @@ class Video extends Model
     *   @return Transcript object
     **/
     public function transcript() {
-        return $this->hasOne('oval\Transcript');
+        return $this->hasOne('oval\Models\Transcript');
     }
 
     /**
@@ -98,7 +98,7 @@ class Video extends Model
     *   @return collection of Keyword objects
     **/
     public function keywords() {
-        return $this->hasMany('oval\Keyword', 'videoId', 'id');
+        return $this->hasMany('oval\Models\Keyword', 'videoId', 'id');
     }
 
     public function keywords_for_edits() {
@@ -124,7 +124,7 @@ class Video extends Model
     *   @return collection Collection of AnalysisRequest
     **/
     public function analysis_request() {
-        return $this->hasMany('oval\AnalysisRequest');
+        return $this->hasMany('oval\Models\AnalysisRequest');
     }
 
     /**

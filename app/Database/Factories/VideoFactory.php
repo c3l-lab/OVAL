@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use oval\Video;
-use oval\User;
+use oval\Models\Video;
+use oval\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

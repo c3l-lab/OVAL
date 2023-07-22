@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use oval\Course;
+use oval\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CourseFactory extends Factory

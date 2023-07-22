@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
@@ -17,7 +17,7 @@ class AnalysisRequest extends Model
     *   @return Video object
     **/
     public function video() {
-        return $this->belongsTo('oval\Video');
+        return $this->belongsTo('oval\Models\Video');
     }
 
     /**
@@ -25,7 +25,7 @@ class AnalysisRequest extends Model
     *   @return User object
     **/
     public function user() {
-        return $this->belongsTo('oval\User');
+        return $this->belongsTo('oval\Models\User');
     }
 
     /**

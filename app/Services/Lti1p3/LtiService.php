@@ -2,7 +2,7 @@
 namespace oval\Services\Lti1p3;
 
 use Illuminate\Http\Request;
-use oval\LtiRegistration;
+use oval\Models\LtiRegistration;
 use Packback\Lti1p3\Interfaces\ICache;
 use Packback\Lti1p3\Interfaces\ICookie;
 use Packback\Lti1p3\Interfaces\IDatabase;

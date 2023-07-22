@@ -1,6 +1,6 @@
 <?php
 
-namespace oval;
+namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ class Course extends Model
 	*	@reurn collection of User objects
 	**/
 	public function enrolledUsers() {
-		return $this->belongsToMany('oval\User', "enrollments");
+		return $this->belongsToMany('oval\Models\User', "enrollments");
 	}
 
 	/**
@@ -30,7 +30,7 @@ class Course extends Model
 	*	@return collection of User objects
 	**/
 	public function instructors() {
-		return $this->belongsToMany('oval\User', 'enrollments')->wherePivot('is_instructor', 1);
+		return $this->belongsToMany('oval\Models\User', 'enrollments')->wherePivot('is_instructor', 1);
 	}
 
 	/**
@@ -39,7 +39,7 @@ class Course extends Model
 	*	@return collection of Group objects
 	**/
 	public function groups() {
-		return $this->hasMany('oval\Group');
+		return $this->hasMany('oval\Models\Group');
 	}
 
 	/**

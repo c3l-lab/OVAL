@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use oval\LtiConsumer;
-use oval\Course;
+use oval\Models\LtiConsumer;
+use oval\Models\Course;
 
 class EditCoursesTableForMultipleLti extends Migration
 {
