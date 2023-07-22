@@ -37,3 +37,5 @@ public/css/app.css
 public/css/theme.css
 public/js/app.js
 public/js/theme.js
+
+.php-cs-fixer.cache

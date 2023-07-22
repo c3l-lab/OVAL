@@ -22,7 +22,8 @@
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^10.0",
         "symfony/css-selector": "^6.2",
-        "symfony/dom-crawler": "^6.2"
+        "symfony/dom-crawler": "^6.2",
+        "friendsofphp/php-cs-fixer": "^3.22"
     },
     "autoload": {
         "classmap": [
