@@ -23,7 +23,8 @@
         "phpunit/phpunit": "^10.0",
         "symfony/css-selector": "^6.2",
         "symfony/dom-crawler": "^6.2",
-        "friendsofphp/php-cs-fixer": "^3.22"
+        "friendsofphp/php-cs-fixer": "^3.22",
+        "nunomaduro/collision": "^7.7"
     },
     "autoload": {
         "classmap": [
@@ -31,7 +32,8 @@
         ],
         "psr-4": {
             "oval\\": "app/",
-            "Database\\Factories\\": "app/Database/Factories/"
+            "Database\\Factories\\": "app/Database/Factories/",
+            "Tests\\": "tests/"
         }
     },
     "autoload-dev": {
