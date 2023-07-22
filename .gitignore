@@ -29,9 +29,6 @@ speechtotext-server/audios
 phpunit.xml.bak
 .phpunit.cache/
 
-# Remove Composer.lock from CI/CD process
-composer.lock
-
 public/mix-manifest.json
 public/css/app.css
 public/css/theme.css
