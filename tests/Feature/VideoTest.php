@@ -29,6 +29,11 @@ class VideoTest extends TestCase
 
         $response->assertStatus(200);
 
+        $response->assertJson([
+            'course_id' => 1,
+            'video_id' => 1,
+        ]);
+
         $this->assertDatabaseHas('videos', [
             'identifier' => $youtubeId,
             'title' => 'Rick Astley - Never Gonna Give You Up (Official Music Video)',
