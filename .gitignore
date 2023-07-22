@@ -39,3 +39,5 @@ public/js/app.js
 public/js/theme.js
 
 .php-cs-fixer.cache
+
+coverage
