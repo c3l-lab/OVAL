@@ -5,6 +5,7 @@ namespace oval\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use GuzzleHttp;
 
 /**
  * Model class for table 'videos'

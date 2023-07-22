@@ -8,11 +8,11 @@ use oval\Models\Group;
 use oval\Models\User;
 use Tests\TestCase;
 
-class GroupVideoTest extends TestCase
+class VideoTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_adding_video(): void
+    public function test_creating_video(): void
     {
         $course = Course::factory()->has(Group::factory()->count(1))->create();
         User::factory()->create();
@@ -31,6 +31,9 @@ class GroupVideoTest extends TestCase
 
         $this->assertDatabaseHas('videos', [
             'identifier' => $youtubeId,
+            'title' => 'Rick Astley - Never Gonna Give You Up (Official Music Video)',
+            'duration' => 213,
+            'thumbnail_url' => 'https://img.youtube.com/vi/dQw4w9WgXcQ/1.jpg',
             'media_type' => 'youtube',
         ]);
     }

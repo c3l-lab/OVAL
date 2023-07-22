@@ -9,6 +9,7 @@ use DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use oval\Classes\YoutubeDataHelper;
 use oval\Jobs\AnalyzeTranscript;
+use oval\Models\Video;
 use GuzzleHttp;
 
 /**
@@ -491,10 +492,10 @@ class AjaxController extends Controller
         $v = oval\Models\Video::where(['identifier'=>$req->video_id])
                 ->first();
         if (empty($v)) {
-            $v = new oval\Models\Video();
             $client = new GuzzleHttp\Client();
+            $url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=' . config('youtube.api_key');
             try {
-                $response = $client->get('https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=' . config('youtube.api_key'));
+                $response = $client->get($url);
             } catch (GuzzleHttp\Exception\ClientException $e) {
                 return ['error' => $e->getMessage()];
             }
@@ -513,7 +514,6 @@ class AjaxController extends Controller
             $v->thumbnail_url = "https://img.youtube.com/vi/".$req->video_id."/1.jpg";
             $v->duration = $this->ISO8601ToSeconds($result->items[0]->contentDetails->duration);
 
-            // $v->media_type = $req->media_type;
             $v->added_by = Auth::user()->id;
             $v->save();
         }
@@ -524,11 +524,6 @@ class AjaxController extends Controller
             $group = oval\Models\Course::find($course_id)
                         ->defaultGroup();
             $v->assignToGroup($group);
-            $group_video = oval\Models\GroupVideo::firstOrCreate([
-                                "group_id"=>$group->id,
-                                "video_id"=>$v->id
-                            ]);
-
         }
 
         //--automatically fire off job for text analysis if youtube...
