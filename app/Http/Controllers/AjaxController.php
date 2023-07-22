@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use oval;
 use DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Illuminate\Support\Facades\Log;
 use oval\Classes\YoutubeDataHelper;
 use oval\Jobs\AnalyzeTranscript;
+use GuzzleHttp;
 
 /**
  * Controller class to handle Ajax requests
@@ -492,30 +492,14 @@ class AjaxController extends Controller
                 ->first();
         if (empty($v)) {
             $v = new oval\Models\Video();
+            $client = new GuzzleHttp\Client();
+            try {
+                $response = $client->get('https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=' . config('youtube.api_key'));
+            } catch (GuzzleHttp\Exception\ClientException $e) {
+                return ['error' => $e->getMessage()];
+            }
 
-            //--get video data from API
-            $proxy_url = env('CURL_PROXY_URL', '');
-            $proxy_user = env('CURL_PROXY_USER', '');
-            $proxy_pass = env('CURL_PROXY_PASS', '');
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $req->video_id . '&key=' . config('youtube.api_key'));
-            if (!empty($proxy_url)) {
-                curl_setopt($ch, CURLOPT_PROXY, $proxy_url);
-            }
-            if (!empty($proxy_user)) {
-                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_user . ':' . $proxy_pass);
-            }
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $response = curl_exec($ch);
-
-            if ($errno = curl_errno($ch)) {
-                $error_message = curl_strerror($errno);
-                error_log('error ' . $errno . ': ' . $error_message);
-                return ['error'=>$errno];
-            }
-            $result = json_decode($response);
+            $result = json_decode($response->getBody());
 
             $v = oval\Models\Video::firstOrNew([
                 'identifier' => $req->video_id,
@@ -528,8 +512,6 @@ class AjaxController extends Controller
             $v->description = strlen($desc)>507 ? substr($desc, 0, 510) : $desc;
             $v->thumbnail_url = "https://img.youtube.com/vi/".$req->video_id."/1.jpg";
             $v->duration = $this->ISO8601ToSeconds($result->items[0]->contentDetails->duration);
-
-            curl_close($ch);
 
             // $v->media_type = $req->media_type;
             $v->added_by = Auth::user()->id;

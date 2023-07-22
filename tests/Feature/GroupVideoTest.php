@@ -17,9 +17,11 @@ class GroupVideoTest extends TestCase
         $course = Course::factory()->has(Group::factory()->count(1))->create();
         User::factory()->create();
 
+        $youtubeId = "dQw4w9WgXcQ";
+
         $response = $this->post('/add_video', [
                 "api_token" => "test_token",
-                "video_id" => "9sM8pBjbRp4",
+                "video_id" => $youtubeId,
                 "media_type" => "youtube",
                 "course_id" => $course->id,
                 "request_analysis" => false
@@ -28,7 +30,7 @@ class GroupVideoTest extends TestCase
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('videos', [
-            'identifier' => '9sM8pBjbRp4',
+            'identifier' => $youtubeId,
             'media_type' => 'youtube',
         ]);
     }
