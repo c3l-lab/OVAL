@@ -24,7 +24,7 @@ class UserFactory extends Factory
             'last_name' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'password' => bcrypt('password'),
-            'api_token' => 'test_token',
+            'api_token' => fake()->unique()->regexify('[a-zA-Z0-9]{60}'),
         ];
     }
 
