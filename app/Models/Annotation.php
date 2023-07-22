@@ -43,8 +43,4 @@ class Annotation extends Model
     {
         return $this->belongsToMany('oval\Models\Tag', 'annotation_tags')->withTimeStamps();
     }
-    protected static function newFactory()
-    {
-        return \Database\Factories\AnnotationFactory::new();
-    }
 }

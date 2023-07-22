@@ -18,13 +18,13 @@
         "firebase/php-jwt": "6.5.0"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.21",
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^10.0",
         "symfony/css-selector": "^6.2",
         "symfony/dom-crawler": "^6.2",
         "friendsofphp/php-cs-fixer": "^3.22",
-        "nunomaduro/collision": "^7.7"
+        "nunomaduro/collision": "^7.7",
+        "fakerphp/faker": "^1.23"
     },
     "autoload": {
         "classmap": [
@@ -32,7 +32,6 @@
         ],
         "psr-4": {
             "oval\\": "app/",
-            "Database\\Factories\\": "app/Database/Factories/",
             "Tests\\": "tests/"
         }
     },
@@ -61,6 +60,9 @@
         ]
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

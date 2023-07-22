@@ -342,8 +342,4 @@ class GroupVideo extends Model
                     ->where('event', '=', 'View')
                     ->count();
     }
-    protected static function newFactory()
-    {
-        return \Database\Factories\GroupVideoFactory::new();
-    }
 }

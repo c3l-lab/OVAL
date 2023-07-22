@@ -65,8 +65,4 @@ class Comment extends Model
     {
         return $this->belongsToMany('oval\Models\Tag', 'comment_tags')->withTimeStamps();
     }
-    protected static function newFactory()
-    {
-        return \Database\Factories\CommentFactory::new();
-    }
 }

@@ -101,8 +101,4 @@ class Course extends Model
         });
         return $students;
     }
-    protected static function newFactory()
-    {
-        return \Database\Factories\CourseFactory::new();
-    }
 }

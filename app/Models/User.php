@@ -291,8 +291,4 @@ class User extends Authenticatable
     {
         return $this->hasMany('oval\Models\AnalysisRequest');
     }
-    protected static function newFactory()
-    {
-        return \Database\Factories\UserFactory::new();
-    }
 }//end class

@@ -174,8 +174,4 @@ class Group extends Model
             }
         }
     }
-    protected static function newFactory()
-    {
-        return \Database\Factories\GroupFactory::new();
-    }
 }

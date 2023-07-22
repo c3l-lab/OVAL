@@ -164,8 +164,4 @@ class Video extends Model
 
         return $retVal;
     }
-    protected static function newFactory()
-    {
-        return \Database\Factories\VideoFactory::new();
-    }
 }
