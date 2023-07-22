@@ -13,15 +13,15 @@ class CreateKeywordsTable extends Migration
      */
     public function up()
     {
-      Schema::create('keywords', function (Blueprint $table) {
-          $table->increments('id');
-          $table->string('keyword');
-          $table->integer('videoId')->length(10)->unsigned();
-          $table->float('startTime', 7, 2)->nullable();
-          $table->float('endTime', 7, 2)->nullable();
-          $table->decimal('relevance', 9, 8)->nullable();
-          $table->string('type');
-      });
+        Schema::create('keywords', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('keyword');
+            $table->integer('videoId')->length(10)->unsigned();
+            $table->float('startTime', 7, 2)->nullable();
+            $table->float('endTime', 7, 2)->nullable();
+            $table->decimal('relevance', 9, 8)->nullable();
+            $table->string('type');
+        });
         Schema::table('keywords', function (Blueprint $table) {
             $table->foreign('videoId')->references('id')->on('videos')->onDelete('cascade');
         });
@@ -35,7 +35,7 @@ class CreateKeywordsTable extends Migration
      */
     public function down()
     {
-        Schema::table('keywords', function(Blueprint $table) {
+        Schema::table('keywords', function (Blueprint $table) {
             $table->dropForeign(['videoId']);
         });
         Schema::dropIfExists('keywords');

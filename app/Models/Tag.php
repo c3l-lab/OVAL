@@ -16,7 +16,8 @@ class Tag extends Model
     *   Many-to-Many relationship
     *   @return collection of Comment objects
     **/
-    public function comments() {
+    public function comments()
+    {
         return $this->belongsToMany('oval\Models\Comment')->withTimeStamps();
     }
 
@@ -24,7 +25,8 @@ class Tag extends Model
     *   Many-to-Many relationship
     *   @return collection of Annotation objects
     **/
-    public function annotations() {
+    public function annotations()
+    {
         return $this->belongsToMany('oval\Models\Annotation')->withTimeStamps();
     }
 }

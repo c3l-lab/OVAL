@@ -16,7 +16,10 @@ use Exception;
  */
 class SendEmail implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     // Important, will throw an error without it
     protected $opt;
@@ -47,7 +50,7 @@ class SendEmail implements ShouldQueue
     public function handle(Mailer $mailer)
     {
         // echo json_encode($this->opt) . "\n";
-        
+
         $mailer->send($this->opt["email"], $this->opt["params"], function ($message) {
             $message->from(env('MAIL_FROM', 'oval@example.com'), env('MAIL_NAME', 'OVAL'));
             // $message->sender($address, $name = null);
@@ -72,4 +75,3 @@ class SendEmail implements ShouldQueue
         echo 'Caught exception: ',  $exception->getMessage(), "\n";
     }
 }
-

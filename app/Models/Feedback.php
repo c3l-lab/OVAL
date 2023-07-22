@@ -19,7 +19,8 @@ class Feedback extends Model
     *   One-to-Many relationship (inverse)
     *   @return collection of Point objects
     **/
-    public function forPoint() {
+    public function forPoint()
+    {
         return $this->belongsTo('oval\Models\Point');
     }
 
@@ -27,7 +28,8 @@ class Feedback extends Model
     *   One-to-One relationship (inverse)
     *   @return Comment object
     **/
-    public function forComment() {
+    public function forComment()
+    {
         return $this->belongsTo('oval\Models\Comment');
     }
 

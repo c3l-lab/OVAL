@@ -26,18 +26,18 @@ class LtiProvider extends ToolProvider\ToolProvider
         $_SERVER['SERVER_PORT'] = '';
         $_SERVER['SERVER_NAME'] = $request->getHost();
 
-        $this->setParameterConstraint('oauth_consumer_key', TRUE, 50, array('basic-lti-launch-request', 'ContentItemSelectionRequest', 'DashboardRequest'));
-        $this->setParameterConstraint('resource_link_id', TRUE, 50, array('basic-lti-launch-request'));
-        $this->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
-        $this->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
+        $this->setParameterConstraint('oauth_consumer_key', true, 50, array('basic-lti-launch-request', 'ContentItemSelectionRequest', 'DashboardRequest'));
+        $this->setParameterConstraint('resource_link_id', true, 50, array('basic-lti-launch-request'));
+        $this->setParameterConstraint('user_id', true, 50, array('basic-lti-launch-request'));
+        $this->setParameterConstraint('roles', true, null, array('basic-lti-launch-request'));
     }
 
-    function onLaunch()
+    public function onLaunch()
     {
         Log::info("Launch successfull");
     }
 
-    function onError()
+    public function onError()
     {
         Log::error('Error in LTI handling', ['error_message' => $this->reason, 'details' => $this->details]);
     }

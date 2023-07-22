@@ -19,7 +19,8 @@ class PointInstruction extends Model
     *	One-to-One relationship
     *	@return GroupVideo this instruction belongs to
     **/
-    public function forGroupVideo() {
-    	return $this->belongsTo('oval\Models\GroupVideo');
+    public function forGroupVideo()
+    {
+        return $this->belongsTo('oval\Models\GroupVideo');
     }
 }

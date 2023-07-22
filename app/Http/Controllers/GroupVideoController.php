@@ -34,7 +34,7 @@ class GroupVideoController extends Controller
 
         // Log every user views
         if (!empty($user) && !empty($video)) {
-            $tracking = new Tracking;
+            $tracking = new Tracking();
             $tracking->group_video_id = $group_video->id;
             $tracking->user_id = $user->id;
             $tracking->event = "View";
@@ -123,7 +123,8 @@ class GroupVideoController extends Controller
         return response()->json(['success' => true]);
     }
 
-    private function getGroupVideo($id) {
+    private function getGroupVideo($id)
+    {
         return GroupVideo::findOrFail($id);
     }
 }

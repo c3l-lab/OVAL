@@ -37,7 +37,7 @@ class CreateLti2ResourceLinkTables extends Migration
      */
     public function down()
     {
-        Schema::table('lti2_resource_link', function(Blueprint $table) {
+        Schema::table('lti2_resource_link', function (Blueprint $table) {
             $table->dropForeign(['context_pk']);
             $table->dropForeign(['primary_resource_link_pk']);
             $table->dropForeign(['consumer_pk']);

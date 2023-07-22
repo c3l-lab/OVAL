@@ -28,9 +28,9 @@ class CreateAnnotationsTable extends Migration
                     ->default('current');
             $table->timestamps();
         });
-        
-        Schema::table('annotations', function(Blueprint $table) {
-        	$table->foreign('group_video_id')->references('id')->on('group_videos')->onDelete('cascade');
+
+        Schema::table('annotations', function (Blueprint $table) {
+            $table->foreign('group_video_id')->references('id')->on('group_videos')->onDelete('cascade');
         });
     }
 
@@ -41,7 +41,7 @@ class CreateAnnotationsTable extends Migration
      */
     public function down()
     {
-        Schema::table('annotations', function(Blueprint $table) {
+        Schema::table('annotations', function (Blueprint $table) {
             $table->dropForeign(['group_video_id']);
         });
         Schema::dropIfExists('annotations');

@@ -13,7 +13,7 @@ class RegistrationController extends Controller
      */
     public function index()
     {
-		return view('lti.registrations.index', [
+        return view('lti.registrations.index', [
             'registrations' => LtiRegistration::all(),
         ]);
     }

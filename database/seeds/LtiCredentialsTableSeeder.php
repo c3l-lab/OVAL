@@ -21,7 +21,7 @@ class LtiCredentialsTableSeeder extends Seeder
         //-- because LtiCredential object is set up to encrypt/decrypt
         //-- username and password automatically, create object instead of
         //-- entering db record manually...
-        $c1 = new LtiCredential;
+        $c1 = new LtiCredential();
         $c1->db_type = 'mysql';
         $c1->host = '127.0.0.1';
         $c1->port = 3306;
@@ -33,7 +33,7 @@ class LtiCredentialsTableSeeder extends Seeder
         $c1->save();
 
 
-        $c2 = new LtiCredential;
+        $c2 = new LtiCredential();
         $c2->db_type = 'mysql';
         $c2->host = '127.0.0.1';
         $c2->port = 3306;

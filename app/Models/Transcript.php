@@ -16,7 +16,8 @@ class Transcript extends Model
      * One-to-One relationship.
      * @return Video
      */
-    public function video() {
+    public function video()
+    {
         return $this->belongsTo("oval\Models\Video");
     }
 }

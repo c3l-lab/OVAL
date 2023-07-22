@@ -20,7 +20,8 @@ class CreateTrackingsTable extends Migration
             $table->string('event');
             $table->string('target')->nullable();
             $table->string('info')->nullable();
-            $table->timestamp('event_time')->useCurrent();;
+            $table->timestamp('event_time')->useCurrent();
+            ;
         });
     }
 

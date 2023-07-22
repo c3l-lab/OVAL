@@ -23,7 +23,8 @@ class LtiCredential extends Model
      * Returns Lti2Consumer object this db credential is for.
      * @return LtiConsumer
      */
-    public function consumer() {
+    public function consumer()
+    {
         return $this->belongsTo('oval\Models\LtiConsumer', 'consumer_pk', 'consumer_id');
     }
 }

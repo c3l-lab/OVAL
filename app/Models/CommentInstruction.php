@@ -19,7 +19,8 @@ class CommentInstruction extends Model
     *   The group_video this comment_instruction is for.
     *   @return GroupVideo object
     **/
-    public function group_video() {
+    public function group_video()
+    {
         return $this->belongsTo('oval\Models\GroupVideo');
     }
 }

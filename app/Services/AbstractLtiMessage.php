@@ -4,10 +4,10 @@ namespace oval\Services;
 
 abstract class AbstractLtiMessage
 {
-  public abstract function getUserEmail();
-  public abstract function getUserFirstName();
-  public abstract function getUserLastName();
-  public abstract function isUserInstructor();
-  public abstract function getCourseId();
-  public abstract function getCourseName();
+    abstract public function getUserEmail();
+    abstract public function getUserFirstName();
+    abstract public function getUserLastName();
+    abstract public function isUserInstructor();
+    abstract public function getCourseId();
+    abstract public function getCourseName();
 }

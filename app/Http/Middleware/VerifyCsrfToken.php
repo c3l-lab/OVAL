@@ -27,13 +27,15 @@ class VerifyCsrfToken extends BaseVerifier
     protected function addCookieToResponse($request, $response)
     {
         $response->headers->setCookie(
-            new Cookie('XSRF-TOKEN',
+            new Cookie(
+                'XSRF-TOKEN',
                 $request->session()->token(),
                 time() + 60 * 120,
                 '/',
                 null,
                 config('session.secure'),
-                config('session.http_only'))
+                config('session.http_only')
+            )
         );
 
         return $response;

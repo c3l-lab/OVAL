@@ -9,13 +9,15 @@ class AjaxTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function loginAsMinnieMouse() {
+    private function loginAsMinnieMouse()
+    {
         // Create a user for testing purposes
         $minnie = oval\Models\User::factory()->create();
         $this->be($minnie);
     }
 
-    public function testGetComments() {
+    public function testGetComments()
+    {
         $this->loginAsMinnieMouse();
 
         // Create a video

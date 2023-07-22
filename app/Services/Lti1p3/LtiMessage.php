@@ -7,60 +7,60 @@ use Packback\Lti1p3\LtiConstants;
 
 class LtiMessage extends AbstractLtiMessage
 {
-  private $launchData;
+    private $launchData;
 
-  public function __construct($launchData)
-  {
-    $this->launchData = $launchData;
-  }
-
-  public function getUserEmail()
-  {
-    return $this->launchData['email'] ?? null;
-  }
-
-  public function getUserFirstName()
-  {
-    return $this->launchData['given_name'] ?? $this->launchData['preferred_username'] ?? 'student';
-  }
-
-  public function getUserLastName()
-  {
-    return $this->launchData['family_name'] ?? 'Unknow';
-  }
-
-  public function isUserInstructor()
-  {
-    return $this->incldueRole(LtiConstants::SYSTEM_ADMINISTRATOR) || $this->incldueRole(LtiConstants::INSTITUTION_INSTRUCTOR);
-  }
-
-  public function getCourseId()
-  {
-    if (empty($this->context())) {
-      return null;
+    public function __construct($launchData)
+    {
+        $this->launchData = $launchData;
     }
-    return $this->context()['id'];
-  }
 
-  public function getCourseName()
-  {
-    if (empty($this->context())) {
-      return null;
+    public function getUserEmail()
+    {
+        return $this->launchData['email'] ?? null;
     }
-    return $this->context()['title'];
-  }
 
-  private function context()
-  {
-    return $this->launchData[LtiConstants::CONTEXT] ?? null;
-  }
-
-  private function incldueRole($targetRole)
-  {
-    foreach ($this->launchData[LtiConstants::ROLES] as $role) {
-      if ($role == $targetRole) {
-        return true;
-      }
+    public function getUserFirstName()
+    {
+        return $this->launchData['given_name'] ?? $this->launchData['preferred_username'] ?? 'student';
     }
-  }
+
+    public function getUserLastName()
+    {
+        return $this->launchData['family_name'] ?? 'Unknow';
+    }
+
+    public function isUserInstructor()
+    {
+        return $this->incldueRole(LtiConstants::SYSTEM_ADMINISTRATOR) || $this->incldueRole(LtiConstants::INSTITUTION_INSTRUCTOR);
+    }
+
+    public function getCourseId()
+    {
+        if (empty($this->context())) {
+            return null;
+        }
+        return $this->context()['id'];
+    }
+
+    public function getCourseName()
+    {
+        if (empty($this->context())) {
+            return null;
+        }
+        return $this->context()['title'];
+    }
+
+    private function context()
+    {
+        return $this->launchData[LtiConstants::CONTEXT] ?? null;
+    }
+
+    private function incldueRole($targetRole)
+    {
+        foreach ($this->launchData[LtiConstants::ROLES] as $role) {
+            if ($role == $targetRole) {
+                return true;
+            }
+        }
+    }
 }

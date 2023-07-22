@@ -20,10 +20,10 @@ class CreateFeedbacksTable extends Migration
             $table->integer('answer')->nullable();
             $table->timestamps();
         });
-        
-        Schema::table('feedbacks', function(Blueprint $table) {
+
+        Schema::table('feedbacks', function (Blueprint $table) {
             $table->foreign('point_id')->references('id')->on('points')->onDelete('cascade');
-            $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');            
+            $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');
         });
     }
 
@@ -34,9 +34,9 @@ class CreateFeedbacksTable extends Migration
      */
     public function down()
     {
-        Schema::table('feedbacks', function(Blueprint $table){
+        Schema::table('feedbacks', function (Blueprint $table) {
             $table->dropForeign(['point_id']);
-            $table->dropForeign(['comment_id']);            
+            $table->dropForeign(['comment_id']);
         });
         Schema::dropIfExists('feedbacks');
     }

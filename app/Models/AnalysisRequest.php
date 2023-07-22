@@ -16,7 +16,8 @@ class AnalysisRequest extends Model
     *   One-to-Many relationship (inverse)
     *   @return Video object
     **/
-    public function video() {
+    public function video()
+    {
         return $this->belongsTo('oval\Models\Video');
     }
 
@@ -24,7 +25,8 @@ class AnalysisRequest extends Model
     *   One-to-Many relationship (inverse) - The user that requested analysis
     *   @return User object
     **/
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo('oval\Models\User');
     }
 
@@ -34,7 +36,8 @@ class AnalysisRequest extends Model
     *   Used for data display in admin page
     *   @return int
     **/
-    public function numberOfReqForSameVideo() {
+    public function numberOfReqForSameVideo()
+    {
         $num = AnalysisRequest::where('video_id', '=', $this->video_id)->count();
         return $num;
     }
@@ -45,7 +48,8 @@ class AnalysisRequest extends Model
     *   Used for data display in admin page
     *   @return array of string
     **/
-    public function allRequestorsNames() {
+    public function allRequestorsNames()
+    {
         $reqs_for_same = AnalysisRequest::distinct('user_id')->where('video_id', '=', $this->video_id)->get();
         $names = [];
         foreach ($reqs_for_same as $r) {
@@ -58,7 +62,8 @@ class AnalysisRequest extends Model
      * Method to fetch AnalysisRequests for same video
      * @return collection Collection of AnalysisRequest objects
      */
-    public function requestsForSameVideo() {
+    public function requestsForSameVideo()
+    {
         return AnalysisRequest::where('video_id', '=', $this->video_id)->get();
     }
 
@@ -66,7 +71,8 @@ class AnalysisRequest extends Model
      * Method to get ids of users who requested analysis for the video
      * @return array Array of int
      */
-    public function requestorsIds() {
+    public function requestorsIds()
+    {
         $reqs = $this->requestsForSameVideo();
         $ids = [];
         foreach($reqs as $r) {

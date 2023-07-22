@@ -30,7 +30,7 @@ class CreateLti2NonceTables extends Migration
      */
     public function down()
     {
-        Schema::table('lti2_nonce', function(Blueprint $table) {
+        Schema::table('lti2_nonce', function (Blueprint $table) {
             $table->dropForeign(['consumer_pk']);
         });
         Schema::dropIfExists('lti2_nonce');

@@ -19,8 +19,8 @@ class CreatePointInstructionsTable extends Migration
             $table->string('description');
             $table->timestamps();
         });
-        
-        Schema::table('point_instructions', function(Blueprint $table) {
+
+        Schema::table('point_instructions', function (Blueprint $table) {
             $table->foreign('group_video_id')->references('id')->on('group_videos')->onDelete('cascade');
         });
     }
@@ -32,7 +32,7 @@ class CreatePointInstructionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('point_instructions', function(Blueprint $table) {
+        Schema::table('point_instructions', function (Blueprint $table) {
             $table->dropForeign(['group_video_id']);
         });
         Schema::dropIfExists('point_instructions');

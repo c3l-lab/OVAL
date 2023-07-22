@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use oval\Http\Controllers\Api\Lti1p1;
 use oval\Http\Controllers\Api\Lti1p3;
 

@@ -20,7 +20,10 @@ use Exception;
  */
 class AnalyzeTranscript implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     // Important, will throw an error without it
     protected $opt;
@@ -78,11 +81,14 @@ class AnalyzeTranscript implements ShouldQueue
                 curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_user . ':' . $proxy_pass);
             }
             curl_setopt($ch, CURLOPT_USERPWD, $IBM_WATSON_NLU_USER . ':' . $IBM_WATSON_NLU_PASS);
-            curl_setopt($ch, CURLOPT_POST, TRUE);
+            curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             // curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            curl_setopt(
+                $ch,
+                CURLOPT_HTTPHEADER,
+                array(
                 'Content-Type: application/json',
                 'Accept: application/json')
             );
@@ -91,7 +97,7 @@ class AnalyzeTranscript implements ShouldQueue
                 $error_message = curl_strerror($errno);
                 echo "cURL error ({$errno}):\n {$error_message}";
                 throw new Exception("cURL error ({$errno}):\n {$error_message}");
-			}
+            }
             curl_close($ch);
             $analysis_json = json_decode($result);
 
@@ -165,7 +171,7 @@ class AnalyzeTranscript implements ShouldQueue
                             ))->first();
 
                             if (empty($key)) {
-                                $new_key = new Keyword;
+                                $new_key = new Keyword();
                                 $new_key->videoId = $video_id;
                                 $new_key->keyword = $vk->keyword;
                                 $new_key->startTime = round($vt->start, 2);

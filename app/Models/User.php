@@ -38,27 +38,30 @@ class User extends Authenticatable
      * Method to return full name of the user.
      * @return string
      */
-    public function fullName() {
-    	return $this->first_name." ".$this->last_name;
+    public function fullName()
+    {
+        return $this->first_name." ".$this->last_name;
     }
 
     /**
      * Method to return id of the user.
      * TODO: check where it's used... $user->id does the same thing..
      */
-    public function id() {
-    	return $this->id;
+    public function id()
+    {
+        return $this->id;
     }
 
     /**
     *	Method to check if the user is an instructor of any courses
     *	@return boolean
     **/
-    public function isAnInstructor() {
-    	return DB::table('enrollments')
-				->whereUserId($this->id)
-				->whereIsInstructor(true)
-				->count() >0;
+    public function isAnInstructor()
+    {
+        return DB::table('enrollments')
+                ->whereUserId($this->id)
+                ->whereIsInstructor(true)
+                ->count() >0;
     }
 
     /**
@@ -66,12 +69,13 @@ class User extends Authenticatable
     *	@param Course $course
     *	@return boolean
     **/
-    public function isInstructorOf($course) {
-    	return DB::table('enrollments')
-    			->whereUserId($this->id)
-    			->whereCourseId($course->id)
-    			->whereIsInstructor(true)
-    			->count() >0;
+    public function isInstructorOf($course)
+    {
+        return DB::table('enrollments')
+                ->whereUserId($this->id)
+                ->whereCourseId($course->id)
+                ->whereIsInstructor(true)
+                ->count() >0;
     }
 
     /**
@@ -79,34 +83,37 @@ class User extends Authenticatable
     *	@param Course $course
     *	@return boolean true if enrolled, false if not.
     **/
-    public function checkIfEnrolledIn($course) {
-    	return DB::table('enrollments')
-			->whereUserId($this->id)
-			->whereCourseId($course->id)
-			->count() > 0;
+    public function checkIfEnrolledIn($course)
+    {
+        return DB::table('enrollments')
+            ->whereUserId($this->id)
+            ->whereCourseId($course->id)
+            ->count() > 0;
     }
 
     /**
     *	Many to many Relationship - Courses the user is enrolled in.
     *	@return collection of Course objects
     **/
-    public function enrolledCourses() {
-    	return $this->belongsToMany('oval\Models\Course', "enrollments")->withPivot('is_instructor');
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany('oval\Models\Course', "enrollments")->withPivot('is_instructor');
     }
 
     /**
     *	Get collection of Course objects the user teaches
     *	@return collection of Course objects
     **/
-    public function coursesTeaching() {
-    	$user_id = $this->id;
-    	return Course::whereIn('id', function($q) use ($user_id) {
-    					$q	->select('course_id')
-    						->from('enrollments')
-    						->where('user_id', '=', $user_id)
-    						->where('is_instructor', '=', true);
-					})
-					->get();
+    public function coursesTeaching()
+    {
+        $user_id = $this->id;
+        return Course::whereIn('id', function ($q) use ($user_id) {
+            $q	->select('course_id')
+                ->from('enrollments')
+                ->where('user_id', '=', $user_id)
+                ->where('is_instructor', '=', true);
+        })
+                    ->get();
     }
 
     /**
@@ -114,12 +121,13 @@ class User extends Authenticatable
     *	Enroll this user into the course passed as parameter
     *	@param Course $course
     **/
-    public function enrollIn($course) {
-    	//check if user is enrolled in the course first...
-		$alreadyEnrolled = $this->checkIfEnrolledIn($course);
-		if (!$alreadyEnrolled) {
-			$this->enrolledCourses()->attach($course);
-		}
+    public function enrollIn($course)
+    {
+        //check if user is enrolled in the course first...
+        $alreadyEnrolled = $this->checkIfEnrolledIn($course);
+        if (!$alreadyEnrolled) {
+            $this->enrolledCourses()->attach($course);
+        }
     }
 
     /**
@@ -127,21 +135,23 @@ class User extends Authenticatable
     *	Make this user an instructor of a Course
     *	@param Course $course
     **/
-    public function makeInstructorOf($course) {
-    	//first check if enrolled, and unenroll if enrolled
-    	if($this->checkIfEnrolledIn($course)) {
-    		echo "\nalready enrolled";
-    		$this->enrolledCourses()->detach($course->id);
-    	}
-    	$this->enrolledCourses()->save($course, ['is_instructor'=>true]);
+    public function makeInstructorOf($course)
+    {
+        //first check if enrolled, and unenroll if enrolled
+        if($this->checkIfEnrolledIn($course)) {
+            echo "\nalready enrolled";
+            $this->enrolledCourses()->detach($course->id);
+        }
+        $this->enrolledCourses()->save($course, ['is_instructor'=>true]);
     }
 
     /**
     *	Get many-to-many relationship
     *	@return collection of Group objects
     **/
-    public function groupMemberOf() {
-    	return $this->belongsToMany('oval\Models\Group', "group_members");
+    public function groupMemberOf()
+    {
+        return $this->belongsToMany('oval\Models\Group', "group_members");
     }
 
     /**
@@ -149,50 +159,55 @@ class User extends Authenticatable
     *	@param Group $group
     *	@return boolean true if in group, false if not.
     **/
-    public function checkIfInGroup($group) {
-    	return DB::table('group_members')
-			->whereUserId($this->id)
-			->whereGroupId($group->id)
-			->count() > 0;
+    public function checkIfInGroup($group)
+    {
+        return DB::table('group_members')
+            ->whereUserId($this->id)
+            ->whereGroupId($group->id)
+            ->count() > 0;
     }
 
-	/**
-	*	Add this user to the group passed in
-	*	@param	Group $group
-	**/
-	public function addToGroup($group) {
-		if (!$this->checkIfInGroup($group)) {
-			$this->groupMemberOf()->attach($group);
-		}
-	}
+    /**
+    *	Add this user to the group passed in
+    *	@param	Group $group
+    **/
+    public function addToGroup($group)
+    {
+        if (!$this->checkIfInGroup($group)) {
+            $this->groupMemberOf()->attach($group);
+        }
+    }
 
     /**
     *	Remove this user from the Group passed in
     *	@param Group $group
     **/
-    public function removeFromGroup($group) {
-    	$this->groupMemberOf->detach($group->id);
+    public function removeFromGroup($group)
+    {
+        $this->groupMemberOf->detach($group->id);
     }
 
     /**
     *	Videos that are assigned to the groups this user belongs to
     *	@return collection of Video objects
     **/
-    public function viewableGroupVideos() {
-    	$group_videos = collect();
-    	foreach ($this->groupMemberOf as $group) {
+    public function viewableGroupVideos()
+    {
+        $group_videos = collect();
+        foreach ($this->groupMemberOf as $group) {
             $group_videos = $group_videos->merge($group->availableGroupVideosForUser($this));
 
-    	}
-    	return $group_videos;
+        }
+        return $group_videos;
     }
 
     /**
      * One-to-many relationship - Annotation created by the User
      *	@return collection of Annotation objects
      **/
-    public function annotations() {
-    	return $this->hasMany('oval\Models\Annotation');
+    public function annotations()
+    {
+        return $this->hasMany('oval\Models\Annotation');
     }
 
     /**
@@ -200,16 +215,18 @@ class User extends Authenticatable
     *	Comments written by this user.
     *	@return collection of Comment objects
     **/
-    public function comments() {
-    	return $this->hasMany('oval\Models\Comment');
+    public function comments()
+    {
+        return $this->hasMany('oval\Models\Comment');
     }
 
     /**
      * One to many relationship - Videos added by the User
      *	@return collection of Video objects
      **/
-    public function videosAdded() {
-    	return $this->hasMany('oval\Models\Video', 'added_by');
+    public function videosAdded()
+    {
+        return $this->hasMany('oval\Models\Video', 'added_by');
     }
 
     /**
@@ -217,8 +234,9 @@ class User extends Authenticatable
     *	Returns videos viewed by this user.
     *	@return collection of Video objects
     **/
-    public function videosViewed() {
-    	return $this->belongsToMany('oval\Models\Video', 'videos_viewed_by');
+    public function videosViewed()
+    {
+        return $this->belongsToMany('oval\Models\Video', 'videos_viewed_by');
     }
 
     /**
@@ -226,8 +244,9 @@ class User extends Authenticatable
     *	Annotations viewed by this user.
     *	@return collection of Annotation objects
     **/
-    public function annotationViewed() {
-    	return $this->belongsToMany('oval\Models\Annotation', 'annotation_viewed_by');
+    public function annotationViewed()
+    {
+        return $this->belongsToMany('oval\Models\Annotation', 'annotation_viewed_by');
     }
 
     /**
@@ -235,8 +254,9 @@ class User extends Authenticatable
     *	Feedbacks made by this user.
     *	@return collection of Feedback objects
     **/
-    public function feedbacks() {
-    	return $this->hasMany('oval\Models\Feedback');
+    public function feedbacks()
+    {
+        return $this->hasMany('oval\Models\Feedback');
     }
 
     /**
@@ -244,28 +264,31 @@ class User extends Authenticatable
     *	@param int group_video_id
     *	@return ConfidenceLevel object
     **/
-    public function confidenceLevelForVideo($group_video_id) {
-    	return DB::table('confidence_levels')
-    			->where([
-    				['user_id', '=', $this->id],
-    				['group_video_id', '=', $group_video_id]
-    			])
-    			->first();
+    public function confidenceLevelForVideo($group_video_id)
+    {
+        return DB::table('confidence_levels')
+                ->where([
+                    ['user_id', '=', $this->id],
+                    ['group_video_id', '=', $group_video_id]
+                ])
+                ->first();
     }
 
     /**
     *	One-to-Many relationship
     *	@return collection of Tracking objects
     **/
-    public function trackings() {
-    	return $this->hasMany('oval\Models\Tracking');
+    public function trackings()
+    {
+        return $this->hasMany('oval\Models\Tracking');
     }
 
     /**
     *   One-to-Many relationship
     *   @return collection of AnalysisRequest objects
     **/
-    public function analysis_request() {
+    public function analysis_request()
+    {
         return $this->hasMany('oval\Models\AnalysisRequest');
     }
     protected static function newFactory()

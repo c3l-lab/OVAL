@@ -17,7 +17,7 @@ class EventServiceProvider extends ServiceProvider
             'oval\Listeners\LoginListener',
         ],
         'Illuminate\Auth\Events\Logout' => [
-        	'oval\Listeners\LogoutListener',
+            'oval\Listeners\LogoutListener',
         ],
     ];
 

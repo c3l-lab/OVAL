@@ -1,11 +1,12 @@
 <?php
+
 namespace oval\Services\Lti1p3;
 
 use Packback\Lti1p3;
 
 class LtiCache implements Lti1p3\Interfaces\ICache
 {
-public const NONCE_PREFIX = 'nonce_';
+    public const NONCE_PREFIX = 'nonce_';
 
     public function getLaunchData(string $key): ?array
     {

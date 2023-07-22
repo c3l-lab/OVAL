@@ -19,7 +19,8 @@ class Keyword extends Model
     *   One-to-Many relationship (Inverse)
     *   @return Video object
     **/
-    public function video() {
+    public function video()
+    {
         return $this->belongsTo('oval\Models\Video', 'videoId');
     }
 
@@ -30,7 +31,8 @@ class Keyword extends Model
      *
      * @return array Array of array with keys: title, url, time_url, time
      */
-    public function related() {
+    public function related()
+    {
         $related = Keyword::where([
             ['keyword', '=', $this->keyword],
             ['type', '=', $this->type],
@@ -52,7 +54,8 @@ class Keyword extends Model
      * Method to get time values when the keyword appears in video.
      * @return array Array
      */
-    public function occurrences() {
+    public function occurrences()
+    {
         $occurrences = Keyword::where([
             ['keyword', '=', $this->keyword],
             ['type', '=', $this->type],

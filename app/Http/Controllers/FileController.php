@@ -11,7 +11,8 @@ use oval;
  */
 class FileController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
@@ -24,11 +25,12 @@ class FileController extends Controller
      * @param Request $req Request contains video_id, file
      * @return Illuminate\Http\RedirectResponse redirects to video-management page
      */
-    public function upload_transcript (Request $req) {
-		$video_id = intval($req->video_id);
+    public function upload_transcript(Request $req)
+    {
+        $video_id = intval($req->video_id);
         $file = $req->file;
-		$path = $file->store('transcripts');
-		$srt = trim(Storage::get($path));
+        $path = $file->store('transcripts');
+        $srt = trim(Storage::get($path));
 
         $text = "[";
         $items = preg_split("/\r\n\r\n|\n\n|\r\r/", $srt);
@@ -37,16 +39,14 @@ class FileController extends Controller
             for ($i=0; $i<count($lines); $i++) {
                 if ($i == 0) {
                     $text .= '"{';
-                }
-                elseif ($i == 1) {
+                } elseif ($i == 1) {
                     $start_to_end = explode(" ", $lines[$i]);
                     $start_parts = explode(":", $start_to_end[0]);
                     $start = intval($start_parts[0])*3600 + intval($start_parts[1])*60 + floatval(str_replace(',', '.', $start_parts[2]));
                     $end_parts = explode(":", $start_to_end[2]);
                     $end = intval($end_parts[0])*3600 + intval($end_parts[1])*60 + floatval(str_replace(',', '.', $end_parts[2]));
                     $text .= '\"start\": '.$start.', \"end\": '.$end.', \"transcript\": \"';
-                }
-                else {
+                } else {
                     $text .= $lines[$i];
                 }
                 if ($i == count($lines)-1) {
@@ -60,7 +60,7 @@ class FileController extends Controller
 
         $transcript = oval\Models\Transcript::find($video_id);
         if (empty($transcript)) {
-            $transcript = new oval\Models\Transcript;
+            $transcript = new oval\Models\Transcript();
         }
         $transcript->video_id = $video_id;
         $transcript->transcript = $text;
@@ -68,6 +68,6 @@ class FileController extends Controller
 
         Storage::delete($path);
 
-		return redirect('video-management');
-	}
+        return redirect('video-management');
+    }
 }

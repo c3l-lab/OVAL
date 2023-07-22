@@ -22,7 +22,7 @@ class CreateQuiz extends Migration
             $table->boolean('visable');
             $table->timestamps();
         });
-        
+
     }
 
     /**

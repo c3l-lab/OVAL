@@ -20,7 +20,8 @@ class ConfidenceLevel extends Model
     *   The comment this ConfidenceLevel is about.
     *   @return Comment object
     **/
-    public function forComment() {
+    public function forComment()
+    {
         return $this->belongsTo('oval\Models\Comment');
     }
 }

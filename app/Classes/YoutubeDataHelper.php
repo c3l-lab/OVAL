@@ -1,4 +1,5 @@
 <?php
+
 namespace oval\Classes;
 
 use oval;
@@ -9,8 +10,8 @@ use Google_Service_Exception;
 /**
  * This is a helper class to use Youtube Data API Client Library to handle the actual API calls
  */
-class YoutubeDataHelper {
-
+class YoutubeDataHelper
+{
     /**
      * @var Google_Client Google_Client object used for API calls
      */
@@ -27,7 +28,8 @@ class YoutubeDataHelper {
      * @param string $client_id
      * @param string $secret
      */
-    public function __construct($client_id, $secret) {
+    public function __construct($client_id, $secret)
+    {
         $proxy_url = env('CURL_PROXY_URL', '');
         $proxy_user = env('CURL_PROXY_USER', '');
         $proxy_pass = env('CURL_PROXY_PASS', '');
@@ -54,10 +56,11 @@ class YoutubeDataHelper {
      *
      * @return string auth url (the google login page)
      */
-    public function get_auth_url() {
+    public function get_auth_url()
+    {
         $this->client->setPrompt('consent');    //-->obtain refresh token
-		$authURL = $this->client->createAuthUrl();
-		return $authURL;
+        $authURL = $this->client->createAuthUrl();
+        return $authURL;
     }
 
     /**
@@ -65,7 +68,8 @@ class YoutubeDataHelper {
      *
      * @param string $code param passed when coming back after authentication by google
      */
-    public function handle_auth_redirect($code) {
+    public function handle_auth_redirect($code)
+    {
         $token = json_encode($this->client->authenticate($code));
         $accessToken = $this->client->getAccessToken();
 
@@ -76,7 +80,7 @@ class YoutubeDataHelper {
         $google_cred = oval\Models\GoogleCredential::where('client_id', '=', $this->client->getClientId())
                                             ->first();
         if (empty($google_cred)) {
-            $google_cred = new oval\Models\GoogleCredential;
+            $google_cred = new oval\Models\GoogleCredential();
             $google_cred->client_id = $this->client->getClientId();
         }
         $google_cred->client_secret = $this->client->getClientSecret();
@@ -91,7 +95,8 @@ class YoutubeDataHelper {
      * This method checks if access token is expired for credential passed in and refreshes it if expired
      * @param oval\Models\GoogleCredential $cred
      */
-    public function handle_access_token_refresh(oval\Models\GoogleCredential $cred) {
+    public function handle_access_token_refresh(oval\Models\GoogleCredential $cred)
+    {
         $existing_token = $cred['access_token'];
         $this->client->setAccessToken($existing_token);
         if ($this->client->isAccessTokenExpired()) {
@@ -108,7 +113,8 @@ class YoutubeDataHelper {
      *
      * @return array returned by Youtube Data API
      */
-    public function get_captions($video_identifier) {
+    public function get_captions($video_identifier)
+    {
         $youtube = new Google_Service_Youtube($this->client);
         $captions = $youtube->captions->listCaptions("id,snippet", $video_identifier);
         return $captions;
@@ -124,7 +130,8 @@ class YoutubeDataHelper {
      * @return string id of the caption track
      *
      */
-    public function get_caption_track_id($video_identifier) {
+    public function get_caption_track_id($video_identifier)
+    {
         $captions = $this->get_captions($video_identifier);
         $langs = config('youtube.transcript_lang');
         $track_id = null;
@@ -148,15 +155,15 @@ class YoutubeDataHelper {
      *
      * @return array containing json object with keys: start, end, transcript
      */
-    public function download_caption($track_id) {
+    public function download_caption($track_id)
+    {
         $youtube = new Google_Service_Youtube($this->client);
-        try{
+        try {
             $response = $youtube->captions->download($track_id, array(
             'tfmt' => "srt",
             'alt' => "media"
             ));
-        }
-        catch(Google_Service_Exception $e) {
+        } catch(Google_Service_Exception $e) {
             return null;
         }
         $caption_string = $response->getBody()->getContents();
@@ -188,6 +195,3 @@ class YoutubeDataHelper {
     }
 
 }//end class
-
-
-?>

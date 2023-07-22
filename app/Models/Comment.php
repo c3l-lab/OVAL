@@ -16,7 +16,7 @@ class Comment extends Model
 
     /** @var array The attributes that are mass assignable.*/
     protected $fillable = [
-    	'group_video_id', 'user_id', 'description', 'tags', 'is_private'
+        'group_video_id', 'user_id', 'description', 'tags', 'is_private'
     ];
 
     /**
@@ -24,8 +24,9 @@ class Comment extends Model
     *	Returns the User that wrote this Comment.
     *	@return User
     **/
-    public function user() {
-    	return $this->belongsTo('oval\Models\User');
+    public function user()
+    {
+        return $this->belongsTo('oval\Models\User');
     }
 
     /**
@@ -33,15 +34,17 @@ class Comment extends Model
     *	Returns the groupvideo this comment belongs to.
     *	@return GroupVideo object
     **/
-    public function groupVideo() {
-		$this->belongsToMany('oval\Models\GroupVideo');
+    public function groupVideo()
+    {
+        $this->belongsToMany('oval\Models\GroupVideo');
     }
 
     /**
     *   One-to-One relationship.
     *   @return Feedback object
     **/
-    public function feedback() {
+    public function feedback()
+    {
         return $this->hasOne('oval\Models\Feedback');
     }
 
@@ -49,7 +52,8 @@ class Comment extends Model
     *   One-to-One relationship.
     *   @return ConfidenceLevel object
     **/
-    public function confidenceLevel() {
+    public function confidenceLevel()
+    {
         return $this->hasOne('oval\Models\ConfidenceLevel');
     }
 
@@ -57,7 +61,8 @@ class Comment extends Model
     *   Many-to-Many relationship.
     *   @return collection of Tag objects
     **/
-    public function tags() {
+    public function tags()
+    {
         return $this->belongsToMany('oval\Models\Tag', 'comment_tags')->withTimeStamps();
     }
     protected static function newFactory()

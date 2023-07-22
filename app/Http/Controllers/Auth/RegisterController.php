@@ -106,13 +106,13 @@ class RegisterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    protected function showRegistrationForm() {
+    protected function showRegistrationForm()
+    {
         $user = Auth::user();
 
         if ($user->role=="A") {
             return view('auth.register');
-        }
-        else {
+        } else {
             return view('pages.message-page', ['title'=>"ERROR", 'message'=>"You must be an administrator to create an account."]);
         }
     }
@@ -136,6 +136,6 @@ class RegisterController extends Controller
         // $this->guard()->login($user);
 
         return $this->registered($request, $user)
-                        ?: redirect()->back()->with('message','User "'.$user->fullName().'" was added/updated');
+                        ?: redirect()->back()->with('message', 'User "'.$user->fullName().'" was added/updated');
     }
 }

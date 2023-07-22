@@ -30,15 +30,16 @@ class GoogleAPIController extends Controller
      * @param Request $req Request contains client_id, secret
      * @return Illuminate\Http\RedirectResponse
      */
-    public function add_google_cred (Request $req) {
-		$client_id = $req->client_id;
-		$secret = $req->secret;
-		session(['cid' => $client_id]);
+    public function add_google_cred(Request $req)
+    {
+        $client_id = $req->client_id;
+        $secret = $req->secret;
+        session(['cid' => $client_id]);
         session(['s' => $secret]);
         $helper = new YoutubeDataHelper($client_id, $secret);
-		$authURL = $helper->get_auth_url();
-		return redirect()->away($authURL);
-	}
+        $authURL = $helper->get_auth_url();
+        return redirect()->away($authURL);
+    }
 
     /**
      * Method called from /youtube_auth_redirect path
@@ -50,7 +51,8 @@ class GoogleAPIController extends Controller
      * @param Request $req Request contains code, session with cid and s
      * @return Illuminate\Http\RedirectResponse
      */
-    public function youtube_auth_redirect (Request $req) {
+    public function youtube_auth_redirect(Request $req)
+    {
         if(!$req->has('code')) {
             throw new Exception('$_GET[\'code\'] is not set. Please re-authenticate.');
         }
@@ -60,8 +62,7 @@ class GoogleAPIController extends Controller
             $secret = $req->session()->get('s');
             $helper = new YoutubeDataHelper($client_id, $secret);
             $helper->handle_auth_redirect($req->get('code'));
-        }
-        catch (Exception $ex) {
+        } catch (Exception $ex) {
             throw $ex;
         }
         return redirect('/');
@@ -77,7 +78,8 @@ class GoogleAPIController extends Controller
      * @param string $video_identifier Video ID for Youtube Video
      * @return string $track_id
      */
-    private function get_caption_track_id ($video_identifier) {
+    private function get_caption_track_id($video_identifier)
+    {
         $langs = config('youtube.transcript_lang');
         $credentials = oval\Models\GoogleCredential::all();
         $track_id = null;
@@ -109,7 +111,8 @@ class GoogleAPIController extends Controller
      * @uses GoogleAPIController::get_caption_track_id()
      * @return array key:caption_available val:true if available, false if not
      */
-    public function check_youtube_caption (Request $req) {
+    public function check_youtube_caption(Request $req)
+    {
         $video_id = $req->video_id;
         $caption_available = false;
         $langs = config('youtube.transcript_lang');
