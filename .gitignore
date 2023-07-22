@@ -20,6 +20,7 @@ Homestead.json
 .rocketeer/
 
 .vscode/
+.idea/
 *.DS_Store
 speechtotext-server/videos
 speechtotext-server/audios
