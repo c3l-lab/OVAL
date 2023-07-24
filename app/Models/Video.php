@@ -71,15 +71,13 @@ class Video extends Model
     **/
     public function assignToGroup($group)
     {
-        if (!$this->checkIfAssignedTo($group)) {
-            // $this->groups()->attach($group);
-            //-- in order for the "default values" to be set, instantiate it
-            //-- rather than attaching it
-            $group_video = new GroupVideo();
-            $group_video->group_id = $group->id;
-            $group_video->video_id = $this->id;
-            $group_video->save();
-        }
+        // $this->groups()->attach($group);
+        //-- in order for the "default values" to be set, instantiate it
+        //-- rather than attaching it
+        $group_video = new GroupVideo();
+        $group_video->group_id = $group->id;
+        $group_video->video_id = $this->id;
+        $group_video->save();
     }
 
     /**
