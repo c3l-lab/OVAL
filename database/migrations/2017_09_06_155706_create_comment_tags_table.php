@@ -20,7 +20,7 @@ class CreateCommentTagsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::table('comment_tags', function(Blueprint $table){
+        Schema::table('comment_tags', function (Blueprint $table) {
             $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');
             $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
         });

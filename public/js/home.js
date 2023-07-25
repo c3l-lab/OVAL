@@ -71,137 +71,137 @@ function commaDelimitedToArray(commaDelimited) {
 //-----------------------------------------
 //-- Annotations & Comments --
 //-----------------------------------------
-//function getAllAnnotations() {
-//	annotations.splice(0, annotations.length);
-//	$.ajax({
-//		type: "POST",
-//		url: "/get_annotations",
-//		data: {course_id:course_id, group_id:group_id, video_id:video_id},
-//		success: function(data) {
-//			annotations = data.slice();
-//			layoutAnnotations();
-//			trackingInitial({event: 'click', target: '#annotations-list .annotation-button', info: 'View an annotation'}, trackings);
-//	},
-//	error: function(request, status, error) {
-//		console.log("error get_annotations - "+error);	/////
-//	}
-//});
-//}
+function getAllAnnotations() {
+	annotations.splice(0, annotations.length);
+	$.ajax({
+		type: "POST",
+		url: "/get_annotations",
+		data: {course_id:course_id, group_id:group_id, video_id:video_id},
+		success: function(data) {
+			annotations = data.slice();
+			layoutAnnotations();
+ 			trackingInitial({event: 'click', target: '#annotations-list .annotation-button', info: 'View an annotation'}, trackings);
+		},
+		error: function(request, status, error) {
+			console.log("error get_annotations - "+error);	/////
+		}
+	});
+}
 
-//function getComments() {
-//	comments = [];
-//	$.ajax ({
-//		type: "POST",
-//		url: "/get_comments",
-//		data: {group_video_id: group_video_id},
-//		success: function (data) {
-//			if (data) {
-//				comments = data.slice();
-//				$(".comments-box").html(formatComments());
-//				trackingInitial({event: 'click', target: '.edit-comment-button', info: 'Edit comment'}, trackings);
-//			}
-//		},
-//		error: function(request, status, error) {
-//			console.log("home.js, getComments() ajax error: "+request.status+", error: "+error+"<error>"+request.responseText+"</error>");
-//			if(status=="401") {
-//				window.location = "/logout";
-//			}
-//		},
-//		async: false
-//	});
-//}
+function getComments() {
+	comments = [];
+	$.ajax ({
+		type: "POST",
+		url: "/get_comments",
+		data: {group_video_id: group_video_id},
+		success: function (data) {
+			if (data) {
+				comments = data.slice();
+				$(".comments-box").html(formatComments());
+				trackingInitial({event: 'click', target: '.edit-comment-button', info: 'Edit comment'}, trackings);
+			}
+		},
+		error: function(request, status, error) {
+			console.log("home.js, getComments() ajax error: "+request.status+", error: "+error+"<error>"+request.responseText+"</error>");
+			if(status=="401") {
+				window.location = "/logout";
+			}
+		},
+		async: false
+	});
+}
 
-//function formatComments() {
-//	var html = "";	//return val
-//    if (comments == null || comments.length <= 0) {
-//    	// Display a single, uneditable entry telling people to post something.
-//   	html = "<div class=\"comment-text\">There is no comment for this video yet. You can add yours and review them later!</div>";
-//
-//   } else {
-//		var list = "";
-//	    $.each(comments, function(index, value) {
-//	        var description = value.description;
-//	        description = $("<div/>").text(unescapeHtml(description)).html();
-//				
-//	        // var commentDate = dateStringFromSqlTimestamp(value.updated_at);
-//	        var commentID = value.id;
-//	        var divClass = (description.length > 100) ? " comment-summary" : "";
-//
-//	        html += "\n<div class=\"comment\">";
-//			html += "\n\t<div class=\"comment-header\">";
-//	        if (value.is_mine) {
-//	        	html += "\n\t\t<button type=\"button\" id=\""+ commentID +"\" class=\"btn btn-link edit-comment-button\" title=\"Edit comment\"><i class=\"fa fa-pencil-square-o\"></i></button>";
-//	        }
-//			html += "\n\t\t<div class=\"username\">" + value.name;
-//			if (value.by_instructor) {
-//				html += "<span class=\"instructor\">instructor</span>";
-//			}
-//			html += "</div>";
-//	        if ((value.privacy === "private") || (value.privacy === "nominated")) {
-//	        	html += "\n\t\t<div class=\"privacy-icon\"><i class=\"fa fa-eye-slash\"></i></div>";
-//	        }
-//	        else if (value.privacy === "all") {
-//	        	html += "\n\t\t<div class=\"privacy-icon\"><i class=\"fa fa-eye\"></i></div>";
-//			}
-//			html += "\n\t\t<div class=\"date\">"+value.updated_at+"</div>";
-//			html += "\n\t\t<div class=\"tags\">";
-//			if (value.tags && value.tags.length > 0) {
-//				$.each(value.tags, function(i, v) {
-//					html += "\n\t\t\t<span class=\"tag comment-tag\">"+v+"</span>";
-//				});
-//			}
-//			html += "\n\t\t</div><!-- .tags -->";
-//			html += "\n\t</div><!-- .comment-header -->";
-//			html += "\n\t<div class=\"comment-text"+divClass+"\" id=\"comment-text-"+commentID+"\">";
-//			html += "\n\t\t"+description;
-//			html += "\n\t</div><!-- .comment-text -->";
-//			html += "\n</div><!-- .comment -->";
-//	    });
-//  }
-//   return html;
-//}//end formatComments
+function formatComments() {
+	var html = "";	//return val
+    if (comments == null || comments.length <= 0) {
+    	// Display a single, uneditable entry telling people to post something.
+    	html = "<div class=\"comment-text\">There is no comment for this video yet. You can add yours and review them later!</div>";
 
-//function generateTrendline() {
-//	var canvas = document.getElementById("trends");
-//	if (canvas.getContext) {
-//		var ctx = canvas.getContext('2d');
-//		canvas.width = $("#annotations-list").width()-2;
-//		canvas.height = 25;
-//		var y = 25;
-//		var w = $("#annotations-list").width();
-//		ctx.lineWidth = 3;
-//		ctx.strokeStyle = "#F9B200";
-//		ctx.beginPath();
-//		for(i=0; i<annotations.length; i++) {
-//			var x = annotations[i].start_time / video_duration * w;
-//			x = (x==w)? x-1.5 : x;	///////dodgey fix.. so annotation at end of video shows
-//			ctx.moveTo(x, 0);
-//			ctx.lineTo(x, y);
-//		}
-//		ctx.stroke();
-//	}
-//	else {
-//		//--canvas isn't supported--
-//		console.log("canvas not supported");	///////////
-//	}
-//}//end generateTrendline
+    } else {
+		var list = "";
+	    $.each(comments, function(index, value) {
+	        var description = value.description;
+	        description = $("<div/>").text(unescapeHtml(description)).html();
 
-//function adjustAnnotationsListDiv() {
-//	var annotations_list_width = $("#annotations").width();
-//	annotations_list_width = annotations_list_width > 550 ? annotations_list_width : 550;
-//	var max_y = 0;
-//	$(".annotation-icon").each(function() {
-//		max_y = Math.max($(this).position().top, max_y);
-//	});
-//	var annotations_list_height = max_y + $(".annotation-icon").height();
-//
-//	annotations_list_height = (annotations_list_height > 70) ? annotations_list_height+40 : 120;
-//	$("#annotations-list").height(annotations_list_height);
-//	// $("#annotations-list").width(annotations_list_width).height(annotations_list_height);
-//	$("#trends").width($("#annotations").width()-3);
-//	// $("#trends").width(annotations_list_width-2);
-//	generateTrendline();
-//}
+	        // var commentDate = dateStringFromSqlTimestamp(value.updated_at);
+	        var commentID = value.id;
+	        var divClass = (description.length > 100) ? " comment-summary" : "";
+
+	        html += "\n<div class=\"comment\">";
+			html += "\n\t<div class=\"comment-header\">";
+	        if (value.is_mine) {
+	        	html += "\n\t\t<button type=\"button\" id=\""+ commentID +"\" class=\"btn btn-link edit-comment-button\" title=\"Edit comment\"><i class=\"fa fa-pencil-square-o\"></i></button>";
+	        }
+			html += "\n\t\t<div class=\"username\">" + value.name;
+			if (value.by_instructor) {
+				html += "<span class=\"instructor\">instructor</span>";
+			}
+			html += "</div>";
+	        if ((value.privacy === "private") || (value.privacy === "nominated")) {
+	        	html += "\n\t\t<div class=\"privacy-icon\"><i class=\"fa fa-eye-slash\"></i></div>";
+	        }
+	        else if (value.privacy === "all") {
+	        	html += "\n\t\t<div class=\"privacy-icon\"><i class=\"fa fa-eye\"></i></div>";
+			}
+			html += "\n\t\t<div class=\"date\">"+value.updated_at+"</div>";
+			html += "\n\t\t<div class=\"tags\">";
+			if (value.tags && value.tags.length > 0) {
+				$.each(value.tags, function(i, v) {
+					html += "\n\t\t\t<span class=\"tag comment-tag\">"+v+"</span>";
+				});
+			}
+			html += "\n\t\t</div><!-- .tags -->";
+			html += "\n\t</div><!-- .comment-header -->";
+			html += "\n\t<div class=\"comment-text"+divClass+"\" id=\"comment-text-"+commentID+"\">";
+			html += "\n\t\t"+description;
+			html += "\n\t</div><!-- .comment-text -->";
+			html += "\n</div><!-- .comment -->";
+	    });
+    }
+    return html;
+}//end formatComments
+
+function generateTrendline() {
+	var canvas = document.getElementById("trends");
+	if (canvas.getContext) {
+		var ctx = canvas.getContext('2d');
+		canvas.width = $("#annotations-list").width()-2;
+		canvas.height = 25;
+		var y = 25;
+		var w = $("#annotations-list").width();
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = "#F9B200";
+		ctx.beginPath();
+		for(i=0; i<annotations.length; i++) {
+			var x = annotations[i].start_time / video_duration * w;
+			x = (x==w)? x-1.5 : x;	///////dodgey fix.. so annotation at end of video shows
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, y);
+		}
+		ctx.stroke();
+	}
+	else {
+		//--canvas isn't supported--
+		console.log("canvas not supported");	///////////
+	}
+}//end generateTrendline
+
+function adjustAnnotationsListDiv() {
+	var annotations_list_width = $("#annotations").width();
+	annotations_list_width = annotations_list_width > 550 ? annotations_list_width : 550;
+	var max_y = 0;
+	$(".annotation-icon").each(function() {
+		max_y = Math.max($(this).position().top, max_y);
+	});
+	var annotations_list_height = max_y + $(".annotation-icon").height();
+
+	annotations_list_height = (annotations_list_height > 70) ? annotations_list_height+40 : 120;
+	$("#annotations-list").height(annotations_list_height);
+	// $("#annotations-list").width(annotations_list_width).height(annotations_list_height);
+	$("#trends").width($("#annotations").width()-3);
+	// $("#trends").width(annotations_list_width-2);
+	generateTrendline();
+}
 
 function unescapeHtml(safe) {
 	return safe ? safe.replace(/&amp;/g, '&')
@@ -279,56 +279,59 @@ function compareY(a,b) {
 	return retVal;
 }
 
-//function layoutAnnotations(mode) {
-//	if (!mode) {
-//		mode = ALL;
-//	}
-//	var anno_list = $("#annotations-list");
-//	
-//	if (annotations.length == 0) {
-//		var noAnnotationText = "<br/>There is no annotation for this video yet.<br/>Add annotations as you find points of interest so you can review them later!</br> ";
-//		anno_list.html("<div class=\"no-annotation\">"+noAnnotationText+"</div>");
-//	}
-//	else {
-//		var x=0;
-//		var y=0;
-//		var iconsize = 32;
-//		var placed = [];
-//		var actual_width = anno_list.width()-iconsize/2;
-//		var paddingX = 7;
-//	
-//		anno_list.html("");
-//		$.each(annotations, function(i, a) {
-//			if ((mode == MINE && !a.mine) || (mode == STUDENTS && a.by_instructor) || (mode == INSTRUCTORS && !a.by_instructor)) {
-//				return 1;
-//			}
-//
-//			var start_ratio = a.start_time/video_duration;
-//			x = Math.floor(actual_width * start_ratio)-paddingX;
-//			y = 0;
-//			$.each(placed, function(j, val) {
-//				if ((x >= val.x && x<=val.x+iconsize && y==val.y) || (x+iconsize>=val.x && x<=val.x+iconsize && y==val.y)) {
-//					y+= iconsize;
-//				}
-//			});
-//			placed.push({x:x, y:y});
-//			placed.sort(compareY);
-//			var style = "left:"+x+"px; top:"+y+"px;";
-//			var icon_tag;
-//			if(a.mine) {
-//				icon_tag = '<i class="fa fa-dot-circle-o" aria-hidden="true"></i>';
-//			}
-//			else if (a.by_instructor) {
-//				icon_tag = '<i class="fa fa-circle" aria-hidden="true"></i>';
-//			}
-//			else {
-//				icon_tag = '<i class="fa fa-circle-o" aria-hidden="true"></i>';
-//			}
-//			anno_list.append('<div class="annotation-icon" style="'+style+'"><button type="button" class="btn btn-link annotation-button" data-id="'+a.id+'">'+icon_tag+'</button></div>');
-//		});
-//		adjustAnnotationsListDiv();
-//	}
-//}
+function layoutAnnotations(mode) {
+	if (!mode) {
+		mode = ALL;
+	}
+	var anno_list = $("#annotations-list");
+	if (anno_list.length == 0) {
+		return;
+	}
+
+	if (annotations.length == 0) {
+		var noAnnotationText = "<br/>There is no annotation for this video yet.<br/>Add annotations as you find points of interest so you can review them later!</br> ";
+		anno_list.html("<div class=\"no-annotation\">"+noAnnotationText+"</div>");
+	}
+	else {
+		var x=0;
+		var y=0;
+		var iconsize = 32;
+		var placed = [];
+		var actual_width = anno_list.width()-iconsize/2;
+		var paddingX = 7;
+
+		anno_list.html("");
+		$.each(annotations, function(i, a) {
+			if ((mode == MINE && !a.mine) || (mode == STUDENTS && a.by_instructor) || (mode == INSTRUCTORS && !a.by_instructor)) {
+				return 1;
+			}
+
+			var start_ratio = a.start_time/video_duration;
+			x = Math.floor(actual_width * start_ratio)-paddingX;
+			y = 0;
+			$.each(placed, function(j, val) {
+				if ((x >= val.x && x<=val.x+iconsize && y==val.y) || (x+iconsize>=val.x && x<=val.x+iconsize && y==val.y)) {
+					y+= iconsize;
+				}
+			});
+			placed.push({x:x, y:y});
+			placed.sort(compareY);
+			var style = "left:"+x+"px; top:"+y+"px;";
+			var icon_tag;
+			if(a.mine) {
+				icon_tag = '<i class="fa fa-dot-circle-o" aria-hidden="true"></i>';
+			}
+			else if (a.by_instructor) {
+				icon_tag = '<i class="fa fa-circle" aria-hidden="true"></i>';
+			}
+			else {
+				icon_tag = '<i class="fa fa-circle-o" aria-hidden="true"></i>';
+			}
+			anno_list.append('<div class="annotation-icon" style="'+style+'"><button type="button" class="btn btn-link annotation-button" data-id="'+a.id+'">'+icon_tag+'</button></div>');
+		});
+		adjustAnnotationsListDiv();
+	}
+}
 
 function getNominatedStudentList(itemType, itemId) {
 	if (!itemId) {
@@ -365,7 +368,7 @@ function populateNominatedStudentList(nominated) {
 	});
 	list.val(selectedItems);
 	list.multiSelect('refresh');
-	
+
 }
 
 function saveFeedbacksAndConfidenceLevel (comment) {
@@ -404,13 +407,13 @@ $(document).ready (
 		var item_start_time_text = null;			//human readable start_time text used in modal-form
 		var item = null;				//annotation or comment item used in modal-form
 
-//		getAllAnnotations();
-//		getComments();
-		
+		getAllAnnotations();
+		getComments();
+
 		$("#course-name").text(course_name);
 		$("#group-name").text(group_name);
 		$("#video-name").text(unescapeHtml(video_name));
-		
+
 		$("#right-side").height($("#left-side").height());
 		$(".comments-box").height($("#left-side").height()-$("#related-videos").height()-$("#comments .header").height());
 
@@ -438,7 +441,7 @@ $(document).ready (
 			$(this).removeClass("comment-full");
 			$(this).addClass("comment-summary");
 		});
-		
+
 		/*$("#search-box").on("submit", function(e) {
 			e.preventDefault();
 			console.log("Search");		//////
@@ -452,7 +455,7 @@ $(document).ready (
 			// todo: implement search method /////////////////
 
 		}); */
-		
+
 		$(".add-annotation").on("click", function(e) {
 			e.preventDefault();
 			item = null;
@@ -469,7 +472,7 @@ $(document).ready (
 				}
 			}
 			if (show) {
-				modal.find("#modalLabel").text("ADD THOUGHT REPORT");
+				modal.find("#modalLabel").text("ADD ANNOTATION");
 				item_start_time_text = secondsToMinutesAndSeconds(item_start_time);
 				modal.find("#time-label").html(item_start_time_text);
 				modal.find(".edit-annotation-time").show();
@@ -512,7 +515,7 @@ $(document).ready (
 		});
 		$(".edit-annotation-button").on("click", function(e) {
 			e.preventDefault();
-			if ($("#preview").is(":visible")) {	
+			if ($("#preview").is(":visible")) {
 				$("#preview").hide();
 			}
 			modal.find("#modalLabel").text("EDIT ANNOTATION");
@@ -568,7 +571,7 @@ $(document).ready (
 		});
 		$(".comments-box").on("click", ".edit-comment-button", function(e) {
 			e.preventDefault();
-			
+
 			modal.find("#modalLabel").text("EDIT COMMENT");
 			var comment_id = $(this).attr("id");
 			var match = $.grep(comments, function(e){return e.id==comment_id;});
@@ -639,8 +642,15 @@ $(document).ready (
 					save_button.html('<i class="fa fa-save" aria-hidden="true"></i>');
 				}
 			}
-			
+
 		});
+
+		$("#annotation-modal").on("hidden.bs.modal", function () {
+				if (player.getPlayerState() === 2) {
+					playVideo();
+				}
+		});
+
 
 		modal.on("change", "input[name=privacy-radio]", function() {
 			type = "";
@@ -690,7 +700,7 @@ $(document).ready (
 
 			modal.find("#annotation-form").validator('validate');
 			if(modal.find("#annotation-form").find('.has-error').length) {
-				if((modal.find("#annotation-description").data('bs.validator.errors').length>0) 
+				if((modal.find("#annotation-description").data('bs.validator.errors').length>0)
 					|| ((privacy==="nominated") && modal.find("#nominated-students-list").data('bs.validator.errors').length>0)){
 					return false;
 				}
@@ -702,14 +712,14 @@ $(document).ready (
 
 			var tags = commaDelimitedToArray(tags_string);
 
-			if (title==="ADD THOUGHT REPORT") {
+			if (title==="ADD ANNOTATION") {
 				$.ajax({
 					type:"POST",
 					url: "/add_annotation",
 					data: {group_video_id: group_video_id, start_time: item_start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids:nominated},
 					success: function(data) {
 						modal.modal("hide");
-						//getAllAnnotations();
+						getAllAnnotations();
 					},
 					error: function (request, status, error) {
 						console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
@@ -785,7 +795,7 @@ $(document).ready (
 		});
 		modal.on("click", "#delete", function() {
 			var title = $("#modalLabel").text();
-			if ((title === "ADD THOUGHT REPORT")||(title === "ADD COMMENT")) {
+			if ((title === "ADD ANNOTATION")||(title === "ADD COMMENT")) {
 				$("#annotation-modal .close").click();
 				return;
 			}
@@ -917,7 +927,7 @@ $(document).ready (
 		});
 		$("#feedback").on("click", "#re-enter-comment", function() {
 			saveFeedbacksAndConfidenceLevel(item);
-				
+
 			modal.find("#modalLabel").text("EDIT COMMENT");
 			$("#annotation-description").val(unescapeHtml(item.description));
 			var tags = "";
@@ -929,7 +939,7 @@ $(document).ready (
 				}
 			}
 			modal.find("#tags").val(tags);
-			
+
 			if (is_instructor) {
 				modal.find(".edit-instruction").show();
 			}
@@ -972,7 +982,7 @@ $(document).ready (
 				url: '/download_annotations',
 				// data: {filter: filter, group_video_id: group_video_id, course_id: course_id},
 				data: {group_video_id: group_video_id, course_id: course_id},
-				
+
 				success: function(data) {
 					var a = document.createElement('a');
 					a.href = "data:attachment/csv;charset=utf-8," + encodeURIComponent(data);
@@ -993,12 +1003,12 @@ $(document).ready (
 			layoutAnnotations(parseInt(mode));
 		});
 		$('#annotations-list').on('click', '.annotation-button', function(e) {
-// 			saveTracking({event: "click", target: '.annotation-button', info: 'View an annotation', event_time: Date.now()});	
+// 			saveTracking({event: "click", target: '.annotation-button', info: 'View an annotation', event_time: Date.now()});
 
 			var preview = $("#preview");
 			if (preview.is(':visible')) {
 				preview.hide();
-			}		
+			}
 			var annotationID = $(this).data('id');
 			var matches = $.grep(annotations, function(e){return e.id==annotationID;});
 			var annotation = matches[0];
@@ -1031,7 +1041,7 @@ $(document).ready (
 			else {
 				preview.find(".edit-annotation-button").hide();
 			}
-			
+
 			var posX = e.pageX + previewOffsetX;
 			var posY = e.pageY + previewOffsetY;
 			var previewWidth = preview.width();
@@ -1040,11 +1050,14 @@ $(document).ready (
 				posX = windowWidth - previewWidth;
 			}
 			preview.css({'top': posY+"px", 'left': posX+"px"});
-			var footer = $(".footer").parent();
-			var windowBottom = footer.position().top+footer.height();
-			var previewBottom = posY + preview.height();
-			if (windowBottom < previewBottom) {
-				$(".canvas").height(previewBottom);
+			var $footer = $(".footer");
+			if ($footer.length > 0) {
+				var $footerContainer = $footer.parent();
+				var windowBottom = $footerContainer.position().top + $footer.height();
+				var previewBottom = posY + preview.height();
+				if (windowBottom < previewBottom) {
+					$(".canvas").height(previewBottom);
+				}
 			}
 			preview.show();
 		});
@@ -1069,7 +1082,7 @@ $(document).ready (
 			function populateRelatedResources(searchTermArray) {
 				console.log("populateRelatedResoruces - "+searchTermArray);	/////
 				console.table(searchTermArray);/////
-				
+
 				var related_ul = $("#related-ul");
 				related_ul.html("");
 				var html = "";
@@ -1079,9 +1092,9 @@ $(document).ready (
 					$.each(text_analysis, function(i, word) {
 						if ((word.text.indexOf(searchTerm) == 0) && (word['related'])){
 							var trigger = 0;
-	
+
 							$.each(word['related'], function(j, related) {
-								// html = '"'+word.text+'" in <span class="video-link">'+related.title+'</span> <span class="related-time">@'+secondsToMinutesAndSeconds(related.time)+'</span>';	
+								// html = '"'+word.text+'" in <span class="video-link">'+related.title+'</span> <span class="related-time">@'+secondsToMinutesAndSeconds(related.time)+'</span>';
 								// $('<li/>', {
 								// 	// class: 'video-link',
 								// 	html: html,
@@ -1089,11 +1102,11 @@ $(document).ready (
 								// 	"data-time-url": related.time_url,
 								// 	"data-time": related.time
 								// }).appendTo(related_ul);
-	
+
 								if(trigger === 0){
 									if(temp_url_arr.length === 0){
 										temp_url_arr.push(related.url);
-										html = '<span class="video-link">'+related.title+'</span>';	
+										html = '<span class="video-link">'+related.title+'</span>';
 										$('<li/>', {
 											// class: 'video-link',
 											html: html,
@@ -1104,7 +1117,7 @@ $(document).ready (
 									}else{
 										if(temp_url_arr.indexOf(related.url) === -1){
 											temp_url_arr.push(related.url);
-											html = '<span class="video-link">'+related.title+'</span>';	
+											html = '<span class="video-link">'+related.title+'</span>';
 											$('<li/>', {
 												// class: 'video-link',
 												html: html,
@@ -1137,7 +1150,7 @@ $(document).ready (
 				var html = word['text'];
 				if (word['occurrences']) {
 					$.each(word['occurrences'], function(j, val) {
-						html += '<span class="related-time" data-time="'+val+'">@'+secondsToMinutesAndSeconds(val)+'</span>';	
+						html += '<span class="related-time" data-time="'+val+'">@'+secondsToMinutesAndSeconds(val)+'</span>';
 					});
 					$("<li/>", {
 						html: html
@@ -1147,7 +1160,7 @@ $(document).ready (
 			$("#keyword-list").getNiceScroll().resize();
 
 			populateRelatedResources(['']);
-			
+
 
 			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 				var target = $(e.target).attr("href");
@@ -1166,7 +1179,7 @@ $(document).ready (
 					$("#related-links").getNiceScroll().resize();
 				}
 			});
-			
+
 
 			$("#topic-search-textbox").autoComplete({
 				minChars: 1,
@@ -1203,25 +1216,25 @@ $(document).ready (
 			$("#topic-search-form").on("submit", function(e) {
 				e.preventDefault();
 				populateRelatedResources([$("#topic-search-textbox").val()]);
-			});	
+			});
 		}
 		else {
 			$(".no-keyword-msg").text("There are no keywords.");
 			$("#related-links").text("There are no related videos.");
 		}
-		
+
 		// $(".video-link").on("click", function(e) {
-		// 	pauseVideo();		
+		// 	pauseVideo();
 		// 	$("#modal-iframe").attr('src', $(this).data("url"));
 		// 	$("#video-modal").modal('show');
 		// });
 		$("#related-videos").on("click", ".video-link", function() {
-			pauseVideo();		
+			pauseVideo();
 			$("#modal-iframe").attr('src', $(this).parent().data("url"));
 			$("#video-modal").modal('show');
 		});
 		$("#related-videos").on("click", ".related-time", function() {
-			pauseVideo();		
+			pauseVideo();
 			$("#modal-iframe").attr('src', $(this).parent().data("time-url"));
 			$("#video-modal").modal('show');
 		});
@@ -1259,7 +1272,7 @@ $(document).ready (
 						}).appendTo(body);
 						var comment_header = $("<div/>", {
 							'class':'comment-header',
-						}).appendTo(comment_div);	
+						}).appendTo(comment_div);
 						$("<div/>", {
 							'class': 'username',
 							'html': v.name
@@ -1309,7 +1322,7 @@ $(document).ready (
 						}).appendTo(body);
 						var comment_header = $("<div/>", {
 							'class':'comment-header',
-						}).appendTo(comment_div);	
+						}).appendTo(comment_div);
 						$("<div/>", {
 							'class': 'username',
 							'html': v.name
@@ -1343,7 +1356,7 @@ $(document).ready (
 
 		//Tracking all meaningful events
 		var trackingsArr = [
-			{event: 'click', target: '.add-annotation', info: 'Add Thought Report'},
+			{event: 'click', target: '.add-annotation', info: 'Add Annotation'},
 			{event: 'click', target: '.download-comments', info: 'Download Annotations'},
 			{event: 'click', target: '#rewind-button', info: 'Edit annotation time (back)'},
 			{event: 'click', target: '#forward-button', info: 'Edit annotation time (forward)'},

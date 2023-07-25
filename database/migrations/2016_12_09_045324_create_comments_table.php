@@ -25,13 +25,13 @@ class CreateCommentsTable extends Migration
                     ->comment("array of user_id of nominated students if privacy is set to 'nominated'");
             $table->enum('status', ['current', 'archived', 'deleted'])
                     ->default('current');
-            $table->integer('parent')->length(10)->unsigned()->nullable()->default(null);                    
+            $table->integer('parent')->length(10)->unsigned()->nullable()->default(null);
             $table->timestamps();
         });
-        
-		Schema::table('comments', function(Blueprint $table) {
-        	$table->foreign('group_video_id')->references('id')->on('group_videos')->onDelete('cascade');
-            $table->foreign('parent')->references('id')->on('comments')->onDelete('cascade');            
+
+        Schema::table('comments', function (Blueprint $table) {
+            $table->foreign('group_video_id')->references('id')->on('group_videos')->onDelete('cascade');
+            $table->foreign('parent')->references('id')->on('comments')->onDelete('cascade');
         });
     }
 
@@ -42,9 +42,9 @@ class CreateCommentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('comments', function(Blueprint $table) {
+        Schema::table('comments', function (Blueprint $table) {
             $table->dropForeign(['group_video_id']);
-            $table->dropForeign(['parent']);            
+            $table->dropForeign(['parent']);
         });
         Schema::dropIfExists('comments');
     }

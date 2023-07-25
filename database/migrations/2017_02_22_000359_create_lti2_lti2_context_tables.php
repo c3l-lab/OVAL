@@ -32,7 +32,7 @@ class CreateLti2Lti2ContextTables extends Migration
      */
     public function down()
     {
-        Schema::table('lti2_context', function(Blueprint $table) {
+        Schema::table('lti2_context', function (Blueprint $table) {
             $table->dropForeign(['consumer_pk']);
         });
         Schema::dropIfExists('lti2_context');

@@ -32,7 +32,7 @@ class CreateLti2ToolProxyTables extends Migration
      */
     public function down()
     {
-        Schema::table('lti2_tool_proxy', function(Blueprint $table) {
+        Schema::table('lti2_tool_proxy', function (Blueprint $table) {
             $table->dropForeign(['consumer_pk']);
         });
         Schema::dropIfExists('lti2_tool_proxy');

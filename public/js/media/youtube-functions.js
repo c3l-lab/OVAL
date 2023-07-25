@@ -6,20 +6,18 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 var player;
 
-function onYouTubeIframeAPIReady() {
+window.onYouTubeIframeAPIReady = function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
-		width: '640',
-		height: '350',
+		width: '100%',
+		height: '100%',
 		videoId: video_identifier,
-		playerVars: { 
-			wmode: "transparent", 
-			rel: 0, 
-			enablejsapi: 1, 
+		playerVars: {
+			wmode: "transparent",
+			rel: 0,
+			enablejsapi: 1,
 			origin: domain,
-			fs: 0,
-			modestbranding: 1,
+			controls: 0,
 			disablekb: 1,
-			controls: 0
 		},
 		events: {
 			'onReady': onPlayerReady,
@@ -31,6 +29,7 @@ function onYouTubeIframeAPIReady() {
 }//end onYouTubeIframeAPIReady
 
 function pauseVideo() {
+	player.pauseFromJs = true;
 	player.pauseVideo();
 }
 
@@ -58,8 +57,10 @@ function onTime() {
 };
 
 function onPlayerReady(event) {
+	player.loadModule("captions");
 	event.target.pauseVideo();
 	window.setInterval(onTime, 1000);
+	checkQuiz();
 }
 
 function onPlayerStateChange(event) {
@@ -71,6 +72,10 @@ function onPlayerStateChange(event) {
 		action = "Play";
 	} else if (event.data == YT.PlayerState.PAUSED) {
 		action = "Paused";
+		if (player.pauseFromJs !== true) {
+			player.playVideo();
+		}
+		player.pauseFromJs = false;
 	} else if (event.data == YT.PlayerState.ENDED) {
 		action = "Ended";
 		$("#current-keywords").html("&nbsp;");
@@ -89,39 +94,41 @@ var is_visable = true;
 
 var flag = false; //true for modal fired, false for not fired
 
-var intervalID_youtubeplayer = window.setInterval(
-	function () {
+function checkQuiz() {
+	var intervalID_youtubeplayer = window.setInterval(
+		function () {
 
-		if (quiz_meta.length > 0 && is_visable) {
+			if (quiz_meta.length > 0 && is_visable) {
 
-			var current_video_time = parseInt(currentVideoTime().toFixed(0));
-			var trigger = true;
-			var meta_position = 0;
+				var current_video_time = parseInt(currentVideoTime().toFixed(0));
+				var trigger = true;
+				var meta_position = 0;
 
-			for (var i = 0; i < quiz_meta.length; i++) {
-				if (trigger && current_video_time <= parseInt(quiz_meta[i].stop)) {
-					meta_position = i;
-					trigger = false
+				for (var i = 0; i < quiz_meta.length; i++) {
+					if (trigger && current_video_time <= parseInt(quiz_meta[i].stop)) {
+						meta_position = i;
+						trigger = false
+					}
 				}
+
+				if (meta_position > 0) {
+					var quiz_stop = parseInt(quiz_meta[meta_position].stop);
+				} else {
+					var quiz_stop = parseInt(quiz_meta[0].stop);
+				}
+
+				if (current_video_time === quiz_stop) {
+					setTimeout(function () {
+						show_quiz(quiz_meta[meta_position]);
+					}, 1000);
+				}
+
 			}
 
-			if (meta_position > 0) {
-				var quiz_stop = parseInt(quiz_meta[meta_position].stop);
-			} else {
-				var quiz_stop = parseInt(quiz_meta[0].stop);
-			}
-
-			if (current_video_time === quiz_stop) {
-				setTimeout(function () {
-					show_quiz(quiz_meta[meta_position]);
-				}, 1000);
-			}
-
-		}
-
-	},
-	1000
-)
+		},
+		1000
+	)
+}
 
 function load_quiz(video_identifier) {
 	$.ajax({
@@ -205,7 +212,6 @@ function show_quiz_modal(data, cb) {
 		})
 
 		$("#quiz_modal").on("hidden.bs.modal", function () {
-			playVideo();
 			flag = false;
 		});
 
@@ -364,9 +370,9 @@ function show_feedback_hint(quiz_data) {
 			temp.answer = user_ans;
 			temp.feedback = quiz_data.items[i].feedback[feedback_position];
 
-			if(quiz_data.items[i].ans[0] === quiz_data.items[i].user_ans){
+			if (quiz_data.items[i].ans[0] === quiz_data.items[i].user_ans) {
 				temp.is_correct = true;
-			}else{
+			} else {
 				temp.is_correct = false;
 			}
 
@@ -405,9 +411,9 @@ function show_feedback_modal(feedback_array) {
 
 		for (var item in feedback_array[i]) {
 
-			if(item === "is_correct"){
+			if (item === "is_correct") {
 
-				if(typeof(feedback_array[i][item]) === "boolean"){
+				if (typeof (feedback_array[i][item]) === "boolean") {
 					switch (feedback_array[i][item]) {
 						case true:
 							var th = "<td style='text-align:center;'>" + "<img src='../../img/tick.png' alt='' style='width:32px; height:auto;'>" + "</td>";
@@ -418,14 +424,14 @@ function show_feedback_modal(feedback_array) {
 						default:
 							break;
 					}
-					
-				}else{
-					var th = "<td>" + "Please check the example answer." + "</td>";
+
+				} else {
+					var th = "<td>" + "please check example answer" + "</td>";
 				}
 
 				$tr.append(th);
 
-			}else{
+			} else {
 				var th = "<td>" + feedback_array[i][item] + "</td>";
 				$tr.append(th);
 			}
@@ -437,6 +443,12 @@ function show_feedback_modal(feedback_array) {
 	}
 
 	$("#feedback_dialog").modal('show');
+
+	$("#feedback_dialog").on("hidden.bs.modal", function () {
+		if (player.getPlayerState() === 2) {
+			playVideo();
+		}
+	});
 }
 
 /*------ end quiz client plugin for youtube ------*/

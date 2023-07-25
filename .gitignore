@@ -13,6 +13,8 @@ storage/*.key
 .env.*.php
 .env.php
 .env
+.env.*
+!.env.example
 Homestead.yaml
 Homestead.json
 
@@ -20,6 +22,7 @@ Homestead.json
 .rocketeer/
 
 .vscode/
+.idea/
 *.DS_Store
 speechtotext-server/videos
 speechtotext-server/audios
@@ -29,5 +32,12 @@ speechtotext-server/audios
 phpunit.xml.bak
 .phpunit.cache/
 
-# Remove Composer.lock from CI/CD process
-composer.lock
+public/mix-manifest.json
+public/css/app.css
+public/css/theme.css
+public/js/app.js
+public/js/theme.js
+
+.php-cs-fixer.cache
+
+coverage

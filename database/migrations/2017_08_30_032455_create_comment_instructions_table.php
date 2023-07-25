@@ -32,7 +32,7 @@ class CreateCommentInstructionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('comment_instructions', function(Blueprint $table) {
+        Schema::table('comment_instructions', function (Blueprint $table) {
             $table->dropForeign(['group_video_id']);
         });
         Schema::dropIfExists('comment_instructions');

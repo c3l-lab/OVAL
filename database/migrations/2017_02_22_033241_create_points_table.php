@@ -20,8 +20,8 @@ class CreatePointsTable extends Migration
             $table->boolean('is_course_wide')->default(false);
             $table->timestamps();
         });
-        
-        Schema::table('points', function(Blueprint $table) {
+
+        Schema::table('points', function (Blueprint $table) {
             $table->foreign('group_video_id')->references('id')->on('group_videos')->onDelete('cascade');
         });
     }
@@ -33,7 +33,7 @@ class CreatePointsTable extends Migration
      */
     public function down()
     {
-        Schema::table('points', function(Blueprint $table) {
+        Schema::table('points', function (Blueprint $table) {
             $table->dropForeign(['group_video_id']);
         });
         Schema::dropIfExists('points');

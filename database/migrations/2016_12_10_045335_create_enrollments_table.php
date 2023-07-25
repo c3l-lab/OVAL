@@ -17,12 +17,12 @@ class CreateEnrollmentsTable extends Migration
             $table->increments('id');
             $table->integer('course_id')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index();
-			$table->boolean('is_instructor')->default(false);	
-			$table->timestamps();
+            $table->boolean('is_instructor')->default(false);
+            $table->timestamps();
         });
-        
-        Schema::table("enrollments", function(Blueprint $table) {
-        	$table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
+
+        Schema::table("enrollments", function (Blueprint $table) {
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
@@ -34,7 +34,7 @@ class CreateEnrollmentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('enrollments', function(Blueprint $table) {
+        Schema::table('enrollments', function (Blueprint $table) {
             $table->dropForeign(['course_id']);
             $table->dropForeign(['user_id']);
         });

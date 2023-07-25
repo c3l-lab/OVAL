@@ -18,7 +18,8 @@ class CreateQuizResult extends Migration
             $table->integer('user_id')->unsigned()->index();
             $table->string('identifier');
             $table->string('media_type')->nullable();
-            $table->json('quiz_data')->nullable();;
+            $table->json('quiz_data')->nullable();
+            ;
             $table->timestamps();
         });
     }

@@ -24,10 +24,10 @@ class CreateGroupVideosTable extends Migration
             $table->enum('status', ['current', 'archived'])->default('current');
             $table->timestamps();
         });
-        
-        Schema::table('group_videos', function(Blueprint $table) {
-        	$table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
-        	$table->foreign('video_id')->references('id')->on('videos')->onDelete('cascade');
+
+        Schema::table('group_videos', function (Blueprint $table) {
+            $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
+            $table->foreign('video_id')->references('id')->on('videos')->onDelete('cascade');
         });
     }
 
@@ -38,7 +38,7 @@ class CreateGroupVideosTable extends Migration
      */
     public function down()
     {
-        Schema::table('group_videos', function(Blueprint $table) {
+        Schema::table('group_videos', function (Blueprint $table) {
             $table->dropForeign(['group_id']);
             $table->dropForeign(['video_id']);
         });

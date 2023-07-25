@@ -35,7 +35,7 @@ class CreateAnalysisRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::table('analysis_requests', function(Blueprint $table) {
+        Schema::table('analysis_requests', function (Blueprint $table) {
             $table->dropForeign(['video_id']);
             $table->dropForeign(['user_id']);
         });

@@ -13,12 +13,9 @@ phases:
       - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   pre_build:
     commands:
-      - cp ".env.${ENVIRONMENT_TYPE}" .env
-      - cp ".env.${ENVIRONMENT_TYPE}" .env.local
+      - aws ssm get-parameter --with-decryption --name /oval/${ENVIRONMENT_TYPE}/env --output text --query "Parameter.Value" > .env
       - composer install
       - npm install
-      # - npm install --global cross-env
-      # - chmod +x .platform/hooks/prebuild/*.sh
       - chmod +x .platform/hooks/postdeploy/*.sh
   build:
     commands:

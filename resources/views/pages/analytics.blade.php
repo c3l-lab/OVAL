@@ -51,7 +51,7 @@ VIDEO USAGE ANALYTICS</div>
 			<div class="admin-page-section">
 				<table class="table table-striped">
 					<thead>
-						<tr style="border-bottom:1px solid black">
+						<tr style="border-bottom:1px solid var(--table-border-color)">
 							<th>Video</th>
 							<th>Student Views</th>
 							<th>Annotations</th>
@@ -83,11 +83,11 @@ VIDEO USAGE ANALYTICS</div>
 								Average per user: {{ceil($gv->aveAnnotationsPerUser())}}<br />
 
 								<button class='annotations_column analytics_btn' userlist = {{$gv->memberList()}} groupvideoid = {{$gv->id}} > Unique students &nbsp;&nbsp; <i class="fa fa-info-circle" aria-hidden="true"></i></button><br />
-								
+
 
 							</td>
 							<td>
-								@if (count($gv->points) != 0) 
+								@if (count($gv->points) != 0)
 								Total: {{count($gv->points)}}<br /><br />
 								<!-- <a href="../../points-details/{{$gv->id}}" class="btn btn-default btn-xs">
 									<i class="fa fa-info-circle" aria-hidden="true"></i>

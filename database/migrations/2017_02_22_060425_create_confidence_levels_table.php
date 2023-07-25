@@ -16,12 +16,12 @@ class CreateConfidenceLevelsTable extends Migration
         Schema::create('confidence_levels', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('comment_id')->length(10)->unsigned();
-			$table->integer('level')->nullable()->comment('5=very high, 4=high, 3=medium, 2=low, 1=very low');
+            $table->integer('level')->nullable()->comment('5=very high, 4=high, 3=medium, 2=low, 1=very low');
             $table->timestamps();
         });
-        
-        Schema::table('confidence_levels', function(Blueprint $table) {
-            $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');            
+
+        Schema::table('confidence_levels', function (Blueprint $table) {
+            $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');
         });
     }
 
@@ -32,7 +32,7 @@ class CreateConfidenceLevelsTable extends Migration
      */
     public function down()
     {
-        Schema::table('confidence_levels',function(Blueprint $table){
+        Schema::table('confidence_levels', function (Blueprint $table) {
             $table->dropForeign(['comment_id']);
         });
         Schema::dropIfExists('confidence_levels');

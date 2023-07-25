@@ -20,7 +20,7 @@ class CreateTranscriptsTable extends Migration
             $table->json('analysis')->nullable();
             $table->timestamp('event_time')->useCurrent();
         });
-        
+
         Schema::table('transcripts', function (Blueprint $table) {
             $table->foreign('video_id')->references('id')->on('videos')->onDelete('cascade');
         });

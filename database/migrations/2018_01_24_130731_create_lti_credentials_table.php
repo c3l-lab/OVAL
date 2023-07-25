@@ -19,14 +19,14 @@ class CreateLtiCredentialsTable extends Migration
             $table->string('host');
             $table->unsignedSmallInteger('port');
             $table->string('database');
-            $table->string('username'); //encrypt 
-            $table->string('password'); //encrypt 
+            $table->string('username'); //encrypt
+            $table->string('password'); //encrypt
             $table->string('prefix')->nullable();
             $table->integer('consumer_id')->length(10)->unsigned();
             $table->timestamps();
         });
 
-        Schema::table('lti_credentials', function(Blueprint $table) {
+        Schema::table('lti_credentials', function (Blueprint $table) {
             $table->foreign('consumer_id')->references('consumer_pk')->on('lti2_consumer')->onDelete('cascade');
         });
     }
@@ -38,7 +38,7 @@ class CreateLtiCredentialsTable extends Migration
      */
     public function down()
     {
-        Schema::table('lti_credentials', function(Blueprint $table) {
+        Schema::table('lti_credentials', function (Blueprint $table) {
             $table->dropForeign(['consumer_id']);
         });
         Schema::dropIfExists('lti_credentials');

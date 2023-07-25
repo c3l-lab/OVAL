@@ -12,16 +12,16 @@ class GroupsTableSeeder extends Seeder
     public function run()
     {
 
-        $courses = oval\Course::all();
+        $courses = oval\Models\Course::all();
         foreach ($courses as $c) {
-        	DB::table('groups')->insert([
-        		'name' => $c->name.' - Default Group',
-        		'course_id' => $c->id,
-        	]);
-        	DB::table('groups')->insert([
-        		'name' => $c->name.' - Partial Group',
-        		'course_id' => $c->id,
-        	]);
+            DB::table('groups')->insert([
+                'name' => $c->name.' - Default Group',
+                'course_id' => $c->id,
+            ]);
+            DB::table('groups')->insert([
+                'name' => $c->name.' - Partial Group',
+                'course_id' => $c->id,
+            ]);
         }
 
     }

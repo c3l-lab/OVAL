@@ -13,12 +13,12 @@ class CoursesTableSeeder extends Seeder
     {
         DB::table('courses')->insert([
             'id'=> 10000000,
-        	'name' => 'Test Course 1',
+            'name' => 'Test Course 1',
             'created_at' => date("Y-m-d H:i:s")
         ]);
         DB::table('courses')->insert([
             'id'=> 10000001,
-        	'name' => 'Test Course 2',
+            'name' => 'Test Course 2',
             'created_at' => date("Y-m-d H:i:s")
         ]);
     }

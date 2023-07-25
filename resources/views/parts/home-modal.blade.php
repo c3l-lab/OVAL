@@ -27,12 +27,12 @@
 					<form id="annotation-form" role="form" data-toggle="validator">
 						<div class="form-group">
 	 						<label for="annotation-description" id="annotation-instruction"></label>
-							<textarea id="annotation-description" name="annnotation-description" rows="10" placeholder="Your thoughts ..." required></textarea>
+							<textarea id="annotation-description" name="annnotation-description" rows="10" placeholder="Your comment ..." required></textarea>
 							<div class="help-block with-errors"></div>
 						</div><!-- form-group -->
 						<div class="form-group">
 							<i class="fa fa-tags"></i>
-							<input type="text" id="tags" name="tags" placeholder="Thought types separated by comma ...">
+							<input type="text" id="tags" name="tags" placeholder="Tags separated by comma ...">
 						</div><!-- form-group -->
 						<div class="form-group">
 							<label for="private" class="private-radio-label">
@@ -78,7 +78,7 @@
 					<h4 class="modal-title" id="modalLabel">VIDEO KEY POINTS</h4>
 				</div><!-- modal-header -->
 				<div class="modal-body">
-					
+
 					<form>
 						<div class="form-group">
 							<div class="space-bottom">
@@ -89,12 +89,12 @@
 							<div id="feedback-content">
 							</div><!-- form-content -->
 						</div><!-- form-group -->
-						
-						
+
+
 						<div class="form-group">
 							<label for="confidence-level">
 								What is your level of confidence that your comment fully captures the key points of the video?
-							</label>			
+							</label>
 							<select class="form-control" id="confidence-level" name="confidence-level">
 	 							<option value="0">Please select...</option>
 								<option value="5">Very High</option>
@@ -251,7 +251,7 @@
 				<h4 class="modal-title">Oval Notification</h4>
 			</div>
 			<div class="modal-body" id="alert_dialog_content">
-				
+
 			</div>
 			<div>
 				<button type="button" class="btn btn-link center-block quiz_submit_btn" onclick="$('#alert_dialog').modal('hide');">
@@ -283,7 +283,7 @@
 							<th>Instructor Feedback</th>
 						</tr>
 					</tbody>
-				</table>	
+				</table>
 			</div>
 			<div>
 				<button type="button" class="btn btn-link center-block quiz_submit_btn" onclick="$('#feedback_dialog').modal('hide'); $('#quiz_modal').modal('hide');">

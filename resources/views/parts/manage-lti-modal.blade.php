@@ -7,7 +7,7 @@
 				</button>
 				<h4 class="modal-title" id="edit-lti-title">EDIT LTI CONNECTION</h4>
 			</div><!-- .modal-header -->
-			
+
 			<div class="modal-body container-fluid">
 				<form id="assign-video-to-group-form" role="form" data-toggle="validator">
 					<div class="row">
@@ -24,7 +24,7 @@
                             </fieldset>
 
                             <div class="form-group">
-                                <label for="lti-secret">Secret</legend>  
+                                <label for="lti-secret">Secret</legend>
                                 <input type="text" id="lti-secret" class="form-control" name="secret" required>
                                 <div class="col-xs-12 help-block with-errors"></div>
                             </fieldset>
@@ -38,39 +38,6 @@
                                 <label for="lti-to">To</label>
                                 <input type="date" id="lti-to" class="form-control" name="to_date">
                             </div>
-
-                            <fieldset class="light-gray">
-                                <legend>Database Credential</legend>
-                                
-                                <div class="form-group col-xs-12">
-                                    <label for="lti-type">DB type</label>
-                                    <input id="lti-dbtype" class="form-control" name="db_type">
-                                </div>
-                                <div class="form-group col-xs-12">
-                                    <label for="lti-host">Host</label>
-                                    <input id="lti-host" class="form-control" name="host">
-                                </div>
-                                <div class="form-group col-xs-12">
-                                    <label for="lti-port">Port</label>
-                                    <input id="lti-port" class="form-control" name="port">
-                                </div>
-                                <div class="form-group col-xs-12">
-                                    <label for="lti-name">DB Name</label>
-                                    <input id="lti-db" class="form-control" name="db_name">
-                                </div>
-                                <div class="form-group col-xs-12">
-                                    <label for="lti-un">User Name</label>
-                                    <input id="lti-un" class="form-control" name="user">
-                                </div>
-                                <div class="form-group col-xs-12">
-                                    <label for="lti-pw">Password</label>
-                                    <input id="lti-pw" class="form-control" name="pw">
-                                </div>
-                                <div class="form-group col-xs-12">
-                                    <label for="lti-prefix">Table Prefix</label>
-                                    <input id="lti-prefix" class="form-control" name="prefix">
-                                </div>
-                            </fieldset>
 
                             <div class="form-buttons">
                                 <button type="button" class="btn btn-link center-block" id="edit-lti-save-button">

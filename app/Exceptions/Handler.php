@@ -46,7 +46,7 @@ class Handler extends ExceptionHandler
     {
         //-- if csrf token mismatch because the page was left open for too long,
         //-- redirect to login
-        if ( $exception instanceof \Illuminate\Session\TokenMismatchException ) {
+        if ($exception instanceof \Illuminate\Session\TokenMismatchException) {
             return redirect('/login');
         }
 

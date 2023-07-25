@@ -1,12 +1,12 @@
 /**
- * oval quiz plugin 
+ * oval quiz plugin
  * yin_gong<Max.Gong@unisa.edu.au>
  */
 (function ($) {
     "use strict";
 
     /**
-     * 
+     *
     var quiz_meta = [{
         name: "demo_quiz_1",
         stop: 5, //stop @ which second
@@ -38,7 +38,7 @@
         stop: 15, //stop @ which second
         items: []
     }];
-     * 
+     *
      */
 
     var quiz_meta = [];
@@ -55,7 +55,7 @@
 
         //     },
         //     error: function(request, status, error) {
-        //         alert("error get quiz - "+error);	
+        //         alert("error get quiz - "+error);
         //     }
         // });
 
@@ -72,24 +72,24 @@
                 var current_video_time = currentVideoTime();
                 var trigger = true;
                 var meta_position = 0;
-    
+
                 for(var i=0; i< quiz_meta.length; i++){
                     if(trigger  && current_video_time <= quiz_meta[i].stop){
                         meta_position = i;
                         trigger = false
                     }
                 }
-    
+
                 if(meta_position > 0){
                     var quiz_stop = quiz_meta[meta_position].stop
                 }else{
                     var quiz_stop = quiz_meta[0].stop
                 }
-    
+
                 if(current_video_time === quiz_stop){
                     setTimeout(function() {
-                        show_quiz(quiz_meta[meta_position]);   
-                    }, 1000); 
+                        show_quiz(quiz_meta[meta_position]);
+                    }, 1000);
                 }
 
             }
@@ -105,8 +105,8 @@
 
     function show_quiz_modal(data,cb){
         if(!flag){
-            //console.log("/*--------------show quiz--------------*/"); 
-            //console.log("/*--------------" + data.name + "--------------*/"); 
+            //console.log("/*--------------show quiz--------------*/");
+            //console.log("/*--------------" + data.name + "--------------*/");
             $("#quiz_modal").off("hidden.bs.modal");
             $(".client_question_list_wrap").empty();
 
@@ -121,8 +121,8 @@
                         $(".client_question_list_wrap").append($li);
                         break;
 
-                    case "multiple_choice":  
-                        var $li = $("<li></li>");                     
+                    case "multiple_choice":
+                        var $li = $("<li></li>");
                         var div = "<h3> <i class='fa fa-question-circle-o' aria-hidden='true'></i> Question " + (parseInt(i) + 1) + " </h3>" +
                                     "<h4><strong>" + data.items[i].title + "</strong></h4>";
 
@@ -142,7 +142,7 @@
                         //                  "</div>";
                         //     choice_list.append(choice);
                         // }
-                             
+
                         $li.append(div);
                         $li.append(choice_list);
 
@@ -160,7 +160,6 @@
             })
 
             $("#quiz_modal").on("hidden.bs.modal", function () {
-                playVideo();
                 flag = false;
             });
 

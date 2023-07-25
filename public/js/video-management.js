@@ -22,7 +22,7 @@ function saveVideo (v_id, u_id, media_type, point_instruction, points, c_id, req
 				window.location.hash = 'unassigned';
 				window.location.reload(true);
 			}
-			
+
 		},
 		error: function(req, status, error) {
 			$("#loading-hud").hide();
@@ -68,8 +68,8 @@ function assignVideoToGroups(group_ids, copy_from_group_id, copy_comment_instruc
 		type: "POST",
 		url: "/save_video_group",
 		data: {
-			group_ids: group_ids, 
-			course_id: modal_course_id, 
+			group_ids: group_ids,
+			course_id: modal_course_id,
 			video_id: modal_video_id,
 			copy_from: copy_from_group_id,
 			copy_comment_instruction: copy_comment_instruction,
@@ -223,15 +223,6 @@ $('document').ready(function(){
 
 	//-- show/hide corresponding fields when radio value changed --
 	$("#add-video-form input").on("change", function() {
-		if ($("input[name=source-radio]:checked", "#add-video-form").val() === "helix") {
-			$("#open-link").prop("title", "Open UniSA Media Library page in new window");
-			$("#open-link").prop("href", helix_js_host);
-		}
-		if ($("input[name=source-radio]:checked", "#add-video-form").val() === "youtube") {
-			$("#open-link").prop("title", "Open YouTube page in new window");
-			$("#open-link").prop("href", "https://youtube.com");
-		}
-
 		if($("input[name=group-radio]:checked", "#add-video-form").val() === "true") {
 			$("#points").show();
 		}
@@ -247,7 +238,6 @@ $('document').ready(function(){
 
 	});//end add-video-form radio on change
 
-	$("[name=source-radio]").val(["helix"]);
 	$("[name=course-radio]").val(["true"]);
 	$("[name=points-radio]").val(["false"]);
 
@@ -267,47 +257,6 @@ $('document').ready(function(){
 	$("#points").on("click", '.delete-point', function(e) {
 		$(this).parent().parent().remove();
 	});
-
-	//-- show/hide text analysis field --> disable
-	/*
-	$("#video-url").on("focusout", function() {
-		//--HELIX--
-		if ($("input[name=source-radio]:checked", "#add-video-form").val() === "helix") {
-			$("#text-analysis").hide();
-		}
-		//--YouTube--
-		if ($("input[name=source-radio]:checked", "#add-video-form").val() === "youtube") {
-			form_media_type = "youtube";
-			var url = $("#video-url").val();
-			var host = hostname(url);
-			var vid;
-
-			if (host == "youtube.com") {
-				vid = url.substr(url.lastIndexOf('watch?v=')+8, 11);
-			} else if (host == "youtu.be") {
-				vid = url.substr(url.lastIndexOf('/')+1, 11);
-			}
-			if (vid) {
-				$.ajax({
-					type: "POST",
-					url: "/check_youtube_caption",
-					data: {video_id:vid},
-					success: function(data) {
-						if (data.caption_available) {
-							$("#text-analysis").show();
-						}
-						else {
-							$("#text-analysis").hide();
-						}
-					},
-					error: function(req, status, error) {
-						console.log("error /check_youtube_caption - "+error);//////
-					}
-				});
-			}
-		}
-	});
-	*/
 
 	//-- add video --
 	$("#add-video-form input").on("keydown", function(e) {
@@ -352,31 +301,17 @@ $('document').ready(function(){
 		}
 
 
-		//--HELIX--
-		if ($("input[name=source-radio]:checked", "#add-video-form").val() === "helix") {
-			media_type = "helix";
-			var helix_host = helix_js_host.split('://').pop();
-			if (hostname(url) != helix_host) {
-				alert('Please check your UniSA Media Library URL is valid. (It starts with ' + helix_js_host + '/)');
-				return false;
-			}
-
-			video_id = url.substr(url.lastIndexOf('/')+1);
-			video_id = video_id.replace(/(_|\.)(\S+)?/g, '');
-		}
 		//--YouTube--
-		if ($("input[name=source-radio]:checked", "#add-video-form").val() === "youtube") {
-			media_type = "youtube";
-			var host = hostname(url);
+		media_type = "youtube";
+		var host = hostname(url);
 
-			if (host == "youtube.com") {
-				video_id = url.substr(url.lastIndexOf('watch?v=')+8, 11);
-			} else if (host == "youtu.be") {
-				video_id = url.substr(url.lastIndexOf('/')+1, 11);
-			} else {
-				alert('Please check your YouTube URL is valid. (It starts with https://www.youtube.com/ or https://youtu.be/)');
-				return false;
-			}
+		if (host == "youtube.com") {
+			video_id = url.substr(url.lastIndexOf('watch?v=')+8, 11);
+		} else if (host == "youtu.be") {
+			video_id = url.substr(url.lastIndexOf('/')+1, 11);
+		} else {
+			alert('Please check your YouTube URL is valid. (It starts with https://www.youtube.com/ or https://youtu.be/)');
+			return false;
 		}
 
 		saveVideo (video_id, u_id, media_type, point_instruction, points, course_id, req_analysis);
@@ -611,7 +546,7 @@ $('document').ready(function(){
 		}
 		assignVideoToGroups(group_ids, copy_from_group_id, copy_comment_instruction, copy_points, copy_quiz);
 	});
-	
+
 	modal.on("hidden.bs.modal", function () {
 		modal_course_id = null;
 		modal_course_name = null;
@@ -859,7 +794,7 @@ $('document').ready(function(){
 				var extension = filename.replace(/^.*\./, '');
 				if (extension == filename) {
 					extension = '';
-				} 
+				}
 				else {
 					extension = extension.toLowerCase();
 				}
@@ -977,7 +912,7 @@ $('document').ready(function(){
 
 		var table = $("#assigned-group-table tbody");
 		table.html("");
-		
+
 		var minus = '<i class="fa fa-minus" aria-hidden="true"></i>';
 		if(modal_groups[modal_course_id]) {
 			var tick = '<i class="fa fa-check" aria-hidden="true"></i>';

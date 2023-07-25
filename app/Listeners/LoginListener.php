@@ -33,8 +33,8 @@ class LoginListener
         $user = $event->user;
         $user->api_token = Str::random(60); // Replace str_random with Str::random
         $user->save();
-        
-        $tracking = new oval\Tracking;
+
+        $tracking = new oval\Models\Tracking();
         $tracking->user_id = $user->id;
         $tracking->event = "Login";
         $tracking->event_time = date("Y-m-d H:i:s");

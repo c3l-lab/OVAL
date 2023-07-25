@@ -31,14 +31,14 @@ class LogoutListener
     {
         $user = $event->user;
         if (!empty($user)) {
-			$user->api_token = null;
-			$user->save();
-		
-			$tracking = new oval\Tracking;
-			$tracking->user_id = $user->id;
-			$tracking->event = "Logout";
-			$tracking->event_time = date("Y-m-d H:i:s");
-			$tracking->save();
-		}
+            $user->api_token = null;
+            $user->save();
+
+            $tracking = new oval\Models\Tracking();
+            $tracking->user_id = $user->id;
+            $tracking->event = "Logout";
+            $tracking->event_time = date("Y-m-d H:i:s");
+            $tracking->save();
+        }
     }
 }

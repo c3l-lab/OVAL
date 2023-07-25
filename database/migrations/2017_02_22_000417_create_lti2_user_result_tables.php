@@ -32,7 +32,7 @@ class CreateLti2UserResultTables extends Migration
      */
     public function down()
     {
-        Schema::table('lti2_user_result', function(Blueprint $table) {
+        Schema::table('lti2_user_result', function (Blueprint $table) {
             $table->dropForeign(['resource_link_pk']);
         });
         Schema::dropIfExists('lti2_user_result');
