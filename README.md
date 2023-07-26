@@ -198,7 +198,6 @@ Laravel Logs can be found in `/storage/logs/laravel.log`
 php artisan serve
 ```
 
-
 ## 4. Additional Resources
 
 ### 4.1 Setting up a Laravel environment
