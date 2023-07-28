@@ -459,36 +459,4 @@ class ProcessController extends Controller
             return back()->with('msg', $msg);
         }
     }
-
-    /**
-     * Method called from route /add_lti_connection (manage-lti page)
-     *
-     * This method adds new LTI tool consumer with values passed in as parameter.
-     * It also adds LtiCredential if values are passed for this in parameter.
-     *
-     * @param Request $req Contains name, key, secret, db_type, host, db_name, user, password, prefix
-     * @return Illuminate\Http\RedirectResponse Redirect object with message
-     */
-    public function add_lti_connection(Request $req)
-    {
-        try {
-            $db_config = DB::getConfig();
-            $conn_str = $db_config['driver'] . ':host=' . $db_config['host'] . ';port=' . $db_config['port'] . ';dbname=' . $db_config['database'];
-            $pdo = new \PDO($conn_str, $db_config['username'], $db_config['password']);
-        } catch (PDOException $e) {
-            return 'Connection failed: ' . $e->getMessage();
-        }
-        $db_connector = DataConnector\DataConnector::getDataConnector('', $pdo);
-        $consumer = new ToolProvider\ToolConsumer($req->key, $db_connector);
-        $consumer->name = $req->name;
-        $consumer->secret = $req->secret;
-        $consumer->enabled = true;
-        $consumer->save();
-
-        $consumer = oval\Models\LtiConsumer::where('consumer_key256', '=', $req->key)->first();
-
-        $msg = "Connection was saved.";
-
-        return back()->with(compact('msg'));
-    }
 }

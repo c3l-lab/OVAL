@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use oval\Http\Controllers\GroupVideoController;
 use oval\Http\Controllers\HomeController;
+use oval\Http\Controllers\Lti\ConsumerController;
 use oval\Http\Controllers\Lti\RegistrationController;
 use oval\Http\Controllers\VideoController;
 use oval\Http\Middleware\RequireAdmin;
@@ -41,6 +42,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])
         ->name('group_videos.by_group');
     Route::resource('group_videos', GroupVideoController::class);
+
+    Route::prefix('lti')->group(function () {
+        Route::middleware([RequireAdmin::class])->group(function () {
+            Route::resources([
+                'registrations' => RegistrationController::class,
+                'consumers' => ConsumerController::class,
+            ]);
+        });
+    });
 });
 
 Route::get('/analytics/{course_id?}/{group_id?}', 'HomeController@analytics');
@@ -48,8 +58,6 @@ Route::get('/analytics/{course_id?}/{group_id?}', 'HomeController@analytics');
 Route::get('/manage-analysis-requests', 'HomeController@manage_analysis_requests');
 
 Route::get('/batch-upload', 'HomeController@batch_upload');
-
-Route::get('/manage-lti-connections', 'HomeController@manage_lti_connections');
 
 // ----------- ajax routes ------------- //
 Route::group(['middleware'=>'auth:api'], function () {
@@ -89,9 +97,6 @@ Route::group(['middleware'=>'auth:api'], function () {
     Route::post('/delete_keywords', 'AjaxController@delete_keywords');
     Route::post('/get_groups_with_video', 'AjaxController@get_groups_with_video');
     Route::post('/get_video_info', 'AjaxController@get_video_info');
-    Route::post('/delete_lti_connection', 'AjaxController@delete_lti_connection');
-    Route::post('/get_lti_connection_detail', 'AjaxController@get_lti_connection_detail');
-    Route::post('/edit_lti_connection', 'AjaxController@edit_lti_connection');
 
     /*------ quiz API ------*/
     Route::post('/store_quiz', 'AjaxController@store_quiz');
@@ -110,16 +115,6 @@ Route::post('/reject_all_text_analysis_requests', 'ProcessController@reject_all_
 Route::post('/recover_all_rejected_text_analysis_requests', 'ProcessController@recover_all_rejected_text_analysis_requests');
 Route::post('/delete_all_rejected_text_analysis_requests', 'ProcessController@delete_all_rejected_text_analysis_requests');
 Route::post('/batch_data_insert', 'ProcessController@batch_data_insert');
-Route::post('/add_lti_connection', 'ProcessController@add_lti_connection');
-
-// ----------- lti routes ------------- //
-Route::prefix('lti')->group(function () {
-    Route::middleware([RequireAdmin::class])->group(function () {
-        Route::resources([
-            'registrations' => RegistrationController::class,
-        ]);
-    });
-});
 
 // ----------- youtube data api ------------- //
 Route::post('/add_google_cred', 'GoogleAPIController@add_google_cred');

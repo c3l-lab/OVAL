@@ -61,7 +61,15 @@
                             </button>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-link delete-lti-button" data-id="{{$c->consumer_pk}}" title="Delete LTI connection">
+                            <button
+                                hx-delete="{{route('consumers.destroy', ['consumer' => $c])}}"
+                                hx-confirm="Are you sure you want to delete? This will delete all data (including annotations, quiz results etc) related to this LTI connection."
+                                hx-target="closest tr"
+                                hx-swap="delete"
+                                type="button"
+                                class="btn btn-link delete-lti-button"
+                                title="Delete LTI connection"
+                            >
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
                         </td>
@@ -81,7 +89,7 @@
 
     <div class="admin-page-section">
         <div class="space-left-right">
-            <form id="add-lti-form" method="POST" action="/add_lti_connection" role="form" data-toggle="validator">
+            <form id="add-lti-form" method="POST" action="{{ route('consumers.store') }}" role="form" data-toggle="validator">
                 {{ csrf_field() }}
                 <div class="row">
                     <div class="col-xs-12 col-md-6">
