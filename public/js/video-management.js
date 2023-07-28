@@ -324,24 +324,6 @@ $('document').ready(function(){
 		return false;
 	});//end add-video-form submit
 
-	//-- delete video (unassigned to groups) --
-	$(".delete-button").click(function() {
-		var video_id = $(this).data("id");
-		if (confirm("Are you sure you want to delete?")) {
-			$.ajax({
-				type: "DELETE",
-				url: "/videos/" + video_id,
-				success: function() {
-					location.reload();
-				},
-				error: function(request, status, error) {
-					console.log("error with deleting video: "+error);	///////
-				},
-				async: false
-			});
-		}
-	});
-
 	//-- archive/un-archive --
 	$(".archive-button").on("click", function() {
 		var group_video_id = $(this).data('id');

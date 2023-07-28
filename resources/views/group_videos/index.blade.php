@@ -142,8 +142,18 @@
                                     </td>
                                     <!-- <td><button type="button" videoid="{{ $video->id }}" class="btn btn-link assign-grp-button" title="Set quiz"><i class="fa fa-comment-o"></i></button></td> -->
                                     <td>{{ $video->created_at }}</td>
-                                    <td><button class="btn btn-link delete-button" data-id="{{ $video->id }}"
-                                            title="Delete"><i class="fa fa-trash-o delete-icon"></i></button></td>
+                                    <td>
+                                        <button
+                                            hx-delete="{{ route('videos.destroy', ['video' => $video]) }}"
+                                            hx-confirm="Are you sure you want to delete?"
+                                            hx-target="closest tr"
+                                            hx-swap="delete"
+                                            class="btn btn-link delete-button"
+                                            title="Delete"
+                                        >
+                                            <i class="fa fa-trash-o delete-icon"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

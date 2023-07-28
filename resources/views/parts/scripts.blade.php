@@ -36,4 +36,5 @@
 </script>
 @endif
 
+<script type="text/javascript" src="{{ URL::secureAsset('js/app.js') }}"></script>
 <script type="text/javascript" src="{{ URL::secureAsset('js/theme.js') }}"></script>
