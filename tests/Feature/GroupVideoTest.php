@@ -99,4 +99,36 @@ class GroupVideoTest extends TestCase
             'id' => $group_video->id,
         ]);
     }
+
+    public function test_by_course(): void
+    {
+        $course = Course::factory()->has(
+            Group::factory()->has(
+                Video::factory()->count(1)
+            )->count(1)
+        )->create();
+        $group = $course->defaultGroup();
+        $user = User::factory()->create();
+        $user->addToGroup($group);
+        $user->makeInstructorOf($course);
+
+        $reponse = $this->actingAs($user)->get('/group_videos/by_course?course_id=' . $course->id);
+        $reponse->assertRedirectToRoute('group_videos.show', ['group_video' => $group->group_videos()->first()]);
+    }
+
+    public function test_by_group(): void
+    {
+        $course = Course::factory()->has(
+            Group::factory()->has(
+                Video::factory()->count(1)
+            )->count(1)
+        )->create();
+        $group = $course->defaultGroup();
+        $user = User::factory()->create();
+        $user->addToGroup($group);
+        $user->makeInstructorOf($course);
+
+        $reponse = $this->actingAs($user)->get('/group_videos/by_group?group_id=' . $group->id);
+        $reponse->assertRedirectToRoute('group_videos.show', ['group_video' => $group->group_videos()->first()]);
+    }
 }
