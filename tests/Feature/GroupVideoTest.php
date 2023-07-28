@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use oval\Models\Course;
+use oval\Models\Group;
 use oval\Models\GroupVideo;
 use oval\Models\User;
 use oval\Models\Video;
@@ -15,13 +16,19 @@ class GroupVideoTest extends TestCase
 
     public function test_index(): void
     {
-        $unassignedVideo = Video::factory()->create();
-        $course = Course::first();
+        $course = Course::factory()->has(
+            Group::factory()->has(
+                Video::factory()->count(1)
+            )->count(1)
+        )->create();
+        $user = User::factory()->create();
         $group = $course->defaultGroup();
-        $user = User::find(10000001);
         $user->addToGroup($group);
         $user->makeInstructorOf($course);
         $videos = $group->group_videos();
+
+        $unassignedVideo = Video::factory()->create();
+
         $response = $this->actingAs($user)->get('/group_videos');
         $response->assertStatus(200);
         $response->assertSee($unassignedVideo->title);
@@ -30,9 +37,13 @@ class GroupVideoTest extends TestCase
 
     public function test_show_group_video(): void
     {
-        $course = Course::first();
+        $course = Course::factory()->has(
+            Group::factory()->has(
+                Video::factory()->count(1)
+            )->count(1)
+        )->create();
         $group = $course->defaultGroup();
-        $user = User::find(10000001);
+        $user = User::factory()->create();
         $user->addToGroup($group);
         $user->makeInstructorOf($course);
         $video = $course->defaultGroup()->videos()->first();
@@ -48,9 +59,13 @@ class GroupVideoTest extends TestCase
 
     public function test_show_group_video_without_permission(): void
     {
-        $course = Course::first();
+        $course = Course::factory()->has(
+            Group::factory()->has(
+                Video::factory()->count(1)
+            )->count(1)
+        )->create();
         $group = $course->defaultGroup();
-        $user = User::find(10000001);
+        $user = User::factory()->create();
         $video = $course->defaultGroup()->videos()->first();
         $video->assignToGroup($group);
         $group_video = $group->group_videos()
@@ -63,9 +78,13 @@ class GroupVideoTest extends TestCase
 
     public function test_destroy(): void
     {
-        $course = Course::first();
+        $course = Course::factory()->has(
+            Group::factory()->has(
+                Video::factory()->count(1)
+            )->count(1)
+        )->create();
         $group = $course->defaultGroup();
-        $user = User::find(10000001);
+        $user = User::factory()->create();
         $user->addToGroup($group);
         $user->makeInstructorOf($course);
         $video = $course->defaultGroup()->videos()->first();

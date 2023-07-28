@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use oval\Models\Course;
+use oval\Models\Group;
 use oval\Models\User;
 use oval\Models\Video;
 use Tests\TestCase;
@@ -13,10 +14,10 @@ class VideoTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_creating_video(): void
+    public function test_store_video(): void
     {
-        $course = Course::first();
-        $user = User::find(10000001);
+        $course = Course::factory()->has(Group::factory()->count(1))->create();
+        $user = User::factory()->create();
 
         $youtubeId = "dQw4w9WgXcQ";
 
@@ -47,7 +48,7 @@ class VideoTest extends TestCase
     public function test_destory_video(): void
     {
         $video = Video::factory()->create();
-        $user = User::find(10000001);
+        $user = User::factory()->create();
 
         $response = $this->actingAs($user)->delete(route('videos.destroy', $video->id));
 

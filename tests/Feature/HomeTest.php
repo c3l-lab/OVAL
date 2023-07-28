@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use oval\Models\Course;
+use oval\Models\Group;
 use oval\Models\GroupVideo;
 use oval\Models\User;
+use oval\Models\Video;
 use Tests\TestCase;
 
 class HomeTest extends TestCase
@@ -15,11 +17,7 @@ class HomeTest extends TestCase
 
     public function test_index_without_video(): void
     {
-        GroupVideo::all()->map(function ($groupVideo) {
-            $groupVideo->hide = true;
-            $groupVideo->save();
-        });
-        $user = User::find(10000001);
+        $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('/');
 
@@ -29,8 +27,13 @@ class HomeTest extends TestCase
 
     public function test_index_with_video(): void
     {
-        $course = Course::first();
-        $user = User::find(10000001);
+        $course = Course::factory()->has(
+            Group::factory()->has(
+                Video::factory()->count(1)
+            )->count(1)
+        )->create();
+        $user = User::factory()->create();
+
         $user->addToGroup($course->defaultGroup());
 
         $response = $this->actingAs($user)->get('/');
