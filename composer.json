@@ -28,18 +28,16 @@
         "fakerphp/faker": "^1.23"
     },
     "autoload": {
-        "classmap": [
-            "database"
-        ],
         "psr-4": {
             "oval\\": "app/",
-            "Tests\\": "tests/"
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
-        ]
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "scripts": {
         "post-root-package-install": [

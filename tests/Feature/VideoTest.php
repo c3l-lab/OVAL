@@ -5,9 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use oval\Models\Course;
-use oval\Models\Group;
 use oval\Models\User;
-use oval\Models\Video;
 use Tests\TestCase;
 
 class VideoTest extends TestCase
@@ -16,7 +14,7 @@ class VideoTest extends TestCase
 
     public function test_default_video_page_without_video(): void
     {
-        $user = User::factory()->create();
+        $user = User::find(10000001);
 
         $response = $this->actingAs($user)->get('/view');
 
@@ -26,12 +24,8 @@ class VideoTest extends TestCase
 
     public function test_default_video_page_with_video(): void
     {
-        $course = Course::factory()->has(
-            Group::factory()->has(
-                Video::factory()->count(1)
-            )->count(1)
-        )->create();
-        $user = User::factory()->create();
+        $course = Course::first();
+        $user = User::find(10000001);
         $user->addToGroup($course->defaultGroup());
 
         $response = $this->actingAs($user)->get('/view');
@@ -42,8 +36,8 @@ class VideoTest extends TestCase
 
     public function test_creating_video(): void
     {
-        $course = Course::factory()->has(Group::factory()->count(1))->create();
-        $user = User::factory()->create();
+        $course = Course::first();
+        $user = User::find(10000001);
 
         $youtubeId = "dQw4w9WgXcQ";
 
