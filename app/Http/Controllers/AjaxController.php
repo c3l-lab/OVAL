@@ -2113,22 +2113,6 @@ class AjaxController extends Controller
         $consumer->enable_until = empty($req->to) ? null : $req->to;
         $result = $consumer->save();
 
-        if(!empty($req->dbtype) && !empty($req->host) && !empty($req->port) && !empty($req->un) && !empty($req->pw)) {
-            $result = false;
-            $cred = $consumer->credential;
-            if (empty($cred)) {
-                $cred = new oval\Models\LtiCredential();
-                $cred->consumer_id = $consumer->consumer_pk;
-            }
-            $cred->db_type = $req->dbtype;
-            $cred->host = $req->host;
-            $cred->port = intval($req->port);
-            $cred->database = $req->db;
-            $cred->username = $req->un;
-            $cred->password = $req->pw;
-            $cred->prefix = empty($req->prefix) ? null : $req->prefix;
-            $result = $cred->save();
-        }
         return compact('result');
     }
 }//end class
