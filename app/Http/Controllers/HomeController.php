@@ -47,59 +47,6 @@ class HomeController extends Controller
     }
 
     /**
-     * Method called from route /course/{$course_id}
-     *
-     * If the user is enrolled in the course whose id passed in,
-     * find the first group in that course user belongs to,
-     * redirect to the first group_video for that group.
-     * If any of above checks fail, show no-video error page.
-     *
-     * @param Request $req
-     * @param string $course_id
-     * @return Illuminate\Http\RedirectResponse or Illuminate\Support\Facades\View
-     */
-    public function course(Request $req, $course_id)
-    {
-        $user = Auth::user();
-        $course = oval\Models\Course::find(intval($course_id));
-        if (!empty($course) && $user->checkIfEnrolledIn($course) == true) {
-            $group = $user->groupMemberOf->where('course_id', '=', $course->id)->first();
-            if (!empty($group)) {
-                $group_videos = $group->availableGroupVideosForUser($user);
-                if ($group_videos->count() > 0) {
-                    return redirect()->route('group_videos.show', ['group_video' => $group_videos->first()]);
-                }
-            }
-        }
-        return view('pages.no-video', compact('user'));
-    }
-
-    /**
-     * Method called from route /group/{$group_id}
-     *
-     * If the user belongs to the group whose id passed in as parameter,
-     * find the first group_video for that group,
-     * and redirect to that group_video.
-     * If any checks fail, show no-video error page.
-     *
-     * @param Request $req
-     * @param string $group_id
-     * @return Illuminate\Http\RedirectResponse or Illuminate\Support\Facades\View
-     */
-    public function group(Request $req, $group_id)
-    {
-        $user = Auth::user();
-        $group = oval\Models\Group::find(intval($group_id));
-        if (!empty($group) && $user->checkIfInGroup($group) == true) {
-            $group_videos = $group->availableGroupVideosForUser($user);
-            if ($group_videos->count() > 0) {
-                return redirect()->route('group_videos.show', ['group_video' => $group_videos->first()]);
-            }
-        }
-        return view('pages.no-video', compact('user'));
-    }
-
-    /**
      * Method called for /analytics route
      *
      * Sets up variables for the logged in instructor,

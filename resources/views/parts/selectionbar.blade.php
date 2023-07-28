@@ -11,7 +11,7 @@
 						<li>NO COURSES</li>
 					@else
 						@foreach ($user->enrolledCourses as $c)
-						<li><a href="/course/{{$c->id}}">{{ $c->name }}</a></li>
+						<li><a href="{{ route('group_videos.by_course', ['course_id' => $c->id]) }}">{{ $c->name }}</a></li>
 						@endforeach
 					@endif
 				  </ul>
@@ -28,7 +28,7 @@
 						<li>NO GROUPS</li>
 					@else
 						@foreach ($user->groupMemberOf->where('course_id', $course->id) as $g)
-						<li><a href="/group/{{$g->id}}">{{ $g->name }}</a></li>
+							<li><a href="{{ route('group_videos.by_group', ['group_id' => $g->id]) }}">{{ $g->name }}</a></li>
 						@endforeach
 					@endif
 					</ul>

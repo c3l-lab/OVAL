@@ -187,6 +187,39 @@ class GroupVideoController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function byCourse(Request $request)
+    {
+        $user = \Auth::user();
+        $course_id = $request->query('course_id');
+        $course = \oval\Models\Course::find(intval($course_id));
+        if (!empty($course) && $user->checkIfEnrolledIn($course) == true) {
+            $group = $user->groupMemberOf->where('course_id', '=', $course->id)->first();
+            if (!empty($group)) {
+                $group_videos = $group->availableGroupVideosForUser($user);
+                if ($group_videos->count() > 0) {
+                    return redirect()->route('group_videos.show', ['group_video' => $group_videos->first()]);
+                }
+            }
+        }
+        return view('pages.no-video');
+    }
+
+    public function byGroup(Request $request)
+    {
+        $user = \Auth::user();
+        $group_id = $request->query('group_id');
+        $group = \oval\Models\Group::find(intval($group_id));
+        if (!empty($group) && $user->checkIfInGroup($group) == true) {
+            $group_videos = $group->availableGroupVideosForUser($user);
+            if ($group_videos->count() > 0) {
+                return redirect()->route('group_videos.show', ['group_video' => $group_videos->first()]);
+            }
+        }
+        return view('pages.no-video');
+    }
+
+
+
     private function getGroupVideo($id)
     {
         return GroupVideo::findOrFail($id);

@@ -28,9 +28,6 @@ Route::get('/logout', 'Auth\LoginController@logout');
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
-    Route::get('/course/{course_id}', 'HomeController@course');
-    Route::get('/group/{group_id}', 'HomeController@group');
-
     Route::resource('videos', VideoController::class);
 
     Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])
@@ -39,6 +36,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('group_videos.toggle_comments');
     Route::post('/group_videos/{id}/toggle_annotations', [GroupVideoController::class, 'toggleAnnotations'])
         ->name('group_videos.toggle_annotations');
+    Route::get('/group_videos/by_course', [GroupVideoController::class, 'byCourse'])
+        ->name('group_videos.by_course');
+    Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])
+        ->name('group_videos.by_group');
     Route::resource('group_videos', GroupVideoController::class);
 });
 
