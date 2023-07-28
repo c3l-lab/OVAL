@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use oval\Http\Controllers\GroupVideoController;
 use oval\Http\Controllers\Lti\RegistrationController;
+use oval\Http\Controllers\VideoController;
 use oval\Http\Middleware\RequireAdmin;
 
 /*
@@ -40,6 +41,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('group_videos.toggle_comments');
     Route::post('/group_videos/{id}/toggle_annotations', [GroupVideoController::class, 'toggleAnnotations'])
         ->name('group_videos.toggle_annotations');
+
+    Route::resource('videos', VideoController::class);
 });
 
 Route::get('/video-management/{course_id?}/{group_id?}', 'HomeController@video_management')->name('video_management');
@@ -72,7 +75,6 @@ Route::group(['middleware'=>'auth:api'], function () {
     Route::post('/edit_comment', 'AjaxController@edit_comment');
     Route::post('/delete_annotation', 'AjaxController@delete_annotation');
     Route::post('/delete_comment', 'AjaxController@delete_comment');
-    Route::post('/add_video', 'AjaxController@add_video');
     Route::post('/delete_video', 'AjaxController@delete_video');
     Route::post('/get_groups', 'AjaxController@get_groups');
     Route::post('/save_video_group', 'AjaxController@assign_video_to_groups');
@@ -130,7 +132,6 @@ Route::post('/add_lti_connection', 'ProcessController@add_lti_connection');
 Route::get('/lti', function () {
     return redirect()->secure('/view');
 });
-Route::post('/lti', 'LtiController@launch');
 
 Route::prefix('lti')->group(function () {
     Route::middleware([RequireAdmin::class])->group(function () {

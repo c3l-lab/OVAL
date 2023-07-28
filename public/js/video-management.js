@@ -9,7 +9,7 @@ var modal_groups;
 function saveVideo (v_id, u_id, media_type, point_instruction, points, c_id, request_analysis) {
 	$.ajax({
 		type: "POST",
-		url: "/add_video",
+		url: "/videos",
 		data: {video_id:v_id, media_type:media_type, point_instruction:point_instruction, points:points, course_id:c_id, request_analysis:request_analysis},
 		success: function(data) {
 			$("#loading-hud").hide();

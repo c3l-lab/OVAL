@@ -28,6 +28,9 @@
         "fakerphp/faker": "^1.23"
     },
     "autoload": {
+        "files": [
+            "app/helpers.php"
+        ],
         "psr-4": {
             "oval\\": "app/",
             "Database\\Factories\\": "database/factories/",

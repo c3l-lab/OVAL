@@ -41,8 +41,7 @@ class VideoTest extends TestCase
 
         $youtubeId = "dQw4w9WgXcQ";
 
-        $response = $this->post('/add_video', [
-            "api_token" => $user->api_token,
+        $response = $this->actingAs($user)->post('/videos', [
             "video_id" => $youtubeId,
             "media_type" => "youtube",
             "course_id" => $course->id,
@@ -55,6 +54,7 @@ class VideoTest extends TestCase
             $json->has('course_id')
                 ->has('video_id')
         );
+
 
         $this->assertDatabaseHas('videos', [
             'identifier' => $youtubeId,
