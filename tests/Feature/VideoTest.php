@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use oval\Models\Course;
 use oval\Models\User;
+use oval\Models\Video;
 use Tests\TestCase;
 
 class VideoTest extends TestCase
@@ -62,6 +63,20 @@ class VideoTest extends TestCase
             'duration' => 213,
             'thumbnail_url' => 'https://img.youtube.com/vi/dQw4w9WgXcQ/1.jpg',
             'media_type' => 'youtube',
+        ]);
+    }
+
+    public function test_destory_video(): void
+    {
+        $video = Video::factory()->create();
+        $user = User::find(10000001);
+
+        $response = $this->actingAs($user)->delete(route('videos.destroy', $video->id));
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseMissing('videos', [
+            'id' => $video->id
         ]);
     }
 }

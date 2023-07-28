@@ -58,7 +58,7 @@ class VideoController extends Controller
         $course_id = intval($request->course_id);
         if (!empty($course_id)) {
             $group = \oval\Models\Course::find($course_id)
-                        ->defaultGroup();
+                ->defaultGroup();
             $v->assignToGroup($group);
         }
 
@@ -102,7 +102,8 @@ class VideoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $result = \oval\Models\Video::destroy($id);
+        return ['result' => $result];
     }
 
     /**
@@ -170,13 +171,13 @@ class VideoController extends Controller
         $credentials = \oval\Models\GoogleCredential::all();
         $track_id = null;
         $caption_array = null;
-        if (!empty($credentials) && count($credentials)>0) {
+        if (!empty($credentials) && count($credentials) > 0) {
             foreach ($credentials as $cred) {
                 $helper = new YoutubeDataHelper($cred->client_id, $cred->client_secret);
                 $helper->handle_access_token_refresh($cred);
 
                 $track_id = $helper->get_caption_track_id($video->identifier);
-                if(!empty($track_id)) {
+                if (!empty($track_id)) {
                     $caption_array = $helper->download_caption($track_id);
                 }
                 if (!empty($caption_array)) {
@@ -192,7 +193,7 @@ class VideoController extends Controller
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             //curl_setopt($ch, CURLOPT_PROXY, 'proxy.example.com:8080');
             foreach ($langs as $l) {
-                curl_setopt($ch, CURLOPT_URL, 'http://video.google.com/timedtext?lang='.$l.'&v='.$video->identifier);
+                curl_setopt($ch, CURLOPT_URL, 'http://video.google.com/timedtext?lang=' . $l . '&v=' . $video->identifier);
                 $response = curl_exec($ch);
                 if (!empty($response)) {
                     $cc = simplexml_load_string($response);
@@ -201,18 +202,18 @@ class VideoController extends Controller
                     foreach ($cc->text as $item) {
                         $line = "{";
                         $time = 0;
-                        foreach ($item->attributes() as $key=>$val) {
+                        foreach ($item->attributes() as $key => $val) {
                             if ($key == "start") {
                                 $time = floatval($val);
-                                $line .= '"start":'.$time.', ';
+                                $line .= '"start":' . $time . ', ';
                             } elseif ($key == "dur") {
                                 $time += floatval($val);
-                                $line .= '"end":'.$time.', ';
+                                $line .= '"end":' . $time . ', ';
                                 $time = 0;
                             }
                         }
                         $text .= $item;
-                        $line .= '"transcript":"'.$item.'"}';
+                        $line .= '"transcript":"' . $item . '"}';
                         $caption_array[] = $line;
                     }
                     break;

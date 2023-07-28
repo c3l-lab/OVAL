@@ -75,7 +75,6 @@ Route::group(['middleware'=>'auth:api'], function () {
     Route::post('/edit_comment', 'AjaxController@edit_comment');
     Route::post('/delete_annotation', 'AjaxController@delete_annotation');
     Route::post('/delete_comment', 'AjaxController@delete_comment');
-    Route::post('/delete_video', 'AjaxController@delete_video');
     Route::post('/get_groups', 'AjaxController@get_groups');
     Route::post('/save_video_group', 'AjaxController@assign_video_to_groups');
     Route::post('/download_annotations', 'AjaxController@download_annotations');

@@ -605,20 +605,6 @@ class AjaxController extends Controller
     }
 
     /**
-     * Method called from route /delete_video
-     *
-     * This method deletes record from videos table.
-     *
-     * @param Request $req Request contains video_id
-     * @return array Array with key [result] containing boolean value - true if successfully deleted, false if not
-     */
-    public function delete_video(Request $req)
-    {
-        $result = oval\Models\Video::destroy(intval($req->video_id));
-        return ['result'=>$result];
-    }
-
-    /**
      * Method called from route /get_groups
      *
      * This method fetches groups that belong to the course whose id is passed in.

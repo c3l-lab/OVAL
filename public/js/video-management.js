@@ -330,9 +330,8 @@ $('document').ready(function(){
 		var video_id = $(this).data("id");
 		if (confirm("Are you sure you want to delete?")) {
 			$.ajax({
-				type: "POST",
-				url: "/delete_video",
-				data: {video_id: video_id},
+				type: "DELETE",
+				url: "/videos/" + video_id,
 				success: function() {
 					location.reload();
 				},
