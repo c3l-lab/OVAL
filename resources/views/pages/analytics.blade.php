@@ -89,24 +89,12 @@ VIDEO USAGE ANALYTICS</div>
 							<td>
 								@if (count($gv->points) != 0)
 								Total: {{count($gv->points)}}<br /><br />
-								<!-- <a href="../../points-details/{{$gv->id}}" class="btn btn-default btn-xs">
-									<i class="fa fa-info-circle" aria-hidden="true"></i>
-									Details
-								</a> -->
 								@else
 								N/A<br /><br />
 								@endif
 
 								<button class='key_point analytics_btn' userlist = {{$gv->memberList()}} groupvideoid = {{$gv->id}} > Details &nbsp;&nbsp; <i class="fa fa-info-circle" aria-hidden="true"></i></button><br />
 							</td>
-							<!-- <td>
-								Annotation viewed: {{$gv->numTimesAnnotationViewed()}}<br />
-								Annotation downloads: {{$gv->numAnnotationDownloads()}}<br />
-								<a href="../../tracking-details/{{$gv->id}}" class="btn btn-default btn-xs">
-									<i class="fa fa-info-circle" aria-hidden="true"></i>
-									Details
-								</a>
-							</td> -->
 							<td>
 
 								<br /><br />

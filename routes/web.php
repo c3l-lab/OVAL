@@ -45,16 +45,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/analytics/{course_id?}/{group_id?}', 'HomeController@analytics');
 
-Route::get('/content-analysis/{course_id?}/{group_id?}', 'HomeController@content_analysis');
-
-Route::get('/points-details/{group_video_id}', 'HomeController@points_details');
-
-Route::get('/tracking-details/{group_video_id}', 'HomeController@tracking_details');
-
-Route::get('/text-analysis-details/{video_id}', 'HomeController@text_analysis_details');
-
-Route::get('/select-video/{link_id}/{group_video_id?}', 'HomeController@select_video');
-
 Route::get('/manage-analysis-requests', 'HomeController@manage_analysis_requests');
 
 Route::get('/batch-upload', 'HomeController@batch_upload');
