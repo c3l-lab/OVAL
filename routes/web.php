@@ -91,7 +91,6 @@ Route::group(['middleware'=>'auth:api'], function () {
     Route::post('/edit_visibility', 'AjaxController@edit_visibility');
     Route::post('/edit_video_order', 'AjaxController@edit_video_order');
     Route::post('/edit_text_analysis_visibility', 'AjaxController@edit_text_analysis_visibility');
-    Route::post('/set_lti_resource_link', 'AjaxController@set_lti_resource_link');
     Route::post('/check_student_activity', 'AjaxController@check_student_activity');
     Route::post('/archive_group_video', 'AjaxController@archive_group_video');
     Route::post('/delete_keywords', 'AjaxController@delete_keywords');

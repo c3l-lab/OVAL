@@ -130,22 +130,4 @@ class HomeController extends Controller
             return view('pages.not-admin', compact('user'));
         }
     }
-
-    /**
-     * Method called from GET route /manage_lti_connections
-     *
-     * Show manage-lti page if the logged in user is admin,
-     * error page if not.
-     */
-    public function manage_lti_connections(Request $req)
-    {
-        $user = Auth::user();
-        if ($user->role == 'A') {
-            $lti_connections = oval\Models\LtiConsumer::all();
-            return view('pages.manage-lti', compact('user', 'lti_connections'));
-        } else {
-            return view('pages.not-admin', compact('user'));
-        }
-    }
-
 } //end class

@@ -1819,27 +1819,6 @@ class AjaxController extends Controller
     }
 
     /**
-     * Method called from /set_lti_resource_link
-     *
-     * This method saves moodle_resource_id value for GroupVideo.
-     *
-     * @param Request $req Contains link_id, group_video_id
-     * @return array Array with key "result". Value is true if saved successfully, false if not.
-     */
-    public function set_lti_resource_link(Request $req)
-    {
-        $link_id = intval($req->link_id);
-        $group_video_id = intval($req->group_video_id);
-
-        // reset old resource_link
-        DB::table('group_videos')->where('moodle_resource_id', $link_id)->update(['moodle_resource_id' => null]);
-
-        $group_video = oval\Models\GroupVideo::find($group_video_id);
-        $group_video->moodle_resource_id = $link_id;
-        return ['result'=>$group_video->save()];
-    }
-
-    /**
      * Method called from route /check_student_activity
      *
      * This method finds if there is any student activity associated with the GroupVideo whose id passed in.
