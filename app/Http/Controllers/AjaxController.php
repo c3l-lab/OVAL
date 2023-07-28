@@ -1878,20 +1878,6 @@ class AjaxController extends Controller
         return compact('result');
     }
 
-    /**
-     * Method called from route /delete_group_video
-     *
-     * This method deletes GroupVideo whose id passed in as parameter
-     *
-     * @param Request $req Contains group_video_id
-     * @return array Array with key:result, value:true if successfully deleted, false if not.
-     */
-    public function delete_group_video(Request $req)
-    {
-        $result = oval\Models\GroupVideo::destroy(intval($req->group_video_id));
-        return compact('result');
-    }
-
     public function delete_keywords(Request $req)
     {
         $words = $req->words;

@@ -165,6 +165,12 @@ class GroupVideoController extends Controller
         ];
     }
 
+    public function destroy(int $id)
+    {
+        $result = GroupVideo::destroy($id);
+        return compact('result');
+    }
+
     public function toggleComments(Request $request, int $id)
     {
         $groupVideo = $this->getGroupVideo($id);

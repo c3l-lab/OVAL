@@ -60,4 +60,24 @@ class GroupVideoTest extends TestCase
         $response = $this->actingAs($user)->get('/group_videos/' . $group_video->id);
         $response->assertStatus(404);
     }
+
+    public function test_destroy(): void
+    {
+        $course = Course::first();
+        $group = $course->defaultGroup();
+        $user = User::find(10000001);
+        $user->addToGroup($group);
+        $user->makeInstructorOf($course);
+        $video = $course->defaultGroup()->videos()->first();
+        $video->assignToGroup($group);
+        $group_video = $group->group_videos()
+                    ->where('status', '=', 'current')
+                    ->first();
+
+        $response = $this->actingAs($user)->delete('/group_videos/' . $group_video->id);
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('group_videos', [
+            'id' => $group_video->id,
+        ]);
+    }
 }

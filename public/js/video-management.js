@@ -367,9 +367,8 @@ $('document').ready(function(){
 				}
 				if (!data.has_activity && confirm("Are you sure you would like to make this video unavailable to the group?")) {
 					$.ajax({
-						type:"POST",
-						url: "/delete_group_video",
-						data: {group_video_id:group_video_id},
+						type:"delete",
+						url: "/group_videos/" + group_video_id,
 						success: function(data) {
 							window.location.reload();
 						},
