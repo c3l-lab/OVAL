@@ -68,6 +68,6 @@ class FileController extends Controller
 
         Storage::delete($path);
 
-        return redirect('video-management');
+        return redirect()->route('group_videos.index');
     }
 }

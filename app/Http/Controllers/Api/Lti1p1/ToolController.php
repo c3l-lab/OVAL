@@ -31,7 +31,7 @@ class ToolController extends Controller
         $resourceId = $req->query('resource_id');
 
         if (empty($resourceId)) {
-            return redirect()->route('video_management');
+            return redirect()->route('group_videos.index');
         }
 
         $group_video = GroupVideo::where([

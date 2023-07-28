@@ -3,7 +3,7 @@
 @if ($user->isInstructorOf($course) && $group_video->hide == 1)
     <div class="msg">
         THIS VIDEO IS SET TO "HIDDEN" AND IS NOT VISIBLE TO STUDENTS.<br />
-        Set it to "visible" in <a href="/video-management">Video Management page</a> to make it available for student
+        Set it to "visible" in <a href="{{ route('group_videos.index') }}">Video Management page</a> to make it available for student
         use.
     </div>
 @endif

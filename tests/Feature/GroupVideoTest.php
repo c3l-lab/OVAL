@@ -4,12 +4,29 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use oval\Models\Course;
+use oval\Models\GroupVideo;
 use oval\Models\User;
+use oval\Models\Video;
 use Tests\TestCase;
 
 class GroupVideoTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_index(): void
+    {
+        $unassignedVideo = Video::factory()->create();
+        $course = Course::first();
+        $group = $course->defaultGroup();
+        $user = User::find(10000001);
+        $user->addToGroup($group);
+        $user->makeInstructorOf($course);
+        $videos = $group->group_videos();
+        $response = $this->actingAs($user)->get('/group_videos');
+        $response->assertStatus(200);
+        $response->assertSee($unassignedVideo->title);
+        $response->assertSeeInOrder($videos->pluck('title')->toArray());
+    }
 
     public function test_show_group_video(): void
     {

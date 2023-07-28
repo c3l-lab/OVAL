@@ -13,9 +13,9 @@
 					</div>
 				</div><!-- row -->
 
-				
+
 			</div><!-- .modal-header -->
-			
+
 			<div class="modal-body container-fluid">
 				<form id="assign-video-to-group-form" role="form" data-toggle="validator">
 					<div class="row">
@@ -110,7 +110,7 @@
 					<div class="form-buttons">
 						<button type="button" class="btn btn-link center-block" id="assign-to-group"><i class="fa fa-save"></i></button>
 					</div><!-- form-buttons -->
-				
+
 				</form>
 
 			</div><!-- .modal-body -->
@@ -128,14 +128,14 @@
 				</button>
 				<h4 class="modal-title" id="modal-points-title">Edit Points</h4>
 			</div><!-- .modal-header -->
-			
-			
+
+
 			<div class="modal-body container-fluid">
 				<form>
-					
-					
-					
-					
+
+
+
+
 					<div class="row form-group">
 						<div class="col-xs-9">
 							<div class="row">
@@ -163,9 +163,9 @@
 							<img id="points-form-thumbnail-img" src="" class="video-thumbnail">
 						</div><!-- col -->
 					</div><!-- row -->
-					
-					
-					
+
+
+
 					<div class="row form-group space-top-30">
 						<div class="col-xs-12">
 							<fieldset class="space-bottom">
@@ -191,17 +191,17 @@
 								<i class="fa fa-plus-circle"></i>
 							</button>
 						</div><!-- points-controls -->
-					</div><!-- row -->		
-					
-						
-										
+					</div><!-- row -->
+
+
+
 					<div class="form-buttons">
 						<button type="button" class="btn btn-link" id="save-points"><i class="fa fa-save"></i></button>
 						<button type="button" class="btn btn-link pull-right" id="delete-points"><i class="fa fa-trash"></i></button>
 					</div><!-- form-group -->
-					
+
 				</form>
-				
+
 			</div><!-- .modal-body -->
 		</div><!-- .modal-content -->
 	</div><!-- .modal-dialog -->
@@ -220,8 +220,8 @@
 				<h4 class="modal-title">SET QUIZ</h4>
 			</div><!-- .modal-header -->
 
-			
-			
+
+
 			<div class="modal-body container-fluid">
 				<div class="player_wrap">
 					<div id="player">
@@ -245,14 +245,14 @@
 					<div class="container-fluid col-xs-4 question_warp">
 						<ul>
 							<div><span class="title">Question List</span><i class="fa fa-caret-down" aria-hidden="true" id="quiz_list_toggle_btn"></i></div>
-							<ul> 
+							<ul>
 								<!-- <li>Question 01<i class="fa fa-trash-o" aria-hidden="true"></i></li>
 								<li>Question 20<i class="fa fa-trash-o" aria-hidden="true"></i></li> -->
 							</ul>
-						</ul>	
+						</ul>
 					</div>
 
-					<div class="container-fluid col-xs-8 create_block_warp">	
+					<div class="container-fluid col-xs-8 create_block_warp">
 						<ul  class="nav nav-pills">
 							<li class="active">
 								<a  href="#1a" data-toggle="tab">MULTIPLE CHOICE</a>
@@ -266,9 +266,9 @@
 							<div class="tab-pane active" id="1a">
 								<h4>Please input your Question</h4>
 								<textarea class="quiz_text_area" rows="2"></textarea>
-								<h4>Please add choice options <br>(input then press enter) 
+								<h4>Please add choice options <br>(input then press enter)
 								</h4>
-								
+
 								<table class="quiz_options_wrap" id="quiz_options_wrap">
 									<tbody>
 										<!-- <tr>
@@ -280,7 +280,7 @@
 
 								<button class="quiz_options_btn" id="quiz_options_add">Add option <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
 								<button class="quiz_options_btn" id="quiz_options_remove">Remove option <i class="fa fa-minus-circle" aria-hidden="true"></i></button>
-								
+
 								<br />
 
 								<button type="button" class="btn btn-link pull-left add_question_list_btn" id="1a_btn" blockType="multiple_choice">
@@ -345,13 +345,13 @@
 						</button>
 					</div>
 				</div>
-				
+
 
 				<div class="container-fluid quiz_warp">
 					<h2><i class="fa fa-list" aria-hidden="true"></i> CURRENT QUIZ LIST </h2>
 					<ul>
 						<div><span class="title"> Quiz List &nbsp;&nbsp;</span><i class="fa fa-caret-down" aria-hidden="true" id="question_list_toggle_btn"></i></div>
-						<ul> 
+						<ul>
 
 						</ul>
 					</ul>
@@ -384,7 +384,7 @@
 				<div class="container-fluid">
 					<div class="button_warp">
 						<button type="button" class="btn btn-link center-block quiz_submit_btn" id="quiz_submit_btn">
-							SUBMIT & SAVE TO SERVER <i class="fa fa-upload" aria-hidden="true"></i> 
+							SUBMIT & SAVE TO SERVER <i class="fa fa-upload" aria-hidden="true"></i>
 						</button>
 					</div>
 				</div>
@@ -405,13 +405,13 @@
 			<div>
 				<button type="button" class="btn btn-link center-block quiz_submit_btn" id="skip_tutorial">Skip Tutorial <i class="fa fa-ban" aria-hidden="true"></i></button>
 			</div>
-			
+
 			<div class="modal-body" id="pop_out_dialog_body">
 
 			</div>
 			<div>
 				<button type="button" id="close_to_use" class="btn btn-link center-block quiz_submit_btn" >
-					OK, start to use &nbsp;&nbsp;&nbsp;<i class="fa fa-play" aria-hidden="true"></i> 
+					OK, start to use &nbsp;&nbsp;&nbsp;<i class="fa fa-play" aria-hidden="true"></i>
 				</button>
 			</div>
 		</div>
@@ -427,7 +427,7 @@
 				<h4 class="modal-title">Oval Notification</h4>
 			</div>
 			<div class="modal-body" id="alert_dialog_content">
-				
+
 			</div>
 			<div>
 				<button type="button" class="btn btn-link center-block quiz_submit_btn" onclick="$('#alert_dialog').modal('hide');">
@@ -446,7 +446,7 @@
 				<h4 class="modal-title">Oval Notification</h4>
 			</div>
 			<div class="modal-body" id="confirm_dialog_content">
-				
+
 			</div>
 			<div class="modal-body">
 				<button type="button" class="btn btn-link center-block" id="confirm_delete" onclick="$('#confirm_dialog').modal('hide');">
@@ -470,7 +470,7 @@
 				</button>
 				<h4 class="modal-title" id="modalLabel">EDIT VIDEO VISIBILITY</h4>
 			</div><!-- .modal-header -->
-			
+
 			<div class="modal-body container-fluid">
 				<form id="visibility-form">
 					<input type="hidden" id="group-video-id">
@@ -501,7 +501,7 @@
 					</button>
 					<h4 class="modal-title" id="modalLabel">EDIT VIDEO LIST</h4>
 				</div><!-- .modal-header -->
-				
+
 				<div class="modal-body container-fluid">
 					<div>
 						Edit the order videos appear in the list.
@@ -530,7 +530,7 @@
 				</button>
 				<h4 class="modal-title" id="text-analysis-title">EDIT VISIBILITY OF RELATED CONTENTS</h4>
 			</div><!-- .modal-header -->
-			
+
 			<div class="modal-body container-fluid">
 				<form id="text-analysis-form">
 					<input type="hidden" class="group-video-id">
@@ -561,7 +561,7 @@
 				</button>
 				<h4 class="modal-title" id="transcript-modal-title">UPLOAD TRANSCRIPT</h4>
 			</div><!-- .modal-header -->
-			
+
 			<div class="modal-body container-fluid">
 				<form id="upload-transcript-form" method="POST" action="/upload_transcript" enctype="multipart/form-data" role="form" data-toggle="validator">
 					{{ csrf_field() }}
@@ -571,7 +571,7 @@
 						<input type="file" id="transcript-file" name="file" data-filetype="srt" data-required-error="Please select a file in .srt format" required>
 						<div class="help-block with-errors"></div>
 					</div><!-- form-group -->
-					
+
 					<div class="instruction space-top">
 						<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
 						If a transcript file already exists for this video, it will be overwritten.
@@ -582,8 +582,8 @@
 						</button>
 					</div><!-- form-buttons -->
 				</form>
-				
-			</div><!-- modal-body -->				
+
+			</div><!-- modal-body -->
 		</div><!-- .modal-content -->
 	</div><!-- .modal-dialog -->
 </div><!-- .#modal-form -->
@@ -598,7 +598,7 @@
 				</button>
 				<h4 class="modal-title" id="edit-keywords-modal-title">EDIT KEYWORDS</h4>
 			</div><!-- .modal-header -->
-			
+
 			<div class="modal-body container-fluid">
 				<form id="edit-keywords-form">
 					<div class="form-group">
@@ -610,7 +610,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								
+
 							</tbody>
 						</table>
 					</div><!--form-group-->
@@ -621,8 +621,8 @@
 						</button>
 					</div><!-- form-buttons -->
 				</form>
-				
-			</div><!-- modal-body -->				
+
+			</div><!-- modal-body -->
 		</div><!-- .modal-content -->
 	</div><!-- .modal-dialog -->
 </div><!-- .#modal-form -->
@@ -637,7 +637,7 @@
 				</button>
 				<h4 class="modal-title" id="assigned-groups-modal-title">ASSIGNED GROUPS</h4>
 			</div><!-- .modal-header -->
-			
+
 			<div class="modal-body container-fluid">
 
 				<div class="row">
@@ -670,12 +670,12 @@
 						</tr>
 					</thead>
 					<tbody>
-						
+
 					</tbody>
 				</table>
 
 
-			</div><!-- modal-body -->				
+			</div><!-- modal-body -->
 		</div><!-- .modal-content -->
 	</div><!-- .modal-dialog -->
 </div><!-- .#modal-form -->

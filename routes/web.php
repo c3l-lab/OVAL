@@ -40,8 +40,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('group_videos', GroupVideoController::class);
 });
 
-Route::get('/video-management/{course_id?}/{group_id?}', 'HomeController@video_management')->name('video_management');
-
 Route::get('/analytics/{course_id?}/{group_id?}', 'HomeController@analytics');
 
 Route::get('/content-analysis/{course_id?}/{group_id?}', 'HomeController@content_analysis');

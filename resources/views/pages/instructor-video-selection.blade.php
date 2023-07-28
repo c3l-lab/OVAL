@@ -48,7 +48,7 @@
     <div class="admin-page-section">
     @if (count($group_videos) == 0)
         There are no videos added for this group yet.<br />
-        Please add videos on <a href="/video-management" class="btn btn-link">Video Management page.</a>
+        Please add videos on <a href="{{ route('group_videos.index') }}" class="btn btn-link">Video Management page.</a>
     @else
         <div class="table-responsive">
             <table class="table table-striped" id="videos-table">

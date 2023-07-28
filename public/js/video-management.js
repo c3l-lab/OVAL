@@ -21,8 +21,7 @@ function saveVideo (v_id, u_id, media_type, point_instruction, points, c_id, req
 			if(data.course_id){
 				var protocol = window.location.protocol;
 				var host = window.location.host;
-				// window.location.href = protocol+"//"+host+"/video-management/"+data.course_id+"?"+Math.random()+"#assigned";
-				window.location.href = protocol+"//"+host+"/video-management/"+c_id+"?"+Math.random()+"#v-"+data.video_id;
+				window.location.href = protocol+"//"+host+"/group_videos/?course_id="+c_id+"?"+Math.random()+"#v-"+data.video_id;
 			}
 			else {
 				window.location.hash = 'unassigned';
@@ -85,7 +84,7 @@ function assignVideoToGroups(group_ids, copy_from_group_id, copy_comment_instruc
 		success: function () {
 			alert("Video is assigned to the Group");	/////
 			$("#modal-form").modal('hide');
-			window.location.href = "/video-management/"+modal_course_id+"?"+Math.random()+"#assigned";
+			window.location.href = "/group_videos/?course_id="+modal_course_id+"?"+Math.random()+"#assigned";
 		},
 		error: function(req, status, err) {
 			console.log("error save_video_group - "+status+": "+err);	///////

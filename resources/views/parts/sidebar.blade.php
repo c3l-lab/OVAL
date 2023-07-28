@@ -11,7 +11,7 @@
      <ul class="nav navmenu-nav side-bar-nav">
          <li><a href="/">Home</a></li>
          @if (isset($user) && $user->isAnInstructor())
-             <li><a href="/video-management">Video Management</a></li>
+             <li><a href="{{ route('group_videos.index') }}">Video Management</a></li>
          @endif
          @if (isset($user) && $user->role == 'A')
              <li><a href="/manage-analysis-requests">Manage Content Analysis Requests</a></li>

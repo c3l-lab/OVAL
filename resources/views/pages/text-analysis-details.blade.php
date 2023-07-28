@@ -6,7 +6,7 @@
 
 <div class="container-fluid">
     <div class="page-title">
-            <a href="/video-management/{{ $course_id }}/{{ $group_id }}#assigned">
+            <a href="{{ route("group_videos.index", ["course_id" => $course_id, "group_id" => $group_id]) }}#assigned">
 				<i class="fa fa-laptop" aria-hidden="true"></i>
 				VIDEO MANAGEMENT
             </a>

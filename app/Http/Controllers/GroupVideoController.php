@@ -7,6 +7,50 @@ use oval\Models\GroupVideo;
 
 class GroupVideoController extends Controller
 {
+    public function index(Request $request)
+    {
+        $user = \Auth::user();
+        $course_id = $request->query('course_id');
+        $group_id = $request->query('group_id');
+        $api_token = $user->api_token;
+        if ($user->isAnInstructor()) {
+            $courses_teaching = $user->coursesTeaching();
+            $course_id = $course_id ? $course_id : $request->session()->get('current-course', 0);
+            $course = $course_id ? \oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
+            if (!$user->isInstructorOf($course)) {
+                foreach ($courses_teaching as $c) {
+                    $course = $c;
+                    break;
+                }
+            }
+            $group = $group_id ? \oval\Models\Group::find($group_id) : $course->groups->first();
+            $videos_without_group = \oval\Models\Video::doesntHave('groups')->get();
+            $group_videos = $group->group_videos()->where('status', 'current');
+
+            \JavaScript::put([
+                'user_id' => $user->id,
+                'course_id' => $course->id,
+                'course_name' => $course->name,
+                'group_id' => $group->id,
+                'group_name' => $group->name,
+                'api_token' => $api_token,
+            ]);
+
+            // save current course id
+            session(['current-course' => $course->id]);
+
+            return view('group_videos.index', [
+                'user' => $user,
+                'course' => $course,
+                'group' => $group,
+                'videos_without_group' => $videos_without_group,
+                'group_videos' => $group_videos,
+            ]);
+        } else {
+            return view('pages.not-instructor', compact('user'));
+        }
+    }
+
     public function show(Request $request, int $id)
     {
         return view('group_videos.show', $this->view($id));

@@ -175,7 +175,7 @@
                                 <li>NO COURSES</li>
                             @else
                                 @foreach ($user->coursesTeaching() as $c)
-                                    <li><a href="/video-management/{{ $c->id }}">{{ $c->name }}</a></li>
+                                    <li><a href="{{ route('group_videos.index', ['course_id' => $c->id]) }}">{{ $c->name }}</a></li>
                                 @endforeach
                             @endif
                         </ul>
@@ -196,8 +196,8 @@
                                 <li>NO GROUPS</li>
                             @elseif ($course)
                                 @foreach ($user->groupMemberOf->where('course_id', $course->id) as $g)
-                                    <li><a
-                                            href="/video-management/{{ $course->id }}/{{ $g->id }}">{{ $g->name }}</a>
+                                    <li>
+                                        <a href="{{ route('group_videos.index', [ "course_id" => $course->id, "group_id" => $g->id ]) }}">{{ $g->name }}</a>
                                     </li>
                                 @endforeach
                             @else
@@ -377,7 +377,7 @@
 @endsection
 
 @section('modal')
-    @include('parts.video-management-modal')
+    @include('group_videos.index._modals')
 @endsection
 
 

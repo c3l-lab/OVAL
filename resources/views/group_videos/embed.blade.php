@@ -22,12 +22,6 @@
 @endsection
 
 @section('content')
-    @if ($user->isInstructorOf($course))
-        <div class="links">
-            <a href="/video-management" target="_blank">Video Management</a>
-        </div>
-    @endif
-
     <div class="group-video">
         @include('group_videos.show._group_video', [
             'user' => $user,

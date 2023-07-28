@@ -100,55 +100,6 @@ class HomeController extends Controller
     }
 
     /**
-     * Method called from route /video-management
-     *
-     * Fetches data for the logged in instructor,
-     * sets up JavaScript variables,
-     * and shows video-managment page.
-     * If the visitor is not an instructor, shows error page
-     *
-     * @param Request $req
-     * @param string $course_id Default null
-     * @param string $group_id Default null
-     * @return Illuminate\Support\Facades\View
-     */
-    public function video_management(Request $req, $course_id = null, $group_id = null)
-    {
-        $user = Auth::user();
-        $api_token = $user->api_token;
-        if ($user->isAnInstructor()) {
-            $courses_teaching = $user->coursesTeaching();
-            $course_id = $course_id ? $course_id : $req->session()->get('current-course', 0);
-            $course = $course_id ? oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
-            if (!$user->isInstructorOf($course)) {
-                foreach ($courses_teaching as $c) {
-                    $course = $c;
-                    break;
-                }
-            }
-            $group = $group_id ? oval\Models\Group::find($group_id) : $course->groups->first();
-            $videos_without_group = oval\Models\Video::doesntHave('groups')->get();
-            $group_videos = $group->group_videos()->where('status', 'current');
-
-            JavaScript::put([
-                'user_id' => $user->id,
-                'course_id' => $course->id,
-                'course_name' => $course->name,
-                'group_id' => $group->id,
-                'group_name' => $group->name,
-                'api_token' => $api_token,
-            ]);
-
-            // save current course id
-            session(['current-course' => $course->id]);
-
-            return view('pages.video-management', compact('user', 'course', 'group', 'videos_without_group', 'group_videos'));
-        } else {
-            return view('pages.not-instructor', compact('user'));
-        }
-    }
-
-    /**
      * Method called for /analytics route
      *
      * Sets up variables for the logged in instructor,
