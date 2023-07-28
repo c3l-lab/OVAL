@@ -12,6 +12,12 @@ function saveVideo (v_id, u_id, media_type, point_instruction, points, c_id, req
 		url: "/add_video",
 		data: {video_id:v_id, media_type:media_type, point_instruction:point_instruction, points:points, course_id:c_id, request_analysis:request_analysis},
 		success: function(data) {
+			$("#loading-hud").hide();
+			if (data.error) {
+				alert(data.error);
+				return;
+			}
+
 			if(data.course_id){
 				var protocol = window.location.protocol;
 				var host = window.location.host;

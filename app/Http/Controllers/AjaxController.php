@@ -497,7 +497,7 @@ class AjaxController extends Controller
             try {
                 $response = $client->get($url);
             } catch (GuzzleHttp\Exception\ClientException $e) {
-                return ['error' => $e->getMessage()];
+                return ['error' => "Unable to get video info from youtube."];
             }
 
             $result = json_decode($response->getBody());
