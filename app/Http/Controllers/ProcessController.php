@@ -486,25 +486,8 @@ class ProcessController extends Controller
         $consumer->save();
 
         $consumer = oval\Models\LtiConsumer::where('consumer_key256', '=', $req->key)->first();
-        $success = false;
 
-        if(!empty($req->db_type) && !empty($req->host) && !empty($req->db_name) && !empty($req->user) && !empty($req->pw)) {
-            $cred = new oval\Models\LtiCredential();
-            $cred->consumer_id = $consumer->consumer_pk;
-            $cred->db_type = $req->db_type;
-            $cred->host = $req->host;
-            $cred->port = intval($req->port);
-            $cred->database = $req->db_name;
-            $cred->username = $req->user;
-            $cred->password = $req->pw;
-            $cred->prefix = $req->prefix;
-            $success = $cred->save();
-        }
-        if($success) {
-            $msg = "Connection and database credential was saved.";
-        } else {
-            $msg = "LTI connection was saved but database credential was not saved.";
-        }
+        $msg = "Connection was saved.";
 
         return back()->with(compact('msg'));
     }
