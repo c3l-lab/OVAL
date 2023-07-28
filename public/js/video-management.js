@@ -925,7 +925,7 @@ $('document').ready(function(){
 				var tr = $("<tr>").appendTo(table);
 				$("<td>", {
 							"class":"col-xs-6",
-							"html":"<a href='/view/"+val.group_video_id+"'>"+val.name+"</a>"
+							"html":"<a href='/group_videos/"+val.group_video_id+"'>"+val.name+"</a>"
 						}).appendTo(tr);
 				$("<td>", {
 							"class":"col-xs-2 text-center",

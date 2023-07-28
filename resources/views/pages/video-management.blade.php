@@ -241,7 +241,7 @@
                             <tr id="v-{{ $gv->video()->id }}">
                                 <td>{{ $gv->id }}</td>
                                 <td class="img-cel">
-                                    <a href="/view/{{ $gv->id }}">
+                                    <a href="/group_videos/{{ $gv->id }}">
                                         <img class="video-thumbnail" src="{{ $gv->video()->thumbnail_url }}">
                                         <br />
                                         {{ $gv->video()->title }}

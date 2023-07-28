@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use oval\Http\Controllers\GroupVideoController;
+use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\Lti\RegistrationController;
 use oval\Http\Controllers\VideoController;
 use oval\Http\Middleware\RequireAdmin;
@@ -23,17 +24,10 @@ Auth::routes();
 Route::get('/logout', 'Auth\LoginController@logout');
 
 
-Route::get('/', function () {
-    return redirect()->secure('/view');
-});
-Route::get('/home', function () {
-    return redirect()->secure('/view');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/course/{course_id}', 'HomeController@course');
 Route::get('/group/{group_id}', 'HomeController@group');
 
-Route::get('/view/{group_video_id?}', 'HomeController@view')->name('view');
-// Route::get('/view/{course_id?}/{group_id?}/{video_id?}', 'HomeController@view')
 Route::middleware(['auth'])->group(function () {
     Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])
         ->name('group_videos.show.embed');
@@ -43,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('group_videos.toggle_annotations');
 
     Route::resource('videos', VideoController::class);
+    Route::resource('group_videos', GroupVideoController::class);
 });
 
 Route::get('/video-management/{course_id?}/{group_id?}', 'HomeController@video_management')->name('video_management');
@@ -128,10 +123,6 @@ Route::post('/batch_data_insert', 'ProcessController@batch_data_insert');
 Route::post('/add_lti_connection', 'ProcessController@add_lti_connection');
 
 // ----------- lti routes ------------- //
-Route::get('/lti', function () {
-    return redirect()->secure('/view');
-});
-
 Route::prefix('lti')->group(function () {
     Route::middleware([RequireAdmin::class])->group(function () {
         Route::resources([

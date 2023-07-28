@@ -4,23 +4,38 @@ namespace oval\Http\Controllers;
 
 use Illuminate\Http\Request;
 use oval\Models\GroupVideo;
-use oval\Models\quiz_creation;
-use oval\Models\Tracking;
 
 class GroupVideoController extends Controller
 {
+    public function show(Request $request, int $id)
+    {
+        return view('group_videos.show', $this->view($id));
+    }
     public function embed(Request $request, int $id)
     {
+        return view('group_videos.embed', $this->view($id));
+    }
 
+    private function view($id)
+    {
         $user = \Auth::user();
         $api_token = $user->api_token;
         $course = null;
         $group = null;
         $group_video = null;
+        $group_video_id = intval($id);
 
-        $group_video = $this->getGroupVideo($id);
+        $group_video = \oval\Models\GroupVideo::findOrFail($group_video_id);
+
         $group = $group_video->group();
         $course = $group->course;
+
+        if (
+            !$user->isInstructorOf($course) &&
+            (!$user->checkIfEnrolledIn($course) || !$user->checkIfInGroup($group) || $group_video->hide)
+        ) {
+            abort(404);
+        }
 
         $video = $group_video->video();
 
@@ -34,7 +49,7 @@ class GroupVideoController extends Controller
 
         // Log every user views
         if (!empty($user) && !empty($video)) {
-            $tracking = new Tracking();
+            $tracking = new \oval\Models\Tracking();
             $tracking->group_video_id = $group_video->id;
             $tracking->user_id = $user->id;
             $tracking->event = "View";
@@ -62,7 +77,7 @@ class GroupVideoController extends Controller
             }
         }
 
-        $quizzes = quiz_creation::where('identifier', '=', $video->identifier)->get();
+        $quizzes = \oval\Models\quiz_creation::where('identifier', '=', $video->identifier)->get();
         $has_quiz = $quizzes->count() ? true : false;
 
         \JavaScript::put([
@@ -96,15 +111,14 @@ class GroupVideoController extends Controller
         // save current course id
         session(['current-course' => $course->id]);
 
-        return view('group_videos.embed', [
+        return [
             'user' => $user,
             'course' => $course,
             'group' => $group,
             'video' => $video,
             'group_video' => $group_video,
             'has_quiz' => $has_quiz,
-        ]);
-
+        ];
     }
 
     public function toggleComments(Request $request, int $id)

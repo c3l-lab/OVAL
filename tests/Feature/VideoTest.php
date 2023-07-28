@@ -13,28 +13,6 @@ class VideoTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_default_video_page_without_video(): void
-    {
-        $user = User::find(10000001);
-
-        $response = $this->actingAs($user)->get('/view');
-
-        $response->assertStatus(200);
-        $response->assertSee('There is no video for the ID you selected');
-    }
-
-    public function test_default_video_page_with_video(): void
-    {
-        $course = Course::first();
-        $user = User::find(10000001);
-        $user->addToGroup($course->defaultGroup());
-
-        $response = $this->actingAs($user)->get('/view');
-
-        $response->assertStatus(200);
-        $response->assertSee($course->name);
-    }
-
     public function test_creating_video(): void
     {
         $course = Course::first();

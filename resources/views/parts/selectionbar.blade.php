@@ -42,11 +42,11 @@
 				  </a>
 					<ul class="dropdown-menu">
 					@if (count($user->viewableGroupVideos()) == 0)
-						<li>NO VIDEOS</li> 
+						<li>NO VIDEOS</li>
 					@else
-					
-					@foreach ($group->availableGroupVideosForUser($user) as $gv)  
-					<li><a href="/view/{{$gv->id}}">{{ $gv->video()->title }}</a></li>
+
+					@foreach ($group->availableGroupVideosForUser($user) as $gv)
+					<li><a href="/group_videos/{{$gv->id}}">{{ $gv->video()->title }}</a></li>
 					@endforeach
 					@endif
 

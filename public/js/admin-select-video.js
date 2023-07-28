@@ -11,7 +11,7 @@ $('document').ready(function(){
                url: "/set_lti_resource_link",
                data:{link_id:link_id , group_video_id:group_video_id},
                success: function(data) {
-                   window.location.href = "/view/"+group_video_id;
+                   window.location.href = "/group_videos/" + group_video_id;
                },
                error: function (req, status, error) {
                    console.log("error /set_lti_resource_link - "+error);//////

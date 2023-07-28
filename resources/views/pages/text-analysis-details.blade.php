@@ -14,15 +14,15 @@
             TEXT ANALYSIS DETAILS
         </div>
     <div class="admin-page-info-section">
-        <a href="/view/{{$course_id}}/{{$group_id}}/{{$video->id}}">
+        <a href="/group_videos/{{$course_id}}/{{$group_id}}/{{$video->id}}">
         	<img class="video-thumbnail" src="{{$video->thumbnail_url}}">
         </a>
         <h4 class="inline-with-img">
-        	<a href="/view/{{$course_id}}/{{$group_id}}/{{$video->id}}">
+        	<a href="/group_videos/{{$course_id}}/{{$group_id}}/{{$video->id}}">
         		{{$video->title}}
         	</a>
         </h4>
-        
+
     </div><!-- admin-page-section -->
 
     <div class="admin-page-section-header">

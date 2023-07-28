@@ -3,8 +3,6 @@
 namespace oval\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use JavaScript;
 use oval;
@@ -25,12 +23,35 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
+    public function index()
+    {
+        $user = \Auth::user();
+        $group = $user->groupMemberOf->first();
+        if (!empty($group)) {
+            $course = $group->course;
+            if ($user->isInstructorOf($course)) {
+                $group_video = $group->group_videos()
+                    ->where('status', '=', 'current')
+                    ->first();
+            } else {
+                $group_video = $group->group_videos()
+                    ->where('status', '=', 'current')
+                    ->where('hide', '=', false)
+                    ->first();
+            }
+            if (!empty($group_video)) {
+                return redirect()->route('group_videos.show', ['group_video' => $group_video]);
+            }
+        }
+        return view('pages.no-video');
+    }
+
     /**
      * Method called from route /course/{$course_id}
      *
      * If the user is enrolled in the course whose id passed in,
      * find the first group in that course user belongs to,
-     * redirect to /view to show first group_video for that group.
+     * redirect to the first group_video for that group.
      * If any of above checks fail, show no-video error page.
      *
      * @param Request $req
@@ -41,12 +62,12 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         $course = oval\Models\Course::find(intval($course_id));
-        if (!empty($course)&&$user->checkIfEnrolledIn($course)==true) {
+        if (!empty($course) && $user->checkIfEnrolledIn($course) == true) {
             $group = $user->groupMemberOf->where('course_id', '=', $course->id)->first();
-            if(!empty($group)) {
+            if (!empty($group)) {
                 $group_videos = $group->availableGroupVideosForUser($user);
-                if($group_videos->count()>0) {
-                    return redirect()->secure('/view/'.$group_videos->first()->id);
+                if ($group_videos->count() > 0) {
+                    return redirect()->route('group_videos.show', ['group_video' => $group_videos->first()]);
                 }
             }
         }
@@ -58,7 +79,7 @@ class HomeController extends Controller
      *
      * If the user belongs to the group whose id passed in as parameter,
      * find the first group_video for that group,
-     * and redirect to /view with id of that group_video.
+     * and redirect to that group_video.
      * If any checks fail, show no-video error page.
      *
      * @param Request $req
@@ -69,164 +90,13 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         $group = oval\Models\Group::find(intval($group_id));
-        if (!empty($group) && $user->checkIfInGroup($group)==true) {
+        if (!empty($group) && $user->checkIfInGroup($group) == true) {
             $group_videos = $group->availableGroupVideosForUser($user);
-            if($group_videos->count()>0) {
-                return redirect()->secure('/view/'.$group_videos->first()->id);
+            if ($group_videos->count() > 0) {
+                return redirect()->route('group_videos.show', ['group_video' => $group_videos->first()]);
             }
         }
         return view('pages.no-video', compact('user'));
-    }
-
-    /**
-     * Method called from route /view. This shows the home page of OVAL.
-     *
-     * Fetches data and sets up JavaScript variables.
-     * Shows home page with group_video whose ID passed in.
-     * If no group_video_id is passed in, find the first group_video available for
-     * the user that is currently logged in, and show home page with this.
-     * If there is no group_video to show, returns no-video error page.
-     * @param Request $req
-     * @param string $group_video_id Default null
-     * @return Illuminate\Http\RedirectResponse or Illuminate\Support\Facades\View
-     */
-    public function view(Request $req, $group_video_id=null)
-    {
-        $user = Auth::user();
-        $api_token = $user->api_token;
-        $course = null;
-        $group = null;
-        $group_video = null;
-        $group_video_id = intval($group_video_id);
-
-        if (!empty($group_video_id)) {
-            $group_video = oval\Models\GroupVideo::find($group_video_id);
-            if (!empty($group_video)) {
-                $group = $group_video->group();
-                $course = $group->course;
-
-                if (!$user->isInstructorOf($course) &&
-                        (!$user->checkIfEnrolledIn($course) || !$user->checkIfInGroup($group) || $group_video->hide)) {
-                    $group_video = null;
-                }
-            }
-            if (empty($group_video)) {
-                return view('pages.no-video', compact('user'));
-            }
-        } else {
-            //--find first group_video available for the user if no id passed in
-            $group = $user->groupMemberOf->first();
-            if (!empty($group)) {
-                $course = $group->course;
-                if($user->isInstructorOf($course)) {
-                    $group_video = $group->group_videos()
-                                        ->where('status', '=', 'current')
-                                        ->first();
-                } else {
-                    $group_video = $group->group_videos()
-                                        ->where('status', '=', 'current')
-                                        ->where('hide', '=', false)
-                                        ->first();
-                }
-            }
-            if (empty($group_video)) {
-                return view('pages.no-video', compact('user'));
-            }
-        }
-        $video = $group_video->video();
-
-        $group_members = [];
-        foreach ($group->students() as $student) {
-            $group_members[] = [
-                "id" => $student->id,
-                "name" => $student->fullName(),
-            ];
-        }
-
-        // Log every user views
-        if (!empty($user) && !empty($video)) {
-            $tracking = new oval\Models\Tracking();
-            $tracking->group_video_id = $group_video->id;
-            $tracking->user_id = $user->id;
-            $tracking->event = "View";
-            $tracking->event_time = date("Y-m-d H:i:s");
-            $tracking->save();
-        }
-
-        //--if there's transcript, save a .srt file
-        //--and get the analysis value if exists
-        // $transcript_path = null;
-        // $transcript = $video->transcript;
-        // if (!empty($transcript)) {
-        // 	$filename = $video->id.".srt";
-        // 	$destination = public_path().'/transcript/'.$filename;
-        // 	$json_transcript = json_decode($transcript->transcript);
-        // 	$srt_transcript = "";
-        // 	for($i=0; $i<count($json_transcript); $i++) {
-        // 		$json_transcript[$i] = json_decode($json_transcript[$i]);
-        // 		$srt_transcript.= ($i+1)."\r\n";
-        // 		$start = intval($json_transcript[$i]->start);
-        // 		$end = intval($json_transcript[$i]->end);
-        // 		$srt_transcript.= gmdate("H:i:s", $start)." --> ".gmdate("H:i:s",$end)."\r\n";
-        // 		$srt_transcript.= wordwrap(trim($json_transcript[$i]->transcript), 50, "\r\n")."\r\n\r\n";
-        // 	}
-
-        // 	file_put_contents($destination, $srt_transcript);
-        // 	$transcript_path = url('transcript/'.$filename);
-        // }
-
-        $keywords = $video->keywords->unique('keyword')->sortBy('keyword', SORT_NATURAL|SORT_FLAG_CASE);
-        $analysis = null;
-        if(!empty($keywords)) {
-            $currents = [];
-            $time = null;
-            foreach ($keywords as $k) {
-                if (($k->type == "keywords") || ($k->type == "concepts")) {
-                    $analysis[] = ['text'=>$k->keyword, 'occurrences'=>$k->occurrences(), 'related'=>$k->related()];
-                }
-
-                //--construct array containing data for "current keywords"--
-                $time = intval(floor($k->startTime));
-                if (!array_key_exists($time, $currents)) {
-                    $currents[$time] = [$k->keyword];
-                } else {
-                    array_push($currents[$time], $k->keyword);
-                }
-            }
-        }
-
-        $quizzes = oval\Models\quiz_creation::where('identifier', '=', $video->identifier)->get();
-        $has_quiz = $quizzes->count() ? true : false;
-
-        JavaScript::put([
-            'MINE'=>1, 'INSTRUCTORS'=>2, 'STUDENTS'=>3, 'ALL'=>4,
-            'user_id'=>$user->id,
-            'is_instructor'=>$user->isInstructorOf($course),
-            'comment_instruction' => $group_video->comment_instruction ? $group_video->comment_instruction->description : null,
-            'user_fullname'=>$user->fullName(),
-            'course_id'=>$course->id,
-            'course_name'=>$course->name,
-            'group_id'=>$group->id,
-            'group_name'=>$group->name,
-            'group_members'=>$group_members,
-            'video_id'=>$video->id,
-            'video_identifier'=>$video->identifier,
-            'video_name'=>htmlspecialchars($video->title, ENT_QUOTES),
-            'video_duration'=>$video->duration,
-            'thumbnail_url'=>$video->thumbnail_url,
-            'media_type'=>$video->media_type,
-            // 'transcript_path'=>$transcript_path,
-            'text_analysis'=>$analysis,
-            'current_keywords'=>$currents,
-            'group_video_id'=>$group_video->id,
-            'points'=>$group_video->relatedPoints(),
-            'api_token'=>$api_token,
-        ]);
-
-        // save current course id
-        session(['current-course' => $course->id]);
-
-        return view('pages.home', compact('user', 'course', 'group', 'video', 'group_video', 'has_quiz'));
     }
 
     /**
@@ -242,7 +112,7 @@ class HomeController extends Controller
      * @param string $group_id Default null
      * @return Illuminate\Support\Facades\View
      */
-    public function video_management(Request $req, $course_id=null, $group_id=null)
+    public function video_management(Request $req, $course_id = null, $group_id = null)
     {
         $user = Auth::user();
         $api_token = $user->api_token;
@@ -261,12 +131,12 @@ class HomeController extends Controller
             $group_videos = $group->group_videos()->where('status', 'current');
 
             JavaScript::put([
-                'user_id'=>$user->id,
-                'course_id'=>$course->id,
-                'course_name'=>$course->name,
-                'group_id'=>$group->id,
-                'group_name'=>$group->name,
-                'api_token'=>$api_token,
+                'user_id' => $user->id,
+                'course_id' => $course->id,
+                'course_name' => $course->name,
+                'group_id' => $group->id,
+                'group_name' => $group->name,
+                'api_token' => $api_token,
             ]);
 
             // save current course id
@@ -291,10 +161,10 @@ class HomeController extends Controller
      * @param string $group_id Default null
      * @return Illuminate\Support\Facades\View
      */
-    public function analytics(Request $req, $course_id=null, $group_id=null)
+    public function analytics(Request $req, $course_id = null, $group_id = null)
     {
         $user = Auth::user();
-        if($user->isAnInstructor()) {
+        if ($user->isAnInstructor()) {
             $courses = $user->coursesTeaching();
             $course_id = $course_id ? $course_id : $req->session()->get('current-course', 0);
             $course = $course_id ? oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
@@ -306,10 +176,10 @@ class HomeController extends Controller
             }
             $group = $group_id ? oval\Models\Group::find($group_id) : $course->groups->first();
             JavaScript::put([
-                'course_id'=>$course->id,
-                'course_name'=>$course->name,
-                'group_id'=>$group->id,
-                'group_name'=>$group->name,
+                'course_id' => $course->id,
+                'course_name' => $course->name,
+                'group_id' => $group->id,
+                'group_name' => $group->name,
             ]);
 
             // save current course id
@@ -333,11 +203,11 @@ class HomeController extends Controller
      * @param string $group_id Default null
      * @return Illuminate\Support\Facades\View
      */
-    public function content_analysis(Request $req, $course_id=null, $group_id=null)
+    public function content_analysis(Request $req, $course_id = null, $group_id = null)
     {
         $user = Auth::user();
         $courses = $user->coursesTeaching();
-        if($user->isAnInstructor()) {
+        if ($user->isAnInstructor()) {
             $course_id = $course_id ? $course_id : $req->session()->get('current-course', 0);
             $course = $course_id ? oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
             if (!$user->isInstructorOf($course)) {
@@ -349,11 +219,11 @@ class HomeController extends Controller
             $group = $group_id ? oval\Models\Group::find($group_id) : $course->groups->first();
             $videos = $group->videos;
             JavaScript::put([
-                'user_id'=>$user->id,
-                'course_id'=>$course->id,
-                'course_name'=>$course->name,
-                'group_id'=>$group->id,
-                'group_name'=>$group->name,
+                'user_id' => $user->id,
+                'course_id' => $course->id,
+                'course_name' => $course->name,
+                'group_id' => $group->id,
+                'group_name' => $group->name,
             ]);
             session(['current-course' => $course->id]);
             return view('pages.content-analysis', compact('user', 'courses', 'course', 'group', 'videos'));
@@ -373,10 +243,10 @@ class HomeController extends Controller
      */
     public function points_details(Request $req, $group_video_id)
     {
-        $user= Auth::user();
-        if($user->isAnInstructor()) {
+        $user = Auth::user();
+        if ($user->isAnInstructor()) {
             $group_video = oval\Models\GroupVideo::find($group_video_id);
-            if(!empty($group_video)) {
+            if (!empty($group_video)) {
                 return view('pages.points-details', compact('user', 'group_video'));
             } else {
                 return view('pages.no-video', compact('user'));
@@ -399,10 +269,10 @@ class HomeController extends Controller
      */
     public function tracking_details(Request $req, $group_video_id)
     {
-        $user= Auth::user();
-        if($user->isAnInstructor()) {
+        $user = Auth::user();
+        if ($user->isAnInstructor()) {
             $group_video = oval\Models\GroupVideo::find($group_video_id);
-            if(!empty($group_video)) {
+            if (!empty($group_video)) {
                 return view('pages.tracking-details', compact('user', 'group_video'));
             } else {
                 return view('pages.no-video', compact('user'));
@@ -423,8 +293,8 @@ class HomeController extends Controller
      */
     public function text_analysis_details(Request $req)
     {
-        $user= Auth::user();
-        if($user->isAnInstructor()) {
+        $user = Auth::user();
+        if ($user->isAnInstructor()) {
             $video = oval\Models\Video::find(intval($req->video_id));
             $analysis = json_decode($video->transcript->analysis, true);
             $group = $video->groups->first();
@@ -450,7 +320,7 @@ class HomeController extends Controller
      * @param string $group_video_id Default null.
      * @return Illuminate\Support\Facades\View
      */
-    public function select_video(Request $req, $link_id, $group_video_id=null)
+    public function select_video(Request $req, $link_id, $group_video_id = null)
     {
         $user = Auth::user();
 
@@ -467,8 +337,8 @@ class HomeController extends Controller
             $current = !empty($group_video_id) ? $group_video_id : null;
 
             JavaScript::put([
-                'link_id'=>$link_id,
-                'current_group_video_id'=>$current
+                'link_id' => $link_id,
+                'current_group_video_id' => $current
             ]);
             return view('pages.instructor-video-selection', compact('user', 'group_videos', 'link_id'));
         } else {
@@ -490,18 +360,18 @@ class HomeController extends Controller
         $user = Auth::user();
         if ($user->role == 'A') {
             $current_requests = oval\Models\AnalysisRequest::where('status', '=', 'pending')
-                                    ->orderBy('created_at')
-                                    ->get()
-                                    ->unique('video_id');
+                ->orderBy('created_at')
+                ->get()
+                ->unique('video_id');
             $rejected_requests = oval\Models\AnalysisRequest::where('status', '=', 'rejected')
-                                    ->orderBy('created_at')
-                                    ->get()
-                                    ->unique('video_id');
+                ->orderBy('created_at')
+                ->get()
+                ->unique('video_id');
             $processed_requests = oval\Models\AnalysisRequest::where('status', '=', 'processed')
-                                    ->orWhere('status', '=', 'processing')
-                                    ->orderBy('created_at')
-                                    ->get()
-                                    ->unique('video_id');
+                ->orWhere('status', '=', 'processing')
+                ->orderBy('created_at')
+                ->get()
+                ->unique('video_id');
             $google_creds = oval\Models\GoogleCredential::all();
             return view('pages.admin-page', compact('user', 'current_requests', 'rejected_requests', 'processed_requests', 'google_creds'));
         } else {
@@ -536,4 +406,4 @@ class HomeController extends Controller
         }
     }
 
-}//end class
+} //end class

@@ -64,7 +64,7 @@ VIDEO USAGE ANALYTICS</div>
 						@foreach ($group->group_videos() as $gv)
 						<tr>
 							<td class="img-cel">
-								<a href="/view/{{$gv->id}}">
+								<a href="/group_videos/{{$gv->id}}">
 									<img class="video-thumbnail" src="{{ $gv->video()->thumbnail_url }}">
 									<br />
 									{{ $gv->video()->title }}

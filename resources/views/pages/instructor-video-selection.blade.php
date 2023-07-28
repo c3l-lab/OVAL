@@ -15,13 +15,13 @@
         MANAGE LINK FROM MOODLE
     </div>
 
-   
+
     @if ($group_videos->contains('moodle_resource_id', $link_id))
     <div class="msg">
         This is linked to video "{{$group_videos->where('moodle_resource_id', $link_id)->first()->video()->title}}"
     </div>
     @endif
-    
+
 
     <div class="admin-page-section-header">
         <h2>SELECT VIDEO</h2>
@@ -69,7 +69,7 @@
                             </div>
                         </td>
                         <td>
-                            <a href="/view/{{$gv->id}}">
+                            <a href="/group_videos/{{$gv->id}}">
                                 <img src="{{ $gv->video()->thumbnail_url }}" class="video-thumbnail">
                                 {{ $gv->video()->title }}
                             </a>
