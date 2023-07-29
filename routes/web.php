@@ -5,8 +5,10 @@ use Illuminate\Support\Facades\Route;
 use oval\Http\Controllers\AnnotationController;
 use oval\Http\Controllers\CommentController;
 use oval\Http\Controllers\CommentInstructionController;
+use oval\Http\Controllers\GroupController;
 use oval\Http\Controllers\GroupVideoController;
 use oval\Http\Controllers\HomeController;
+use oval\Http\Controllers\Video;
 use oval\Http\Controllers\Lti\ConsumerController;
 use oval\Http\Controllers\Lti\RegistrationController;
 use oval\Http\Controllers\VideoController;
@@ -51,6 +53,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('comments', CommentController::class);
     Route::resource('comment_instructions', CommentInstructionController::class);
 
+    Route::get('/groups/unassigned', [GroupController::class, 'unassigned'])->name('comments.unassigned');
+    Route::resource('groups', GroupController::class);
+    Route::resource('videos.groups', Video\GroupController::class);
+
     Route::get('/annotations/download', [AnnotationController::class, 'download'])->name('annotations.download');
     Route::get('/annotations/tag', [AnnotationController::class, 'tag'])->name('annotations.tag');
     Route::get('/annotations/column', [AnnotationController::class, 'column'])->name('annotations.column');
@@ -73,14 +79,11 @@ Route::get('/manage-analysis-requests', 'HomeController@manage_analysis_requests
 Route::get('/batch-upload', 'HomeController@batch_upload');
 
 // ----------- ajax routes ------------- //
-Route::group(['middleware'=>'auth:api'], function () {
-    Route::post('/get_groups', 'AjaxController@get_groups');
+Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/save_video_group', 'AjaxController@assign_video_to_groups');
     Route::post('/save_feedback', 'AjaxController@save_feedback');
-    Route::post('/get_group_info_for_video', 'AjaxController@get_group_info_for_video');
     Route::post('/save_confidence_level', 'AjaxController@save_confidence_level');
     Route::post('/get_videos_for_course', 'AjaxController@get_videos_for_course');
-    Route::post('/get_groups_for_video', 'AjaxController@get_groups_for_video');
     Route::post('/check_if_course_wide_points', 'AjaxController@check_if_course_wide_points');
     Route::post('/save_points', 'AjaxController@save_points');
     Route::post('/get_points_for_group_video', 'AjaxController@get_points_for_group_video');

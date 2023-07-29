@@ -100,45 +100,6 @@ class AjaxController extends Controller
     }
 
     /**
-     * Method called from route /get_groups
-     *
-     * This method fetches groups that belong to the course whose id is passed in.
-     *
-     * @param Request $req Request contains course_id
-     * @return array Array with key [groups] containing collection of group objects
-     */
-    public function get_groups(Request $req)
-    {
-        $course_id = $req->course_id;
-        $groups = oval\Models\Course::find($course_id)->groups;
-        return compact('groups');
-    }
-
-    /**
-     * Method called from route /get_group_info_for_video
-     *
-     * This method returns collection of groups the user is teaching,
-     * that belong to the course (all_groups),
-     * and collection of ids of groups that have this video assigned to (assigned_groups_ids).
-     *
-     * @param Request $req The request contains course_id, vidveo_id, and user_id
-     * @return array with keys [all_groups, assigned_groups_ids]
-     */
-    public function get_group_info_for_video(Request $req)
-    {
-        $course_id = intval($req->course_id);
-        $video_id = intval($req->video_id);
-        $user_id = intval($req->user_id);
-        $all_groups = oval\Models\Course::find($course_id)->groups;
-        $assigned_groups = oval\Models\Video::find($video_id)
-                            ->groups;
-        $unassigned_groups = $all_groups->reject(function ($val) use ($assigned_groups) {
-            return $assigned_groups->contains($val);
-        });
-        return compact('unassigned_groups');
-    }
-
-    /**
      * Method called from route /save_video_group
      *
      * This method associates video to groups.
@@ -245,21 +206,6 @@ class AjaxController extends Controller
         $course = oval\Models\Course::find(intval($req->course_id));
         $videos = $course->videos();
         return compact('videos');
-    }
-
-    /**
-     * Method called from route /get_groups_for_video
-     *
-     * This method returns groups that have the video with id passed in is assigned to
-     *
-     * @param Request $req Request contains video_id
-     * @return array Array with key "groups" - containing collection of Group objects
-     */
-    public function get_groups_for_video(Request $req)
-    {
-        $video = oval\Models\Video::find(intval($req->video_id));
-        $groups = $video->groups;
-        return compact('groups');
     }
 
     /**

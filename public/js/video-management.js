@@ -40,8 +40,8 @@ function saveVideo (v_id, u_id, media_type, point_instruction, points, c_id, req
 function modalGetGroups() {
 	$("#modal-course-name").text(modal_course_name);
 	$.ajax({
-		type: "POST",
-		url: "/get_group_info_for_video",
+		type: "GET",
+		url: "/groups/unassigned",
 		data: {course_id: modal_course_id, video_id: modal_video_id, user_id: user_id},
 		success: function(data) {
 			var groups = data.unassigned_groups;
@@ -117,9 +117,8 @@ function checkIfCourseWidePoints (course_id, video_id) {
 
 function getGroupsForVideo() {
 		$.ajax({
-			type: "POST",
-			url: "/get_groups_for_video",
-			data: {video_id: modal_video_id},
+			type: "GET",
+			url: "/videos/" + modal_video_id + "/groups",
 			success: function(data) {
 				var groups = data.groups;
 				var ul = $("#points-form-groups-dropdown");
