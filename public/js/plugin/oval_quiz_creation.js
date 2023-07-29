@@ -101,10 +101,7 @@ $(document).ready(function () {
 
                                         $.ajax({
                                             type: "GET",
-                                            url: "/get_quiz",
-                                            data: {
-                                                identifier: identifier
-                                            },
+                                            url: "/videos/" + identifier + "/quiz",
                                             success: function (res) {
 
                                                 if (res.quiz != null) {
@@ -162,11 +159,10 @@ $(document).ready(function () {
             if ($(this).prop('checked')) {
 
                 $.ajax({
-                    url: "/change_quiz_visable",
-                    type: "get",
+                    url: "/videos/" + videoid + "/quiz/toggle_visible",
+                    type: "post",
                     data: {
                         visable: 1,
-                        videoid: videoid
                     },
                     success: function (res) {
                         if (res.result === "success") {
@@ -185,11 +181,10 @@ $(document).ready(function () {
             } else {
 
                 $.ajax({
-                    url: "/change_quiz_visable",
-                    type: "get",
+                    url: "/videos/" + videoid + "/quiz/toggle_visible",
+                    type: "post",
                     data: {
                         visable: 0,
-                        videoid: videoid
                     },
                     success: function (res) {
                         if (res.result === "success") {
@@ -1104,11 +1099,10 @@ function reset() {
 
 function submit_quiz_to_server(creator_id, identifier, media_type, quiz_data) {
     $.ajax({
-        type: "POST",
-        url: "/store_quiz",
+        type: "PUT",
+        url: "/videos/" + identifier + "/quiz",
         data: {
             creator_id: creator_id,			//int
-            identifier: identifier,  		//stirng
             media_type: media_type,		    //string
             quiz_data: quiz_data            //obj
         },

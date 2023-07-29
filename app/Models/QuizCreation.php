@@ -2,6 +2,7 @@
 
 namespace oval\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class QuizCreation extends Model
 {
+    use HasFactory;
     /**
      * The table associated with the model.
      *

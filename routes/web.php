@@ -8,6 +8,7 @@ use oval\Http\Controllers\CommentInstructionController;
 use oval\Http\Controllers\GroupController;
 use oval\Http\Controllers\GroupVideoController;
 use oval\Http\Controllers\HomeController;
+use oval\Http\Controllers\QuizResultController;
 use oval\Http\Controllers\Video;
 use oval\Http\Controllers\Lti\ConsumerController;
 use oval\Http\Controllers\Lti\RegistrationController;
@@ -57,6 +58,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('groups', GroupController::class);
     Route::resource('videos.groups', Video\GroupController::class);
 
+    Route::post('/videos/{id}/quiz/toggle_visible', [Video\QuizController::class, 'toggleVisible'])
+        ->name('videos.quiz.toggle_visible');
+    Route::singleton('videos.quiz', Video\QuizController::class);
+
+    Route::resource('quiz_results', QuizResultController::class);
+
     Route::get('/annotations/download', [AnnotationController::class, 'download'])->name('annotations.download');
     Route::get('/annotations/tag', [AnnotationController::class, 'tag'])->name('annotations.tag');
     Route::get('/annotations/column', [AnnotationController::class, 'column'])->name('annotations.column');
@@ -99,12 +106,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/delete_keywords', 'AjaxController@delete_keywords');
     Route::post('/get_groups_with_video', 'AjaxController@get_groups_with_video');
     Route::post('/get_video_info', 'AjaxController@get_video_info');
-
-    /*------ quiz API ------*/
-    Route::post('/store_quiz', 'AjaxController@store_quiz');
-    Route::post('/submit_quiz_result', 'AjaxController@submit_ans');
-    /*------ quiz API end ------*/
-
 });
 // ----------- form processing -----------
 Route::post('/upload_transcript', 'FileController@upload_transcript');
@@ -123,13 +124,9 @@ Route::post('/add_google_cred', 'GoogleAPIController@add_google_cred');
 Route::get('/youtube_auth_redirect', 'GoogleAPIController@youtube_auth_redirect');
 Route::post('/check_youtube_caption', 'GoogleAPIController@check_youtube_caption');
 
-/*------ quiz api ------*/
-Route::get('/get_quiz', 'AjaxController@get_quiz');
-
 /*------ analysis api ------*/
 Route::get('/get_student_view', 'AjaxController@get_student_view');
 Route::get('/get_quiz_question', 'AjaxController@get_quiz_question');
 Route::get('/get_key_point', 'AjaxController@get_key_point');
-Route::get('/change_quiz_visable', 'AjaxController@change_quiz_visable');
 Route::get('/get_quiz_visable_status', 'AjaxController@get_quiz_visable_status');
 Route::get('/get_all_student_record', 'AjaxController@get_all_student_record');

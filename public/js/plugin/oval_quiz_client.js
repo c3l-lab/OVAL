@@ -43,24 +43,6 @@
 
     var quiz_meta = [];
 
-    $(document).ready(function(){
-        /*------ get quiz with identifier ------*/
-        // $.ajax({
-        //     type: "GET",
-        //     url: "/get_quiz",
-        //     data: {
-        //         identifier: ""
-        //     },
-        //     success: function(res) {
-
-        //     },
-        //     error: function(request, status, error) {
-        //         alert("error get quiz - "+error);
-        //     }
-        // });
-
-    });
-
     var flag = false; //true for modal fired, false for not fired
 
     //TODO： split to two branch

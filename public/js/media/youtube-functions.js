@@ -133,10 +133,7 @@ function checkQuiz() {
 function load_quiz(video_identifier) {
 	$.ajax({
 		type: "GET",
-		url: "/get_quiz",
-		data: {
-			identifier: video_identifier
-		},
+		url: "/videos/" + video_identifier + "/quiz",
 		success: function (res) {
 
 			if (res.quiz != null) {
@@ -256,7 +253,7 @@ function show_quiz_modal(data, cb) {
 
 			$.ajax({
 				type: "POST",
-				url: "/submit_quiz_result",
+				url: "/quiz_results",
 				data: {
 					user_id: user_id,					//int
 					identifier: video_identifier,  		//stirng

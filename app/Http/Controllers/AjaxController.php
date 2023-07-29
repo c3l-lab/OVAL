@@ -323,56 +323,6 @@ class AjaxController extends Controller
         }
         return compact('nominated');
     }
-
-    /*------ quiz ajax function ------*/
-    public function get_quiz(Request $req)
-    {
-        $quiz = oval\Models\QuizCreation::where('identifier', $req->identifier)
-                                    ->orderBy('created_at', 'desc')
-                                    ->first();
-
-        return compact("quiz");
-    }
-
-    public function store_quiz(Request $req)
-    {
-
-        $quiz = new oval\Models\QuizCreation();
-        $quiz->creator_id = intval($req->creator_id);
-        $quiz->identifier = (string)($req->identifier);
-        $quiz->media_type = (string)($req->media_type);
-        $quiz->quiz_data = json_encode($req->quiz_data);
-        $quiz->visable = 1;
-        $result = $quiz->save();
-
-        return ['result' => 'success'];
-    }
-
-    public function submit_ans(Request $req)
-    {
-
-        $quiz_ans = new oval\Models\QuizResult();
-        $quiz_ans->user_id = intval($req->user_id);
-        $quiz_ans->identifier = (string)($req->identifier);
-        $quiz_ans->media_type = (string)($req->media_type);
-        $quiz_ans->quiz_data = json_encode($req->quiz_data);
-        $result = $quiz_ans->save();
-
-        return ['result' => 'success'];
-
-    }
-
-    public function change_quiz_visable(Request $req)
-    {
-
-        DB::table('quiz_creation')
-            ->join('videos', 'videos.identifier', '=', 'quiz_creation.identifier')
-            ->where('videos.id', '=', $req->videoid)
-            ->update(['visable' => $req->visable]);
-
-        return ['result' => 'success'];
-    }
-
     /*------ end quiz ajax function ------*/
 
     /*------ analysis ajax function ------*/
