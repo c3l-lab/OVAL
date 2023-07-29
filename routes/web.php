@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use oval\Http\Controllers\AnalysisRequestController;
+use oval\Http\Controllers\AnalyticsController;
 use oval\Http\Controllers\AnnotationController;
 use oval\Http\Controllers\CommentController;
 use oval\Http\Controllers\CommentInstructionController;
@@ -14,6 +16,7 @@ use oval\Http\Controllers\Lti\ConsumerController;
 use oval\Http\Controllers\Lti\RegistrationController;
 use oval\Http\Controllers\VideoController;
 use oval\Http\Middleware\RequireAdmin;
+use oval\Http\Middleware\RequireInstructor;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,8 +32,6 @@ use oval\Http\Middleware\RequireAdmin;
 
 Auth::routes();
 Route::get('/logout', 'Auth\LoginController@logout');
-
-
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -69,6 +70,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/annotations/column', [AnnotationController::class, 'column'])->name('annotations.column');
     Route::resource('annotations', AnnotationController::class);
 
+    Route::middleware([RequireAdmin::class])->group(function () {
+        Route::post('/analysis_requests/batch_resend', [AnalysisRequestController::class, 'batch_resend'])->name('analysis_requests.batch_resend');
+        Route::post('/analysis_requests/batch_reject', [AnalysisRequestController::class, 'batch_reject'])->name('analysis_requests.batch_reject');
+        Route::post('/analysis_requests/batch_recover', [AnalysisRequestController::class, 'batch_recover'])->name('analysis_requests.batch_recover');
+        Route::post('/analysis_requests/batch_delete', [AnalysisRequestController::class, 'batch_delete'])->name('analysis_requests.batch_delete');
+        Route::post('/analysis_requests/{analysis_request}/resend', [AnalysisRequestController::class, 'resend'])->name('analysis_requests.resend');
+        Route::post('/analysis_requests/{analysis_request}/reject', [AnalysisRequestController::class, 'reject'])->name('analysis_requests.reject');
+        Route::post('/analysis_requests/{analysis_request}/recover', [AnalysisRequestController::class, 'recover'])->name('analysis_requests.recover');
+        Route::resource('analysis_requests', AnalysisRequestController::class);
+    });
+
+    Route::middleware([RequireInstructor::class])->group(function () {
+        Route::resource('analytics', AnalyticsController::class);
+    });
+
     Route::prefix('lti')->group(function () {
         Route::middleware([RequireAdmin::class])->group(function () {
             Route::resources([
@@ -78,10 +94,6 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 });
-
-Route::get('/analytics/{course_id?}/{group_id?}', 'HomeController@analytics');
-
-Route::get('/manage-analysis-requests', 'HomeController@manage_analysis_requests');
 
 Route::get('/batch-upload', 'HomeController@batch_upload');
 
@@ -96,7 +108,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/get_points_for_group_video', 'AjaxController@get_points_for_group_video');
     Route::post('/delete_points', 'AjaxController@delete_points');
     Route::post('/add_trackings', 'AjaxController@add_trackings');
-    Route::post('/add_analysis_request', 'AjaxController@add_analysis_request');
     Route::post('/get_nominated_students_ids', 'AjaxController@get_nominated_students_ids');
     Route::post('/edit_visibility', 'AjaxController@edit_visibility');
     Route::post('/edit_video_order', 'AjaxController@edit_video_order');
@@ -107,16 +118,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/get_groups_with_video', 'AjaxController@get_groups_with_video');
     Route::post('/get_video_info', 'AjaxController@get_video_info');
 });
+
 // ----------- form processing -----------
 Route::post('/upload_transcript', 'FileController@upload_transcript');
-Route::post('/request_text_analysis', 'ProcessController@request_text_analysis');
-Route::post('/reject_text_analysis_request', 'ProcessController@reject_text_analysis_request');
-Route::post('/recover_text_analysis_request', 'ProcessController@recover_text_analysis_request');
-Route::post('/delete_text_analysis_request', 'ProcessController@delete_text_analysis_request');
-Route::post('/send_all_text_analysis_requests', 'ProcessController@send_all_text_analysis_requests');
-Route::post('/reject_all_text_analysis_requests', 'ProcessController@reject_all_text_analysis_requests');
-Route::post('/recover_all_rejected_text_analysis_requests', 'ProcessController@recover_all_rejected_text_analysis_requests');
-Route::post('/delete_all_rejected_text_analysis_requests', 'ProcessController@delete_all_rejected_text_analysis_requests');
 Route::post('/batch_data_insert', 'ProcessController@batch_data_insert');
 
 // ----------- youtube data api ------------- //

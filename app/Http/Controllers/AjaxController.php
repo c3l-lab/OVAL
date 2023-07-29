@@ -22,84 +22,6 @@ class AjaxController extends Controller
     }
 
     /**
-     * Private method to get caption of a Youtube video.
-     *
-     * It downloads Youtube video's caption via Youtube data API
-     * using YoutubeDataHelper, or publicly available caption and return the caption text.
-     * TODO: move this somewhere - this was copied from another controller.
-     * @param Video $video
-     * @return string caption text
-     */
-    private function download_youtube_caption(oval\Models\Video $video)
-    {
-        $text = "";
-        $transcript = $video->transcript;
-        if (empty($transcript)) {
-            $transcript = new oval\Models\Transcript();
-            $transcript->video_id = $video->id;
-        }
-
-        $langs = config('youtube.transcript_lang');
-        $credentials = oval\Models\GoogleCredential::all();
-        $track_id = null;
-        $caption_array = null;
-        if (!empty($credentials) && count($credentials)>0) {
-            foreach ($credentials as $cred) {
-                $helper = new YoutubeDataHelper($cred->client_id, $cred->client_secret);
-                $helper->handle_access_token_refresh($cred);
-
-                $track_id = $helper->get_caption_track_id($video->identifier);
-                if(!empty($track_id)) {
-                    $caption_array = $helper->download_caption($track_id);
-                }
-                if (!empty($caption_array)) {
-                    break;
-                }
-            }
-        }
-        if (empty($caption_array)) {
-            $response = "";
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            //curl_setopt($ch, CURLOPT_PROXY, 'proxy.example.com:8080');
-            foreach ($langs as $l) {
-                curl_setopt($ch, CURLOPT_URL, 'http://video.google.com/timedtext?lang='.$l.'&v='.$video->identifier);
-                $response = curl_exec($ch);
-                if (!empty($response)) {
-                    $cc = simplexml_load_string($response);
-                    $caption_array = [];
-                    $text = "";
-                    foreach ($cc->text as $item) {
-                        $line = "{";
-                        $time = 0;
-                        foreach ($item->attributes() as $key=>$val) {
-                            if ($key == "start") {
-                                $time = floatval($val);
-                                $line .= '"start":'.$time.', ';
-                            } elseif ($key == "dur") {
-                                $time += floatval($val);
-                                $line .= '"end":'.$time.', ';
-                                $time = 0;
-                            }
-                        }
-                        $text .= $item;
-                        $line .= '"transcript":"'.$item.'"}';
-                        $caption_array[] = $line;
-                    }
-                    break;
-                }
-            }
-        }
-        if (!empty($caption_array)) {
-            $transcript->transcript = json_encode($caption_array);
-            $transcript->save();
-        }
-        return $text;
-    }
-
-    /**
      * Method called from route /save_video_group
      *
      * This method associates video to groups.
@@ -263,40 +185,6 @@ class AjaxController extends Controller
             $tracking->event_time = date("Y-m-d H:i:s", (int)($record['event_time'] / 1000));
             $result = $tracking->save();
         }
-    }
-
-    /**
-     * Method called from route /add_analysis_request
-     *
-     * This method saves an AnalysisRequest for the video_id and user_id passed in.
-     *
-     * @param Request $req Request contains video_id and user_id
-     * @return array Array with key "msg" which contains text to display when the request is processed
-     */
-    public function add_analysis_request(Request $req)
-    {
-        $video_id = intval($req->video_id);
-        $user_id = intval($req->user_id);
-        $msg = "";
-        $ar = oval\Models\AnalysisRequest::where([
-                    ['video_id', '=', $video_id],
-                    ['user_id', '=', $user_id]
-                ])
-                ->first();
-        if (!empty($ar)) {
-            $msg = "Request for this video already exists. Please wait for OVAL administrator to approve it.";
-        } else {
-            $ar = new oval\Models\AnalysisRequest();
-            $ar->video_id = $video_id;
-            $ar->user_id = $user_id;
-            $res = $ar->save();
-            if ($res) {
-                $msg = "Request has been sent to OVAL administrator. Please wait for approval.";
-            } else {
-                $msg = "There was an error. Please try again later.";
-            }
-        }
-        return compact('msg');
     }
 
     /**

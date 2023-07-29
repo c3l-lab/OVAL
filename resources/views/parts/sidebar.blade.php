@@ -14,7 +14,7 @@
              <li><a href="{{ route('group_videos.index') }}">Video Management</a></li>
          @endif
          @if (isset($user) && $user->role == 'A')
-             <li><a href="/manage-analysis-requests">Manage Content Analysis Requests</a></li>
+             <li><a href="/analysis_requests">Manage Content Analysis Requests</a></li>
              <li><a href="/register">Add an admin user</a></li>
          @endif
          @if (isset($user) && $user->isAnInstructor())

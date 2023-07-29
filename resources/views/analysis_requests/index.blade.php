@@ -7,7 +7,7 @@
     <div class="container-fluid">
 		<div class="page-title">
             <i class="fa fa-laptop"></i>
-            MANAGE CONTENT ANALYSIS REQUESTS 
+            MANAGE CONTENT ANALYSIS REQUESTS
         </div>
 		@if (!empty(session('msg')))
         <div class="msg">
@@ -26,14 +26,14 @@
             </div>
         @else
             <div class="space-bottom space-left-right">
-                <form action="/send_all_text_analysis_requests" method="POST" class="one-button-form">
+                <form action="{{ route('analysis_requests.batch_resend', ['id'=>1]) }}" method="POST" class="one-button-form">
                     {{ csrf_field() }}
                     <button type="submit" class="btn rectangle-button" id="approve-all" title="Approve all requests">
                         APPROVE ALL
                         <i class="fa fa-send" aria-hidden="true"></i>
                     </button>
                 </form>
-                <form action="/reject_all_text_analysis_requests" method="POST" class="one-button-form">
+                <form action="{{ route('analysis_requests.batch_reject') }}" method="POST" class="one-button-form">
                     {{ csrf_field() }}
                     <button type="submit" class="btn rectangle-button" id="reject-all" title="Reject all requests">
                         REJECT ALL
@@ -55,7 +55,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($current_requests as $r) 
+                        @foreach ($current_requests as $r)
                         <tr>
                             <td>
                                 <img src="{{ $r->video->thumbnail_url }}" class="video-thumbnail">
@@ -69,18 +69,16 @@
                             </td>
                             <td>{{ $r->created_at }}</td>
                             <td>
-                                <form action="/request_text_analysis" method="POST">
+                                <form action="{{ route('analysis_requests.resend', ['analysis_request' => $r]) }}" method="POST">
                                     {{ csrf_field() }}
-                                    <input type="hidden" name="analysis_request_id" value="{{$r->id}}" />
                                     <button type="submit" class="btn btn-link" title="Approve content analysis request">
                                         <i class="fa fa-send" aria-hidden="true"></i>
                                     </button>
                                 </form>
                             </td>
                             <td>
-                                <form action="/reject_text_analysis_request" method="POST" class="reject-form">
+                                <form action="{{ route('analysis_requests.reject', ['analysis_request' => $r]) }}" method="POST" class="reject-form">
                                     {{ csrf_field() }}
-                                    <input type="hidden" name="video_id" value="{{$r->video->id}}" />
                                     <button type="submit" class="btn btn-link" title="Reject analysis request">
                                         <i class="fa fa-times-circle" aria-hidden="true"></i>
                                     </button>
@@ -93,7 +91,7 @@
             </div><!-- table-responsive -->
         @endif
         </div><!-- admin-page-section -->
-        
+
         <div class="admin-page-section-header">
             <h2>REJECTED REQUESTS</h2>
         </div><!-- admin-page-section-header -->
@@ -106,7 +104,7 @@
         @else
             <div class="space-bottom space-left-right">
 
-                <form action="/recover_all_rejected_text_analysis_requests" method="POST"  class="one-button-form">
+                <form action="{{ route('analysis_requests.batch_recover') }}" method="POST"  class="one-button-form">
                     {{ csrf_field() }}
                     <button type="submit" class="btn rectangle-button" id="recover-all" title="Revert all rejected requests">
                         REVERT ALL
@@ -114,7 +112,7 @@
                     </button>
                 </form>
 
-                <form action="/delete_all_rejected_text_analysis_requests" method="POST" class="one-button-form">
+                <form action="{{ route('analysis_requests.batch_delete') }}" method="POST" class="one-button-form">
                     {{ csrf_field() }}
                     <button type="submit" class="btn rectangle-button" id="delete-all" title="Delete all rejected requests">
                         DELETE ALL
@@ -136,7 +134,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($rejected_requests as $r) 
+                        @foreach ($rejected_requests as $r)
                         <tr>
                             <td>
                                 <img src="{{ $r->video->thumbnail_url }}" class="video-thumbnail">
@@ -150,18 +148,17 @@
                             </td>
                             <td>{{ $r->created_at }}</td>
                             <td>
-                                <form action="/recover_text_analysis_request" method="POST">
+                                <form action="{{ route('analysis_requests.recover', ["analysis_request" => $r]) }}" method="POST">
                                 	{{ csrf_field() }}
-                                	<input type="hidden" name="video_id" value="{{$r->video->id}}" />
                                 	<button type="submit" class="btn btn-link" title="Recover rejected request">
                                     	<i class="fa fa-undo" aria-hidden="true"></i>
                                 	</button>
                                 </form>
                             </td>
                             <td>
-                                <form action="/delete_text_analysis_request" method="POST" class="delete-form">
+                                <form action="{{ route('analysis_requests.destroy', ["analysis_request" => $r]) }}" method="POST" class="delete-form">
+                                    {{ method_field('DELETE') }}
                                     {{ csrf_field() }}
-                                    <input type="hidden" name="video_id" value="{{$r->video->id}}" />
                                     <button type="submit" class="btn btn-link" title="Delete analysis request">
                                         <i class="fa fa-trash" aria-hidden="true"></i>
                                     </button>
@@ -191,7 +188,7 @@
             </div>
         @else
             <div class="space-bottom space-left-right">
-                <form action="/send_all_text_analysis_requests" method="POST" class="one-button-form">
+                <form action="{{ route('analysis_requests.batch_resend', ['id'=>1]) }}" method="POST" class="one-button-form">
                     {{ csrf_field() }}
                     <button type="submit" class="btn rectangle-button" id="resend-all" title="Re-send all requests">
                         RE-SEND ALL
@@ -212,17 +209,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                    
-                        @foreach ($processed_requests as $r) 
+
+                        @foreach ($processed_requests as $r)
                         <tr>
                             <td>
                                 <img src="{{ $r->video->thumbnail_url }}" class="video-thumbnail">
                                 {{ $r->video->title }}
-                                
+
                             </td>
                             <td>{{ $r->numberOfReqForSameVideo() }}</td>
                             <td>
-                            
+
 
                                 @foreach ($r->allRequestorsNames() as $name)
                                 {{$name}}<br />
@@ -230,9 +227,8 @@
                             </td>
                             <td>{{ $r->created_at }}</td>
                             <td>
-                                <form action="/request_text_analysis" method="POST">
+                                <form action="{{ route('analysis_requests.resend', ["analysis_request" => $r]) }}" method="POST">
                                     {{ csrf_field() }}
-                                    <input type="hidden" name="analysis_request_id" value="{{$r->id}}" />
                                     <button type="submit" class="btn btn-link" title="Re-send content analysis request">
                                         <i class="fa fa-send" aria-hidden="true"></i>
                                     </button>
@@ -312,9 +308,9 @@
                     </form>
 
             </div><!-- row -->
-        
 
-        
+
+
 
         </div><!-- admin-page-section -->
 	</div><!-- container-fluid -->

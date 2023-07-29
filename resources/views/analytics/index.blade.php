@@ -23,7 +23,7 @@ VIDEO USAGE ANALYTICS</div>
 						</a>
 						<ul class="dropdown-menu">
 							@foreach ($courses as $c)
-							<li><a href="/analytics/{{ $c->id }}">{{ $c->name }}</a></li>
+								<li><a href="{{ route('analytics.index', ["course_id" => $c->id]) }}">{{ $c->name }}</a></li>
 							@endforeach
 						</ul>
 					</div><!-- .btn-grp -->
@@ -39,7 +39,7 @@ VIDEO USAGE ANALYTICS</div>
 							<li>NO GROUPS</li>
 							@else
 							@foreach ($course->groups as $g)
-							<li><a href="/analytics/{{$course->id}}/{{$g->id}}">{{$g->name}}</a></li>
+								<li><a href="{{ route('analytics.index', ["course_id" => $course->id, "group_id" => $g->id]) }}">{{$g->name}}</a></li>
 							@endforeach
 							@endif
 						</ul>

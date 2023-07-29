@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use GuzzleHttp;
+use oval\Classes\YoutubeDataHelper;
 
 /**
  * Model class for table 'videos'
@@ -162,5 +163,82 @@ class Video extends Model
         }
 
         return $retVal;
+    }
+
+    public function downloadCaption()
+    {
+        $text = "";
+        $transcript = $this->transcript;
+        if (empty($transcript)) {
+            $transcript = new Transcript();
+            $transcript->video_id = $this->id;
+        }
+
+        $langs = config('youtube.transcript_lang');
+        $credentials = GoogleCredential::all();
+        $track_id = null;
+        $caption_array = null;
+        if (!empty($credentials) && count($credentials)>0) {
+            foreach ($credentials as $cred) {
+                $helper = new YoutubeDataHelper($cred->client_id, $cred->client_secret);
+                $helper->handle_access_token_refresh($cred);
+
+                $track_id = $helper->get_caption_track_id($this->identifier);
+                if(!empty($track_id)) {
+                    $caption_array = $helper->download_caption($track_id);
+                }
+                if (!empty($caption_array)) {
+                    break;
+                }
+            }
+        }
+        if (empty($caption_array)) {
+            $response = "";
+            $proxy_url = env('CURL_PROXY_URL', '');
+            $proxy_user = env('CURL_PROXY_USER', '');
+            $proxy_pass = env('CURL_PROXY_PASS', '');
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            if (!empty($proxy_url)) {
+                curl_setopt($ch, CURLOPT_PROXY, $proxy_url);
+            }
+            if (!empty($proxy_user)) {
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_user . ':' . $proxy_pass);
+            }
+            foreach ($langs as $l) {
+                curl_setopt($ch, CURLOPT_URL, 'http://video.google.com/timedtext?lang='.$l.'&v='.$this->identifier);
+                $response = curl_exec($ch);
+                if (!empty($response)) {
+                    $cc = simplexml_load_string($response);
+                    $caption_array = [];
+                    $text = "";
+                    foreach ($cc->text as $item) {
+                        $line = "{";
+                        $time = 0;
+                        foreach ($item->attributes() as $key=>$val) {
+                            if ($key == "start") {
+                                $time = floatval($val);
+                                $line .= '"start":'.$time.', ';
+                            } elseif ($key == "dur") {
+                                $time += floatval($val);
+                                $line .= '"end":'.$time.', ';
+                                $time = 0;
+                            }
+                        }
+                        $text .= $item;
+                        $line .= '"transcript":"'.$item.'"}';
+                        $caption_array[] = $line;
+                    }
+                    break;
+                }
+            }
+        }
+        if (!empty($caption_array)) {
+            $transcript->transcript = json_encode($caption_array);
+            $transcript->save();
+        }
+        return $text;
     }
 }

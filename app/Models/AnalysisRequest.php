@@ -2,6 +2,7 @@
 
 namespace oval\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
@@ -10,6 +11,8 @@ use DB;
  */
 class AnalysisRequest extends Model
 {
+    use HasFactory;
+
     protected $tablename = "analysis_requests";
 
     /**
