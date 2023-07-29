@@ -17,7 +17,7 @@ class CommentTest extends TestCase
     public function test_index(): void
     {
         $user = User::factory()->create();
-        $course = Course::factory()->createWithVideoFor($user);
+        $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
         $comment = Comment::factory()->create([
             'group_video_id' => $groupVideo->id,
@@ -33,7 +33,7 @@ class CommentTest extends TestCase
     public function test_tag(): void
     {
         $user = User::factory()->create();
-        $course = Course::factory()->createWithVideoFor($user);
+        $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
         $comment = Comment::factory()->create([
             'group_video_id' => $groupVideo->id,
@@ -51,7 +51,7 @@ class CommentTest extends TestCase
     public function test_store(): void
     {
         $user = User::factory()->create();
-        $course = Course::factory()->createWithVideoFor($user);
+        $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
 
         $response = $this->actingAs($user)->post('/comments', [
@@ -76,7 +76,7 @@ class CommentTest extends TestCase
     public function test_update(): void
     {
         $user = User::factory()->create();
-        $course = Course::factory()->createWithVideoFor($user);
+        $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
         $comment = Comment::factory()->create([
             'group_video_id' => $groupVideo->id,
@@ -106,7 +106,7 @@ class CommentTest extends TestCase
     public function test_destory(): void
     {
         $user = User::factory()->create();
-        $course = Course::factory()->createWithVideoFor($user);
+        $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
         $comment = Comment::factory()->create([
             'group_video_id' => $groupVideo->id,

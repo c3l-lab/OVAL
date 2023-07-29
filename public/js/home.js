@@ -865,7 +865,7 @@ $(document).ready (
 			var description = $('#comment-instruction-description').val();
 			$.ajax  ({
 				type: "POST",
-				url: "/edit_comment_instruction",
+				url: "/comment_instructions",
 				data: {group_video_id: group_video_id, description: description},
 				success: function(data) {
 					comment_instruction = data;
@@ -884,9 +884,8 @@ $(document).ready (
 			}
 			if (confirm("Are you sure you want to delete this instruction?")) {
 				$.ajax  ({
-					type: "POST",
-					url: "/delete_comment_instruction",
-					data: {group_video_id: group_video_id},
+					type: "DELETE",
+					url: "/comment_instructions/" + group_video_id,
 					success: function(data) {
 						comment_instruction = null;
 						$("#comment-instruction-modal").modal('hide');

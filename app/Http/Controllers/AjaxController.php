@@ -784,44 +784,6 @@ class AjaxController extends Controller
     }
 
     /**
-     * Method called from route /edit_comment_instruction
-     *
-     * This method fetches existing CommentInsruction or creates a new one,
-     * then saves the values passed in as parameter.
-     *
-     * @param Requestt $req Request contains group_video_id, and description
-     * @return string description The description of CommentInstruction
-     */
-    public function edit_comment_instruction(Request $req)
-    {
-        $group_video_id = intval($req->group_video_id);
-        $comment_instruction = oval\Models\CommentInstruction::where('group_video_id', '=', $group_video_id)
-                                ->first();
-        if (empty($comment_instruction)) {
-            $comment_instruction = new oval\Models\CommentInstruction();
-        }
-        $comment_instruction->group_video_id = $group_video_id;
-        $comment_instruction->description = htmlspecialchars($req->description, ENT_QUOTES);
-        $comment_instruction->save();
-        return $comment_instruction->description;
-    }
-
-    /**
-     * Method called from route /delete_comment_instruction
-     *
-     * This method deletes CommentInstruction for the group_video_id passed in.
-     *
-     * @param Request $req Request contains group_video_id
-     * @return void
-     */
-    public function delete_comment_instruction(Request $req)
-    {
-        $group_video_id = intval($req->group_video_id);
-        $comment_instruction = oval\Models\CommentInstruction::where('group_video_id', '=', $group_video_id);
-        $comment_instruction->delete();
-    }
-
-    /**
      * Method called from route /get_annotations_for_tag
      *
      * This method returns annotations with tag passed in as parameter.

@@ -26,7 +26,7 @@ class CourseFactory extends Factory
         ];
     }
 
-    public function createWithVideoFor($user)
+    public function createWithVideoForUser($user)
     {
         $course = Course::factory()->has(
             Group::factory()->count(1)

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use oval\Http\Controllers\CommentController;
+use oval\Http\Controllers\CommentInstructionController;
 use oval\Http\Controllers\GroupVideoController;
 use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\Lti\ConsumerController;
@@ -46,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
     Route::resource('comments', CommentController::class);
+    Route::resource('comment_instructions', CommentInstructionController::class);
 
     Route::prefix('lti')->group(function () {
         Route::middleware([RequireAdmin::class])->group(function () {
@@ -84,8 +86,6 @@ Route::group(['middleware'=>'auth:api'], function () {
     Route::post('/add_trackings', 'AjaxController@add_trackings');
     Route::post('/add_analysis_request', 'AjaxController@add_analysis_request');
     Route::post('/get_nominated_students_ids', 'AjaxController@get_nominated_students_ids');
-    Route::post('/edit_comment_instruction', 'AjaxController@edit_comment_instruction');
-    Route::post('/delete_comment_instruction', 'AjaxController@delete_comment_instruction');
     Route::post('/get_annotations_for_tag', 'AjaxController@get_annotations_for_tag');
     Route::post('/edit_visibility', 'AjaxController@edit_visibility');
     Route::post('/edit_video_order', 'AjaxController@edit_video_order');
