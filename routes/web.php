@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('group_videos', GroupVideoController::class);
 
     Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
+    Route::get('/comments/column', [CommentController::class, 'column'])->name('comments.column');
     Route::resource('comments', CommentController::class);
     Route::resource('comment_instructions', CommentInstructionController::class);
 
@@ -124,7 +125,6 @@ Route::get('/get_quiz', 'AjaxController@get_quiz');
 
 /*------ analysis api ------*/
 Route::get('/get_student_view', 'AjaxController@get_student_view');
-Route::get('/get_comment_column', 'AjaxController@get_comment_column');
 Route::get('/get_quiz_question', 'AjaxController@get_quiz_question');
 Route::get('/get_key_point', 'AjaxController@get_key_point');
 Route::get('/change_quiz_visable', 'AjaxController@change_quiz_visable');

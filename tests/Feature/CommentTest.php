@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use oval\Models\Comment;
 use oval\Models\Tag;
+use oval\Models\Tracking;
 use oval\Models\User;
 use oval\Models\Course;
 use Tests\TestCase;
@@ -121,5 +122,28 @@ class CommentTest extends TestCase
             'id' => $comment->id,
             'status' => 'deleted',
         ]);
+    }
+
+    public function test_column(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->createWithVideoForUser($user);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
+        Comment::factory()->create([
+            'group_video_id' => $groupVideo->id,
+            'user_id' => $user->id
+        ]);
+        Tracking::factory()->create([
+            'group_video_id' => $groupVideo->id,
+            'user_id' => $user->id,
+            'event' => 'View'
+        ]);
+
+        $response = $this->actingAs($user)->get('/comments/column?group_video_id=' . $groupVideo->id);
+
+        $response->dump();
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('0.surname', $user->last_name);
     }
 }

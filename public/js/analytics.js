@@ -185,7 +185,7 @@ $('document').ready(function () {
 			var $group_video_id = $(this).attr("groupvideoid");
 
 			$.ajax({
-				url: "/get_comment_column",
+				url: "/comments/column",
 				type: "GET",
 				data: {
 					user_id: $userlist,
