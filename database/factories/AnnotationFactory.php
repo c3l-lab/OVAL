@@ -18,6 +18,7 @@ class AnnotationFactory extends Factory
     {
         return [
             "description" => fake()->text(100),
+            "start_time" => fake()->numberBetween(0, 100),
             "privacy" => fake()->randomElement(['all', 'private', 'nominated']),
             "status" => 'current',
         ];

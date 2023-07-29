@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use oval\Models\Annotation;
 use oval\Models\Course;
 use oval\Models\Tag;
+use oval\Models\Tracking;
 use oval\Models\User;
 use Tests\TestCase;
 
@@ -125,5 +126,28 @@ class AnnotationTest extends TestCase
             'id' => $annotation->id,
             'status' => 'deleted',
         ]);
+    }
+
+    public function test_column(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->createWithVideoForUser($user);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
+        Annotation::factory()->create([
+            'group_video_id' => $groupVideo->id,
+            'user_id' => $user->id
+        ]);
+        Tracking::factory()->create([
+            'group_video_id' => $groupVideo->id,
+            'user_id' => $user->id,
+            'event' => 'View'
+        ]);
+
+        $response = $this->actingAs($user)->get('/annotations/column?group_video_id=' . $groupVideo->id);
+
+        $response->dump();
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('0.surname', $user->last_name);
     }
 }
