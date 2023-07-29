@@ -45,8 +45,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/group_videos/{groupVideo}/toggle_visibility', [GroupVideoController::class, 'toggleVisibility'])->name('group_videos.toggle_visibility');
     Route::post('/group_videos/{groupVideo}/toggle_comments', [GroupVideoController::class, 'toggleComments'])->name('group_videos.toggle_comments');
     Route::post('/group_videos/{groupVideo}/toggle_annotations', [GroupVideoController::class, 'toggleAnnotations'])->name('group_videos.toggle_annotations');
+    Route::post('/group_videos/{groupVideo}/toggle_analysis', [GroupVideoController::class, 'toggleAnalysis'])->name('group_videos.toggle_analysis');
+    Route::post('/group_videos/{groupVideo}/archive', [GroupVideoController::class, 'archive'])->name('group_videos.archive');
     Route::get('/group_videos/by_course', [GroupVideoController::class, 'byCourse'])->name('group_videos.by_course');
     Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])->name('group_videos.by_group');
+    Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
     Route::resource('group_videos', GroupVideoController::class);
 
     Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
@@ -108,13 +111,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/delete_points', 'AjaxController@delete_points');
     Route::post('/add_trackings', 'AjaxController@add_trackings');
     Route::post('/get_nominated_students_ids', 'AjaxController@get_nominated_students_ids');
-    Route::post('/edit_video_order', 'AjaxController@edit_video_order');
-    Route::post('/edit_text_analysis_visibility', 'AjaxController@edit_text_analysis_visibility');
     Route::post('/check_student_activity', 'AjaxController@check_student_activity');
-    Route::post('/archive_group_video', 'AjaxController@archive_group_video');
     Route::post('/delete_keywords', 'AjaxController@delete_keywords');
     Route::post('/get_groups_with_video', 'AjaxController@get_groups_with_video');
-    Route::post('/get_video_info', 'AjaxController@get_video_info');
 });
 
 // ----------- youtube data api ------------- //

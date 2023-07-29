@@ -335,8 +335,7 @@ $('document').ready(function(){
 				if (data.has_activity && confirm("There are student activities on this video for the group. Are you sure you would like to archive it?")) {
 					$.ajax({
 						type:"POST",
-						url: "/archive_group_video",
-						data: {group_video_id:group_video_id},
+						url: "/group_videos/" + group_video_id + "/archive",
 						success: function(data) {
 							window.location.reload();
 						},
@@ -374,9 +373,8 @@ $('document').ready(function(){
 
 		//--populate thumbnail and title for video--
 		$.ajax({
-			type: "POST",
-			url: "/get_video_info",
-			data: {video_id: modal_video_id},
+			type: "GET",
+			url: "/videos" + "/" + modal_video_id,
 			success: function (data) {
 				$("#modal-video-thumbnail").attr("src", data.thumbnail_url);
 				$("#modal-video-title").text(data.title);
@@ -553,9 +551,8 @@ $('document').ready(function(){
 
 		//--populate thumbnail and title for video--
 		$.ajax({
-			type: "POST",
-			url: "/get_video_info",
-			data: {video_id: modal_video_id},
+			type: "GET",
+			url: "/videos/" . model_video_id,
 			success: function (data) {
 				$("#points-form-thumbnail-img").attr("src", data.thumbnail_url);
 				$("#points-form-video-title").text(data.title);
@@ -729,7 +726,7 @@ $('document').ready(function(){
 		});
 		$.ajax({
 			type: "POST",
-			url: "/edit_video_order",
+			url: "/group_videos/sort",
 			data: {group_video_ids: order},
 			success: function() {
 				$("#order-modal").modal('hide');
@@ -758,8 +755,8 @@ $('document').ready(function(){
 		var show = $('input[name="analysis-vis-radio"]:checked').val();
 		$.ajax({
 			type:"POST",
-			url: "/edit_text_analysis_visibility",
-			data: {group_video_id:group_video_id , visibility:show },
+			url: "/group_videos/" + group_video_id + "/toggle_analysis",
+			data: { visibility:show },
 			success: function() {
 				location.reload();
 			},

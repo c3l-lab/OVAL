@@ -79,4 +79,15 @@ class VideoTest extends TestCase
         $response->assertStatus(200);
         $this->assertSame($group2->videos()->count(), 2);
     }
+
+    public function test_show(): void
+    {
+        $video = Video::factory()->create();
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/videos/' . $video->id);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('id', $video->id);
+    }
 }

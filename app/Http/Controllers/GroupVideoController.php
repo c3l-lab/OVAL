@@ -165,6 +165,13 @@ class GroupVideoController extends Controller
         ];
     }
 
+    public function archive(GroupVideo $groupVideo)
+    {
+        $groupVideo->status = "archived";
+        $result = $groupVideo->save();
+        return compact('result');
+    }
+
     public function destroy(int $id)
     {
         $result = GroupVideo::destroy($id);
@@ -190,6 +197,13 @@ class GroupVideoController extends Controller
         $groupVideo->show_annotations = !$groupVideo->show_annotations;
         $groupVideo->save();
         return response()->json(['success' => true]);
+    }
+
+    public function toggleAnalysis(Request $request, GroupVideo $groupVideo)
+    {
+        $show = intval($request->visibility);
+        $groupVideo->show_analysis = $show;
+        $groupVideo->save();
     }
 
     public function byCourse(Request $request)
@@ -221,5 +235,17 @@ class GroupVideoController extends Controller
             }
         }
         return view('pages.no-video');
+    }
+
+    public function sort(Request $request)
+    {
+        $group_video_ids = $request->group_video_ids;
+        $i = 1;
+        foreach ($group_video_ids as $gv_id) {
+            $group_video = GroupVideo::find($gv_id);
+            $group_video->order = $i;
+            $group_video->save();
+            $i++;
+        }
     }
 }

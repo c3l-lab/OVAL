@@ -528,46 +528,6 @@ class AjaxController extends Controller
 
     }
 
-    /*------ end analysis ajax funciton ------*/
-
-    /**
-     * Method called from route /edit_video_order
-     *
-     * This method sets the value for "order" of GroupVideo
-     *
-     * @param Request $req Contains group_video_ids - array of ids in the order to display.
-     */
-    public function edit_video_order(Request $req)
-    {
-        $group_video_ids = $req->group_video_ids;
-        $i = 1;
-        foreach ($group_video_ids as $gv_id) {
-            $group_video = oval\Models\GroupVideo::find($gv_id);
-            $group_video->order = $i;
-            $group_video->save();
-            $i++;
-        }
-    }
-
-    /**
-     * Method called from route /edit_text_analysis_visibility
-     *
-     * This method saves the visibility of content analysis.
-     * When GroupVideo's show_analysis is set to false, it is not displayed.
-     *
-     * @param Request $req Contains group_video_id, visibility
-     * @return void
-     */
-    public function edit_text_analysis_visibility(Request $req)
-    {
-        $group_video_id = intval($req->group_video_id);
-        $show = intval($req->visibility);
-
-        $group_video = oval\Models\GroupVideo::find($group_video_id);
-        $group_video->show_analysis = $show;
-        $group_video->save();
-    }
-
     /**
      * Method called from route /check_student_activity
      *
@@ -589,22 +549,6 @@ class AjaxController extends Controller
             $has_activity = true;
         }
         return compact('group_video_id', 'has_activity');
-    }
-
-    /**
-     * Method called from route /archive_group_video
-     *
-     * This method marks GroupVideo as "archived"
-     *
-     * @param Request $req Contains group_video_id
-     * @return array Array with key "result", value is true if saved successfully, false if not.
-     */
-    public function archive_group_video(Request $req)
-    {
-        $group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
-        $group_video->status = "archived";
-        $result = $group_video->save();
-        return compact('result');
     }
 
     public function delete_keywords(Request $req)
@@ -670,21 +614,5 @@ class AjaxController extends Controller
 
         $groups = $groups->groupBy('course_id');
         return $groups;
-    }
-
-    /**
-     * Method called from route /get_video_info
-     *
-     * Takes video_id as parameter and returns thumbnail url and title of the video
-     * @param Request $req Contains video_id
-     * @return array Array containing thumbnail_url and title
-     */
-    public function get_video_info(Request $req)
-    {
-        $video_id = intval($req->video_id);
-        $video = oval\Models\Video::find($video_id);
-        $thumbnail_url = $video->thumbnail_url;
-        $title = $video->title;
-        return compact('thumbnail_url', 'title');
     }
 }//end class

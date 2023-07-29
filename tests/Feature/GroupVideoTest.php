@@ -100,6 +100,21 @@ class GroupVideoTest extends TestCase
         ]);
     }
 
+    public function test_archive(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->createWithVideoForUser($user);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
+
+        $response = $this->actingAs($user)->post('/group_videos/' . $groupVideo->id . '/archive');
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('group_videos', [
+            'id' => $groupVideo->id,
+            'status' => 'archived'
+        ]);
+    }
+
     public function test_by_course(): void
     {
         $course = Course::factory()->has(
@@ -146,6 +161,40 @@ class GroupVideoTest extends TestCase
         $this->assertDatabaseHas('group_videos', [
             'id' => $groupVideo->id,
             'hide' => 1
+        ]);
+    }
+
+    public function test_toggle_analysis(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->createWithVideoForUser($user);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
+
+        $response = $this->actingAs($user)->post('/group_videos/' . $groupVideo->id . '/toggle_analysis', [
+            "visibility" => 0
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('group_videos', [
+            'id' => $groupVideo->id,
+            'show_analysis' => 0
+        ]);
+    }
+
+    public function test_sort(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->createWithVideoForUser($user);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
+
+        $response = $this->actingAs($user)->post('/group_videos/sort', [
+            "group_video_ids" => [$groupVideo->id]
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('group_videos', [
+            'id' => $groupVideo->id,
+            'order' => 1
         ]);
     }
 }
