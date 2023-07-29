@@ -37,9 +37,7 @@ class TranscriptTest extends TestCase
         $this->assertDatabaseHas('videos', [
             'identifier' => 'AounoSj7QuQ',
         ]);
-        $this->assertDatabaseHas('transcripts', [
-            'video_id' => 1,
-        ]);
+        $this->assertDatabaseCount('transcripts', 1);
     }
 
 }

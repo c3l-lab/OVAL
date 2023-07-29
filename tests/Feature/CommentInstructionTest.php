@@ -16,7 +16,7 @@ class CommentInstructionTest extends TestCase
     {
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
-        $groupVideo = $course->defaultGroup()->videos()->first();
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
 
         $response = $this->actingAs($user)->post('/comment_instructions', [
             'group_video_id' => $groupVideo->id,
@@ -35,7 +35,7 @@ class CommentInstructionTest extends TestCase
     {
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
-        $groupVideo = $course->defaultGroup()->videos()->first();
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
         $commentInstruction = CommentInstruction::factory()->create([
             'group_video_id' => $groupVideo->id,
         ]);
@@ -57,7 +57,8 @@ class CommentInstructionTest extends TestCase
     {
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
-        $groupVideo = $course->defaultGroup()->videos()->first();
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
+
         $commentInstruction = CommentInstruction::factory()->create([
             'group_video_id' => $groupVideo->id,
         ]);
