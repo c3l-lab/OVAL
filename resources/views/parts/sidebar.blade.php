@@ -21,7 +21,7 @@
              <li><a href="/analytics">Analytics</a></li>
          @endif
          @if (isset($user) && $user->role == 'A')
-             <li><a href="/batch-upload">Batch Upload</a></li>
+             <li><a href="/transcripts">Batch Upload</a></li>
              <li><a href="{{ route('consumers.index') }}">Manage LTI 1.1 Connections</a></li>
              <li><a href="{{ route('registrations.index') }}">Manage LTI 1.3 Registrations</a></li>
          @endif

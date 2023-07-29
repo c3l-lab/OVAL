@@ -563,7 +563,7 @@
 			</div><!-- .modal-header -->
 
 			<div class="modal-body container-fluid">
-				<form id="upload-transcript-form" method="POST" action="/upload_transcript" enctype="multipart/form-data" role="form" data-toggle="validator">
+				<form id="upload-transcript-form" method="POST" action="{{ route('transcripts.store') }}" enctype="multipart/form-data" role="form" data-toggle="validator">
 					{{ csrf_field() }}
 					<input type="hidden" name="video_id" />
 					<div class="form-group">

@@ -11,6 +11,7 @@ use oval\Http\Controllers\GroupController;
 use oval\Http\Controllers\GroupVideoController;
 use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\QuizResultController;
+use oval\Http\Controllers\TranscriptController;
 use oval\Http\Controllers\Video;
 use oval\Http\Controllers\Lti\ConsumerController;
 use oval\Http\Controllers\Lti\RegistrationController;
@@ -79,6 +80,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/analysis_requests/{analysis_request}/reject', [AnalysisRequestController::class, 'reject'])->name('analysis_requests.reject');
         Route::post('/analysis_requests/{analysis_request}/recover', [AnalysisRequestController::class, 'recover'])->name('analysis_requests.recover');
         Route::resource('analysis_requests', AnalysisRequestController::class);
+
+        Route::post('/transcripts/upload', [TranscriptController::class, 'upload'])->name('transcripts.upload');
+        Route::resource('transcripts', TranscriptController::class);
     });
 
     Route::middleware([RequireInstructor::class])->group(function () {
@@ -94,8 +98,6 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 });
-
-Route::get('/batch-upload', 'HomeController@batch_upload');
 
 // ----------- ajax routes ------------- //
 Route::group(['middleware' => 'auth:api'], function () {
@@ -118,10 +120,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/get_groups_with_video', 'AjaxController@get_groups_with_video');
     Route::post('/get_video_info', 'AjaxController@get_video_info');
 });
-
-// ----------- form processing -----------
-Route::post('/upload_transcript', 'FileController@upload_transcript');
-Route::post('/batch_data_insert', 'ProcessController@batch_data_insert');
 
 // ----------- youtube data api ------------- //
 Route::post('/add_google_cred', 'GoogleAPIController@add_google_cred');

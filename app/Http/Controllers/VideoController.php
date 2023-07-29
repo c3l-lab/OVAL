@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use GuzzleHttp;
 use oval\Classes\YoutubeDataHelper;
 use oval\Jobs\AnalyzeTranscript;
+use oval\Models\Video;
 
 class VideoController extends Controller
 {
@@ -15,29 +16,15 @@ class VideoController extends Controller
      */
     public function store(Request $request)
     {
-        $client = new GuzzleHttp\Client();
-        $url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $request->video_id . '&key=' . config('youtube.api_key');
-        try {
-            $response = $client->get($url);
-        } catch (GuzzleHttp\Exception\ClientException $e) {
-            return ['error' => "Unable to get video info from youtube."];
+        $v = Video::where(['identifier'=>$request->video_id])->first();
+
+        if (empty($v)) {
+            try {
+                $v = Video::createFromYoutube($request->video_id, \Auth::user());
+            } catch (\Exception $e) {
+                return ['error' => $e->getMessage()];
+            }
         }
-
-        $result = json_decode($response->getBody());
-
-        $v = new \oval\Models\Video([
-            'identifier' => $request->video_id,
-            'media_type' => $request->media_type
-        ]);
-
-        $v->title = $result->items[0]->snippet->title;
-        $desc = $result->items[0]->snippet->description;
-        $v->description = strlen($desc) > 507 ? substr($desc, 0, 510) : $desc;
-        $v->thumbnail_url = "https://img.youtube.com/vi/" . $request->video_id . "/1.jpg";
-        $v->duration = ISO8601ToSeconds($result->items[0]->contentDetails->duration);
-
-        $v->added_by = \Auth::user()->id;
-        $v->save();
 
         $course_id = intval($request->course_id);
         if (!empty($course_id)) {

@@ -7,7 +7,7 @@
     <div class="container-fluid">
 		<div class="page-title">
             <i class="fa fa-laptop"></i>
-            UPLOAD DATA 
+            UPLOAD DATA
         </div>
 		@if (!empty(session('msg')))
         <div class="msg">
@@ -23,7 +23,7 @@
         <div class="admin-page-section">
 
         <div class="space-left-right">
-                <form id="upload-json-form" method="POST" action="/batch_data_insert" enctype="multipart/form-data" role="form" data-toggle="validator">
+                <form id="upload-json-form" method="POST" action="{{ route('transcripts.upload') }}" enctype="multipart/form-data" role="form" data-toggle="validator">
                     {{ csrf_field() }}
                     <input type="hidden" name="video_id" />
                     <div class="form-group">
@@ -31,7 +31,7 @@
                         <input type="file" id="batch-data-file" name="file" data-filetype="json" data-required-error="Please select a file in .json format" required>
                         <div class="help-block with-errors"></div>
 
-                    
+
 
                     </div><!-- form-group -->
                     <div class="form-group">
@@ -40,7 +40,7 @@
                             <i class="fa fa-upload left-indent" aria-hidden="true"></i>
                         </button>
                     </div>
-                   
+
                 </form>
             </div><!-- space -->
 
@@ -51,7 +51,7 @@
                 </p>
                 <p>
                     For uploading transcripts, it contains objects with variables "identifier" and "transcript".<br />
-                    If array of YouTube video IDs are contained in this JSON document, 
+                    If array of YouTube video IDs are contained in this JSON document,
                     YouTube Data API is used to fetch their transcripts.<br />
                     Text analysis is performed in either case after populating transcripts table.
                 </p>

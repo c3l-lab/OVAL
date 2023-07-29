@@ -45,14 +45,4 @@ class HomeController extends Controller
         }
         return view('pages.no-video');
     }
-
-    public function batch_upload(Request $req)
-    {
-        $user = Auth::user();
-        if ($user->role == 'A') {
-            return view('pages.batch-upload');
-        } else {
-            return view('pages.not-admin', compact('user'));
-        }
-    }
 } //end class

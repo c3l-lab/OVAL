@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use GuzzleHttp;
 use oval\Classes\YoutubeDataHelper;
+use oval\Jobs\AnalyzeTranscript;
 
 /**
  * Model class for table 'videos'
@@ -136,6 +137,26 @@ class Video extends Model
     public function analysis_request()
     {
         return $this->hasMany('oval\Models\AnalysisRequest');
+    }
+
+    public static function createFromYoutube(string $identifier, User $user)
+    {
+        $client = new GuzzleHttp\Client();
+        $url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $identifier . '&key=' . config('youtube.api_key');
+        $response = $client->get($url);
+        $result = json_decode($response->getBody());
+
+        $v = new Video();
+        $v->identifier = $identifier;
+        $v->title = $result->items[0]->snippet->title;
+        $desc = $result->items[0]->snippet->description;
+        $v->description = strlen($desc)>507 ? substr($desc, 0, 510) : $desc;
+        $v->thumbnail_url = "https://img.youtube.com/vi/".$identifier."/1.jpg";
+        $v->duration = ISO8601ToSeconds($result->items[0]->contentDetails->duration);
+        $v->media_type = "youtube";
+        $v->added_by = $user->id;
+        $v->save();
+        return $v;
     }
 
     /**
