@@ -327,7 +327,7 @@ class AjaxController extends Controller
     /*------ quiz ajax function ------*/
     public function get_quiz(Request $req)
     {
-        $quiz = oval\Models\quiz_creation::where('identifier', $req->identifier)
+        $quiz = oval\Models\QuizCreation::where('identifier', $req->identifier)
                                     ->orderBy('created_at', 'desc')
                                     ->first();
 
@@ -337,7 +337,7 @@ class AjaxController extends Controller
     public function store_quiz(Request $req)
     {
 
-        $quiz = new oval\Models\quiz_creation();
+        $quiz = new oval\Models\QuizCreation();
         $quiz->creator_id = intval($req->creator_id);
         $quiz->identifier = (string)($req->identifier);
         $quiz->media_type = (string)($req->media_type);
@@ -351,7 +351,7 @@ class AjaxController extends Controller
     public function submit_ans(Request $req)
     {
 
-        $quiz_ans = new oval\Models\quiz_result();
+        $quiz_ans = new oval\Models\QuizResult();
         $quiz_ans->user_id = intval($req->user_id);
         $quiz_ans->identifier = (string)($req->identifier);
         $quiz_ans->media_type = (string)($req->media_type);
@@ -916,7 +916,7 @@ class AjaxController extends Controller
                             ])
                             ->first();
             $points = $group_video->relatedPoints();
-            $quiz = oval\Models\quiz_creation::where('identifier', '=', oval\Models\Video::find($video_id)->identifier)
+            $quiz = oval\Models\QuizCreation::where('identifier', '=', oval\Models\Video::find($video_id)->identifier)
                         ->first();
 
             $group = [

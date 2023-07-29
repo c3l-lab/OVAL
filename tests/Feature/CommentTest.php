@@ -141,8 +141,6 @@ class CommentTest extends TestCase
 
         $response = $this->actingAs($user)->get('/comments/column?group_video_id=' . $groupVideo->id);
 
-        $response->dump();
-
         $response->assertStatus(200);
         $response->assertJsonPath('0.surname', $user->last_name);
     }

@@ -5,20 +5,18 @@ namespace oval\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Model class for table 'quiz_createion'.
+ * Model class for 'quiz_result'
  * @author Max
  * TODO: add relationship
  */
-class quiz_creation extends Model
+class QuizResult extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'quiz_creation';
+    protected $table = 'quiz_result';
 
-    protected $fillable = ['creator_id', 'identifier', 'media_type', 'quiz_data','visable'];
-
-
+    protected $fillable = ['user_id', 'identifier', 'media_type', 'quiz_data'];
 }

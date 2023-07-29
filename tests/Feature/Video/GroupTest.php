@@ -20,8 +20,6 @@ class GroupTest extends TestCase
 
         $response = $this->actingAs($user)->get(route('videos.groups.index', ['video' => $video]));
 
-        $response->dump();
-
         $response->assertStatus(200);
         $response->assertJsonPath('groups.0.id', $group->id);
     }

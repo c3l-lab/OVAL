@@ -24,8 +24,6 @@ class GroupTest extends TestCase
 
         $response = $this->actingAs($user)->get('/groups/unassigned?course_id=' . $course->id .'&video_id=' . $video->id);
 
-        $response->dump();
-
         $response->assertStatus(200);
         $response->assertJsonPath('unassigned_groups.1.name', $group->name);
     }
