@@ -71,11 +71,10 @@ function assignVideoToGroups(group_ids, copy_from_group_id, copy_comment_instruc
 	}
 	$.ajax({
 		type: "POST",
-		url: "/save_video_group",
+		url: "/videos/" + modal_video_id + "/assign",
 		data: {
 			group_ids: group_ids,
 			course_id: modal_course_id,
-			video_id: modal_video_id,
 			copy_from: copy_from_group_id,
 			copy_comment_instruction: copy_comment_instruction,
 			copy_points: copy_points,

@@ -6,9 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use oval;
 use DB;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use oval\Classes\YoutubeDataHelper;
-use oval\Models\Video;
 
 /**
  * Controller class to handle Ajax requests
@@ -20,72 +17,6 @@ class AjaxController extends Controller
     {
         //         $this->middleware('auth');
     }
-
-    /**
-     * Method called from route /save_video_group
-     *
-     * This method associates video to groups.
-     *
-     * @param Request $req Request contains course_id(int), group_ids(array of int), video_id(int)
-     * @return void
-     */
-    public function assign_video_to_groups(Request $req)
-    {
-        $course_id = intval($req->course_id);
-        $group_ids = $req->group_ids;
-        $video_id = intval($req->video_id);
-
-        $copy_from_group_id = intval($req->copy_from);
-        $copy_comment_instruction = $req->copy_comment_instruction;
-        $copy_points = $req->copy_points;
-        $copy_quiz = $req->copy_quiz;
-
-        $video = oval\Models\Video::find($video_id);
-        $copy_origin = $copy_from_group_id == -1 ? null : oval\Models\GroupVideo::where([['group_id', '=', $copy_from_group_id], ['video_id', '=', $video_id]])->first();
-
-        if (count($group_ids) > 0) {
-            foreach($group_ids as $gid) {
-                $group = oval\Models\Group::find($gid);
-                $video->assignToGroup($group);
-            }
-        }
-        if(!empty($copy_origin)) {
-            foreach($group_ids as $gid) {
-                $gv = oval\Models\GroupVideo::where([
-                        ['group_id', '=', $gid],
-                        ['video_id', '=', $video_id]
-                    ])
-                    ->first();
-                if($copy_comment_instruction == "true") {
-                    $comment_instruction = oval\Models\CommentInstruction::where('group_video_id', '=', $gv->id)->first();
-                    if (empty($comment_instruction)) {
-                        $comment_instruction = new oval\Models\CommentInstruction();
-                        $comment_instruction->group_video_id = $gv->id;
-                    }
-                    $comment_instruction->description = oval\Models\CommentInstruction::where('group_video_id', '=', $copy_origin->id)->first()->description;
-                    $comment_instruction->save();
-                }
-
-                if($copy_points == "true") {
-                    $points = oval\Models\Point::where('group_video_id', '=', $gv->id)->get();
-                    if($points->count() > 0) {
-                        //delete them
-                    }
-                    $copy_points = oval\Models\Point::where('group_video_id', '=', $copy_origin->id)->get();
-                    foreach ($copy_points as $cp) {
-                        $p = new oval\Models\Point();
-                        $p->group_video_id = $gv->id;
-                        $p->description = $cp->description;
-                        $p->save();
-                    }
-                }
-
-                if ($copy_quiz == "true") {
-                    //todo: implement after editing quiz
-                }
-            }
-        }
-    }//end function
 
     /**
      * Method called from route /save_feedback

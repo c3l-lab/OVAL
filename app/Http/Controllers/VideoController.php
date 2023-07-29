@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use GuzzleHttp;
 use oval\Classes\YoutubeDataHelper;
 use oval\Jobs\AnalyzeTranscript;
+use oval\Models\CommentInstruction;
+use oval\Models\Group;
+use oval\Models\GroupVideo;
+use oval\Models\Point;
 use oval\Models\Video;
 
 class VideoController extends Controller
@@ -73,8 +77,66 @@ class VideoController extends Controller
      */
     public function destroy(string $id)
     {
-        $result = \oval\Models\Video::destroy($id);
+        $result = Video::destroy($id);
         return ['result' => $result];
+    }
+
+    public function assign(Request $request, Video $video)
+    {
+        $group_ids = $request->group_ids;
+
+        $copy_from_group_id = intval($request->copy_from);
+        $copy_comment_instruction = $request->copy_comment_instruction;
+        $copy_points = $request->copy_points;
+        $copy_quiz = $request->copy_quiz;
+
+        $copy_origin = $copy_from_group_id == -1 ? null : GroupVideo::where([['group_id', '=', $copy_from_group_id], ['video_id', '=', $video->id]])->first();
+
+        if (count($group_ids) > 0) {
+            foreach($group_ids as $gid) {
+                $group = Group::find($gid);
+                $video->assignToGroup($group);
+            }
+        }
+        if(!empty($copy_origin)) {
+            foreach($group_ids as $gid) {
+                $gv = GroupVideo::where([
+                        ['group_id', '=', $gid],
+                        ['video_id', '=', $video->id]
+                    ])
+                    ->first();
+                if($copy_comment_instruction == "true") {
+                    $originCommentInstruction = CommentInstruction::where('group_video_id', '=', $copy_origin->id)->first();
+                    if (!empty($originCommentInstruction)) {
+                        $comment_instruction = CommentInstruction::where('group_video_id', '=', $gv->id)->first();
+                        if (empty($comment_instruction)) {
+                            $comment_instruction = new CommentInstruction();
+                            $comment_instruction->group_video_id = $gv->id;
+                        }
+                        $comment_instruction->description = $originCommentInstruction->description;
+                        $comment_instruction->save();
+                    }
+                }
+
+                if($copy_points == "true") {
+                    $points = Point::where('group_video_id', '=', $gv->id)->get();
+                    if($points->count() > 0) {
+                        //delete them
+                    }
+                    $copy_points = Point::where('group_video_id', '=', $copy_origin->id)->get();
+                    foreach ($copy_points as $cp) {
+                        $p = new Point();
+                        $p->group_video_id = $gv->id;
+                        $p->description = $cp->description;
+                        $p->save();
+                    }
+                }
+
+                if ($copy_quiz == "true") {
+                    //todo: implement after editing quiz
+                }
+            }
+        }
     }
 
     /**

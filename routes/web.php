@@ -37,6 +37,7 @@ Route::get('/logout', 'Auth\LoginController@logout');
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
+    Route::post('/videos/{video}/assign', [VideoController::class, 'assign'])->name('videos.assign');
     Route::resource('videos', VideoController::class);
 
     Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])
@@ -60,8 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('groups', GroupController::class);
     Route::resource('videos.groups', Video\GroupController::class);
 
-    Route::post('/videos/{id}/quiz/toggle_visible', [Video\QuizController::class, 'toggleVisible'])
-        ->name('videos.quiz.toggle_visible');
+    Route::post('/videos/{id}/quiz/toggle_visible', [Video\QuizController::class, 'toggleVisible'])->name('videos.quiz.toggle_visible');
     Route::singleton('videos.quiz', Video\QuizController::class);
 
     Route::resource('quiz_results', QuizResultController::class);
@@ -101,7 +101,6 @@ Route::middleware(['auth'])->group(function () {
 
 // ----------- ajax routes ------------- //
 Route::group(['middleware' => 'auth:api'], function () {
-    Route::post('/save_video_group', 'AjaxController@assign_video_to_groups');
     Route::post('/save_feedback', 'AjaxController@save_feedback');
     Route::post('/save_confidence_level', 'AjaxController@save_confidence_level');
     Route::post('/get_videos_for_course', 'AjaxController@get_videos_for_course');

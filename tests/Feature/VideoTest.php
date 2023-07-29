@@ -14,7 +14,7 @@ class VideoTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_store_video(): void
+    public function test_store(): void
     {
         $course = Course::factory()->has(Group::factory()->count(1))->create();
         $user = User::factory()->create();
@@ -45,7 +45,7 @@ class VideoTest extends TestCase
         ]);
     }
 
-    public function test_destory_video(): void
+    public function test_destory(): void
     {
         $video = Video::factory()->create();
         $user = User::factory()->create();
@@ -57,5 +57,26 @@ class VideoTest extends TestCase
         $this->assertDatabaseMissing('videos', [
             'id' => $video->id
         ]);
+    }
+
+    public function test_assign(): void
+    {
+        $user = User::factory()->create();
+        $course1 = Course::factory()->createWithVideoForUser($user);
+        $course2 = Course::factory()->createWithVideoForUser($user);
+        $group1 = $course1->defaultGroup();
+        $group2 = $course2->defaultGroup();
+        $video = $group1->videos()->first();
+
+        $response = $this->actingAs($user)->post('/videos/' . $video->id . '/assign', [
+            "group_ids" => [$group2->id],
+            "copy_from" => $group1->id,
+            "copy_comment_instruction" => true,
+            "copy_points" => true,
+            "copy_quiz" => true,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertSame($group2->videos()->count(), 2);
     }
 }
