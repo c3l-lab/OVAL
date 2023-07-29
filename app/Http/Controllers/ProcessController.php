@@ -26,30 +26,6 @@ class ProcessController extends Controller
     private $no_transcript = 'The YouTube video you requested analysis doesn\'t have transcript available for us to use.';
 
     /**
-     * TODO: Move this to helper class - this is copied from AjaxController
-     */
-    private function ISO8601ToSeconds($ISO8601)
-    {
-        preg_match('/\d{1,2}[H]/', $ISO8601, $hours);
-        preg_match('/\d{1,2}[M]/', $ISO8601, $minutes);
-        preg_match('/\d{1,2}[S]/', $ISO8601, $seconds);
-
-        $duration = [
-            'hours'   => $hours ? $hours[0] : 0,
-            'minutes' => $minutes ? $minutes[0] : 0,
-            'seconds' => $seconds ? $seconds[0] : 0,
-        ];
-
-        $hours   = intval(substr($duration['hours'], 0, -1));
-        $minutes = intval(substr($duration['minutes'], 0, -1));
-        $seconds = intval(substr($duration['seconds'], 0, -1));
-
-        $toltalSeconds = ($hours * 60 * 60) + ($minutes * 60) + $seconds;
-
-        return $toltalSeconds;
-    }
-
-    /**
      * Private method to download caption for Youtube video.
      *
      * Uses Google credentials stored in database if any exist, to call YoutubeData API to get caption.
@@ -377,7 +353,7 @@ class ProcessController extends Controller
         $desc = $result->items[0]->snippet->description;
         $v->description = strlen($desc)>507 ? substr($desc, 0, 510) : $desc;
         $v->thumbnail_url = "https://img.youtube.com/vi/".$identifier."/1.jpg";
-        $v->duration = $this->ISO8601ToSeconds($result->items[0]->contentDetails->duration);
+        $v->duration = ISO8601ToSeconds($result->items[0]->contentDetails->duration);
         $v->media_type = "youtube";
         $v->added_by = Auth::user()->id;
         $v->save();

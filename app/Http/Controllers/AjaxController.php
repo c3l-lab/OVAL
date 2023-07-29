@@ -8,9 +8,7 @@ use oval;
 use DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use oval\Classes\YoutubeDataHelper;
-use oval\Jobs\AnalyzeTranscript;
 use oval\Models\Video;
-use GuzzleHttp;
 
 /**
  * Controller class to handle Ajax requests
@@ -79,38 +77,7 @@ class AjaxController extends Controller
         return $intArray;
     }
 
-    /**
-     * Private utility method to convert time duration from ISO8601 (00H00M00S) to seconds.
-     *
-     * @param string $ISO8601 time in format 00H00M00S
-     * @return string the duration in seconds
-     */
-    private function ISO8601ToSeconds($ISO8601)
-    {
-        preg_match('/\d{1,2}[H]/', $ISO8601, $hours);
-        preg_match('/\d{1,2}[M]/', $ISO8601, $minutes);
-        preg_match('/\d{1,2}[S]/', $ISO8601, $seconds);
-
-        $duration = [
-            'hours'   => $hours ? $hours[0] : 0,
-            'minutes' => $minutes ? $minutes[0] : 0,
-            'seconds' => $seconds ? $seconds[0] : 0,
-        ];
-
-        $hours   = intval(substr($duration['hours'], 0, -1));
-        $minutes = intval(substr($duration['minutes'], 0, -1));
-        $seconds = intval(substr($duration['seconds'], 0, -1));
-
-        $toltalSeconds = ($hours * 60 * 60) + ($minutes * 60) + $seconds;
-
-        return $toltalSeconds;
-    }
-
-
-
     //-----------------------------------------------------------------------------------------
-
-
 
     /**
      * Private function to return annotations for group_video
@@ -286,58 +253,6 @@ class AjaxController extends Controller
         $annotation = oval\Models\Annotation::findOrFail(intval($req->annotation_id));
         $annotation->status = "deleted";
         $annotation->save();
-    }
-
-    /**
-     * Private method to process Youtube video's text analysis
-     * for AnalysisRequest object passed in as parameter.
-     * TODO: move this somewhere ... This was copied from another controller.
-     *
-     * @param oval\Models\AnalysisRequest $analysis_request
-     * @return void
-     */
-    private function process_youtube_text_analysis(oval\Models\AnalysisRequest $analysis_request)
-    {
-        //--exit if this video already as result--
-        $requests = $analysis_request->requestsForSameVideo();
-        foreach ($requests as $r) {
-            if ($r->status == "processed") {
-                return;
-            }
-        }
-
-        $video = $analysis_request->video;
-
-        // Change status to 'processing'
-        oval\Models\AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processing']);
-
-        $user_ids = $analysis_request->requestorsIds();
-        array_push($user_ids, Auth::user()->id);
-
-        $caption_text = $this->download_youtube_caption($video);
-        $text = "";
-        $video = $video->fresh();
-
-        if(!empty($caption_text)) {
-            $text = $caption_text;
-        } elseif(!empty($video->transcript)) {
-            $transcript_json = json_decode($video->transcript->transcript);
-            foreach ($transcript_json as $t) {
-                $obj = json_decode($t);
-                $text .= $obj->transcript." ";
-            }
-        } else {
-            // Change status to 'processed'
-            oval\Models\AnalysisRequest::where(array('video_id' => $video->id))->update(['status' => 'processed']);
-            return "no transcript";
-        }
-
-        // Send analyse transcript job to queue
-        $this->dispatch(new AnalyzeTranscript([
-            'videoId'    => $video->id,
-            'transcript' => $text,
-            'userIds'    => $user_ids
-        ]));
     }
 
     /**
