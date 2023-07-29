@@ -205,131 +205,6 @@ class AjaxController extends Controller
     }
 
     /**
-     * Private method that returns comments for group_video_id passed in that are visible to user_id passed in
-     *
-     * This method fetches comments with status "current" that are made by the user whose ID is passed in,
-     * and "current" comments that are made by others that are visible to the user.
-     * The returned array contains data ready for display.
-     *
-     * @param integer $user_id
-     * @param integer $group_video_id
-     * @return array Array of array with keys - id, user_id, name, description, tags, is_mine, privacy, updated_at, created_at
-     */
-    private function get_all_comments($user_id, $group_video_id)
-    {
-        $mine = oval\Models\Comment::where([
-                        ['user_id', '=', $user_id],
-                        ['group_video_id', '=', $group_video_id],
-                        ['status', '=', 'current']
-                    ])
-                    ->get();
-        $others = oval\Models\Comment::where([
-                        ['user_id', '<>', $user_id],
-                        ['group_video_id', '=', $group_video_id],
-                        ['privacy', '<>', 'private'],
-                        ['status', '=', 'current']
-                    ])
-                    ->get();
-        foreach ($others as $key=>$val) {
-            if($val->privacy == 'nominated') {
-                $nominated = json_decode($val->visible_to);
-                if (!empty($nominated)) {
-                    if (!in_array($user_id, $nominated)) {
-                        unset($others[$key]);
-                    }
-                }
-            }
-        }
-        $all_comments = $mine->merge($others)->sortByDesc('updated_at')->values()->all();
-
-        $comments = [];
-        $course = oval\Models\GroupVideo::find($group_video_id)->course();
-        foreach ($all_comments as $c) {
-            $user = oval\Models\User::find($c->user_id);
-            if (empty($user)) {
-                $name = "Unknown User";
-                $mine = false;
-                $instructor = false;
-            } else {
-                $name = $user->fullName();
-                $mine = $c->user_id==$user_id ? true : false;
-                $instructor = $user->isInstructorOf($course);
-            }
-
-            $date = empty($c->updated_at) ? null : $c->updated_at->format('g:iA d M, Y');
-
-            $comments[] = [
-                "id" => $c->id,
-                "user_id" => $user_id,
-                "name" => $name,
-                "description" => $c->description,
-                "tags" => $c->tags->pluck('tag'),
-                "is_mine" => $mine,
-                "privacy" => $c->privacy,
-                "updated_at" => $date,
-                "by_instructor" => $instructor
-            ];
-        }
-        return $comments;
-    }
-
-    /**
-     * Method called from route /get_comments to fetch comments to display on home page
-     *
-     * This method returns comments visible for the user who is logged in, for the group_video_id passed in.
-     * @uses \oval\Http\Controllers\AjaxController::get_all_comments()
-     *
-     * @param Request $req The request has parameters group_video_id
-     * @return array Array of array containing values from Comment object ready for display
-     */
-    public function get_comments(Request $req)
-    {
-        $user = Auth::user();
-        $group_video_id = intval($req->group_video_id);
-        $comments = $this->get_all_comments($user->id, $group_video_id);
-        return $comments;
-    }
-
-    /**
-     * Method called from route /add_comment
-     *
-     * This method inserts a new comment in database
-     * and returns array with values from the new comment ready for display.
-     *
-     * @param Request $req Request contains group_video_id, description, privacy, nominated_students_ids.
-     * @return array array with keys [id, user_id, userr_fullname, description, tags, is_mine, privacy, updated_at]
-     */
-    public function add_comment(Request $req)
-    {
-        $comment = new oval\Models\Comment();
-        $comment->group_video_id = intval($req->group_video_id);
-        $comment->user_id = Auth::user()->id;
-        $comment->description = htmlspecialchars($req->description, ENT_QUOTES);
-        $comment->privacy = $req->privacy;
-        $comment->visible_to = json_encode($this->convertStringArrayToIntArray($req->nominated_students_ids));
-        $comment->save();
-
-        $tags = $req->tags;
-        foreach ($tags as $t) {
-            $t = htmlspecialchars($t, ENT_QUOTES);
-            $tag = oval\Models\Tag::firstOrCreate(['tag'=>$t]);
-            $comment->tags()->attach($tag);
-        }
-        $comment->save();
-
-        $c = array(
-                "id"=>$comment->id,
-                "user_id"=>$comment->user->id,
-                "user_fullname"=>$comment->user->fullName(),
-                "description"=>$comment->description,
-                "tags"=>$comment->tags->pluck('tag'),
-                "is_mine"=>true,
-                "privacy"=>$comment->privacy,
-                "updated_at"=>$comment->updated_at);
-        return $c;
-    }
-
-    /**
      * Method called from route /add_annotation to add annotation
      *
      * The method inserts a new annotation and returns the result.
@@ -399,52 +274,6 @@ class AjaxController extends Controller
     }
 
     /**
-     * Method called from route /edit_comment
-     *
-     * This marks old record as "archived"
-     * and creates a new comment with values passed in
-     * then returns array with values of new comment ready for display.
-     *
-     * @param Request $req Request contains: comment_id, description, privacy, nominated_students_ids, tags
-     * @return array Array with keys: id, user_id, user_fullname, description, tags, is_mine, privacy, updated_at
-     */
-    public function edit_comment(Request $req)
-    {
-        $old = oval\Models\Comment::findOrFail(intVal($req->comment_id));
-        if (!empty($old)) {
-            $old->status = "archived";
-            $old->save();
-        }
-        $comment = new oval\Models\Comment();
-        $comment->group_video_id = $old->group_video_id;
-        $comment->user_id = Auth::user()->id;
-        $comment->description = htmlspecialchars($req->description, ENT_QUOTES);
-        $comment->privacy = $req->privacy;
-        $comment->visible_to = json_encode($this->convertStringArrayToIntArray($req->nominated_students_ids));
-        $comment->parent = $old->id;
-        $comment->save();
-
-        $tags = $req->tags;
-        foreach ($tags as $t) {
-            $t = htmlspecialchars($t, ENT_QUOTES);
-            $tag = oval\Models\Tag::firstOrCreate(['tag'=>$t]);
-            $comment->tags()->attach($tag);
-        }
-        $comment->save();
-
-        $c = array(
-                "id"=>$comment->id,
-                "user_id"=>$comment->user->id,
-                "user_fullname"=>$comment->user->fullName(),
-                "description"=>$comment->description,
-                "tags"=>$comment->tags->pluck('tag'),
-                "is_mine"=>true,
-                "privacy"=>$comment->privacy,
-                "updated_at"=>$comment->updated_at);
-        return $c;
-    }
-
-    /**
      * Method called from route /delete_annotation
      *
      * This method marks the annotation's status as "deleted"
@@ -457,21 +286,6 @@ class AjaxController extends Controller
         $annotation = oval\Models\Annotation::findOrFail(intval($req->annotation_id));
         $annotation->status = "deleted";
         $annotation->save();
-    }
-
-    /**
-     * Method called from route /delete_comment
-     *
-     * This method marks comment's status as "deleted"
-     *
-     * @param Request $req Request contains comment_id
-     * @return void
-     */
-    public function delete_comment(Request $req)
-    {
-        $comment = oval\Models\Comment::findOrFail(intval($req->comment_id));
-        $comment->status = "deleted";
-        $comment->save();
     }
 
     /**
@@ -724,7 +538,7 @@ class AjaxController extends Controller
         $group_video_id = intval($req->group_video_id);
         $course_id = intval($req->course_id);
         $annotations = null;
-        $comments = $this->get_all_comments($user->id, $group_video_id);
+        $comments = \oval\Models\Comment::group_video_comments($group_video_id, $user->id);
         $annotations = $this->get_all_annotations($user->id, $group_video_id);
 
         $response = new StreamedResponse();
@@ -1005,50 +819,6 @@ class AjaxController extends Controller
         $group_video_id = intval($req->group_video_id);
         $comment_instruction = oval\Models\CommentInstruction::where('group_video_id', '=', $group_video_id);
         $comment_instruction->delete();
-    }
-
-    /**
-     * Method called from route /get_comments_for_tag
-     *
-     * This method returns comments with tag passed in as parameter.
-     *
-     * @param Request $req Request contains course_id and tag
-     * @return array Array of array with keys [id, user_id, name, description, tags, is_mine, privacy, updated_at, by_instructor]
-     */
-    public function get_comments_for_tag(Request $req)
-    {
-        $user = Auth::user();
-        $group_video = oval\Models\GroupVideo::find(intval($req->group_video_id));
-        $course = $group_video->course();
-        $tag = $req->tag;
-        $comments = oval\Models\Comment::where([
-                        ['status', '=', 'current'],
-                        ['group_video_id', '=', $group_video->id]
-                    ])
-                    ->whereHas('tags', function ($q) use ($tag) {
-                        $q->where('tag', '=', $tag);
-                    })
-                    ->orderBy('updated_at', 'desc')
-                    ->get();
-        $retval = [];
-        foreach ($comments as $c) {
-            $u = oval\Models\User::find($c->user_id);
-            $mine = $user->id == $u->id ? true : false;
-            $date = empty($c->updated_at) ? null : $c->updated_at->format('g:iA d M, Y');
-            $instructor = $u->isInstructorOf($course);
-            $retval[] = [
-                "id"=>$c->id,
-                "user_id"=>$u->id,
-                "name"=>$u->fullName(),
-                "description"=>$c->description,
-                "tags"=>$c->tags->pluck('tag'),
-                "is_mine"=>$mine,
-                "privacy"=>$c->privacy,
-                "updated_at"=>$date,
-                "by_instructor"=>$instructor
-            ];
-        }
-        return $retval;
     }
 
     /**

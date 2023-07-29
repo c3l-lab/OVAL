@@ -91,9 +91,8 @@ function getAllAnnotations() {
 function getComments() {
 	comments = [];
 	$.ajax ({
-		type: "POST",
-		url: "/get_comments",
-		data: {group_video_id: group_video_id},
+		type: "GET",
+		url: "/comments?group_video_id=" + group_video_id,
 		success: function (data) {
 			if (data) {
 				comments = data.slice();
@@ -730,7 +729,7 @@ $(document).ready (
 			else if (title==="ADD COMMENT") {
 				$.ajax({
 					type:"POST",
-					url: "/add_comment",
+					url: "/comments",
 					beforeSend: function(request) {
 			   			request.setRequestHeader("Authorization", "Bearer "+api_token);
 					},
@@ -769,12 +768,12 @@ $(document).ready (
 			}
 			else if (title==="EDIT COMMENT") {
 				$.ajax({
-					type: "POST",
-					url: "/edit_comment",
+					type: "PUT",
+					url: "/comments/" + item.id,
 					beforeSend: function(request) {
 						request.setRequestHeader("Authorization", "Bearer "+api_token);
 					},
-					data: {comment_id:item.id, tags:tags, description:description, privacy:privacy, nominated_students_ids:nominated},
+					data: {tags:tags, description:description, privacy:privacy, nominated_students_ids:nominated},
 					success: function(data) {
 						if (points.length > 0) {
 							modal.modal('hide');
@@ -819,9 +818,8 @@ $(document).ready (
 					}
 					else if (title==="EDIT COMMENT") {
 						$.ajax({
-							type: "POST",
-							url: "/delete_comment",
-							data: {comment_id:item.id},
+							type: "DELETE",
+							url: "/comments/" + item.id,
 							success: function(data) {
 								getComments();
 								modal.modal("hide");
@@ -1251,9 +1249,8 @@ $(document).ready (
 		$("#comments").on("click", ".comment-tag", function(){
 			var tag = $(this).text();
 			$.ajax({
-				type: "POST",
-				url: "/get_comments_for_tag",
-				data: {tag:tag, group_video_id:group_video_id},
+				type: "GET",
+				url: "/comments/tag?tag=" + tag + "&group_video_id=" + group_video_id,
 				success: function(data) {
 					var tag_modal = $("#same-tag-modal");
 					tag_modal.find("#same-tag-modal-title").text('COMMENTS WITH TAG "'+tag+'"');

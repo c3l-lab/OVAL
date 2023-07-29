@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use oval\Http\Controllers\CommentController;
 use oval\Http\Controllers\GroupVideoController;
 use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\Lti\ConsumerController;
@@ -43,6 +44,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('group_videos.by_group');
     Route::resource('group_videos', GroupVideoController::class);
 
+    Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
+    Route::resource('comments', CommentController::class);
+
     Route::prefix('lti')->group(function () {
         Route::middleware([RequireAdmin::class])->group(function () {
             Route::resources([
@@ -62,13 +66,9 @@ Route::get('/batch-upload', 'HomeController@batch_upload');
 // ----------- ajax routes ------------- //
 Route::group(['middleware'=>'auth:api'], function () {
     Route::post('/get_annotations', 'AjaxController@get_annotations');
-    Route::post('/get_comments', 'AjaxController@get_comments');
-    Route::post('/add_comment', 'AjaxController@add_comment');
     Route::post('/add_annotation', 'AjaxController@add_annotation');
     Route::post('/edit_annotation', 'AjaxController@edit_annotation');
-    Route::post('/edit_comment', 'AjaxController@edit_comment');
     Route::post('/delete_annotation', 'AjaxController@delete_annotation');
-    Route::post('/delete_comment', 'AjaxController@delete_comment');
     Route::post('/get_groups', 'AjaxController@get_groups');
     Route::post('/save_video_group', 'AjaxController@assign_video_to_groups');
     Route::post('/download_annotations', 'AjaxController@download_annotations');
@@ -86,7 +86,6 @@ Route::group(['middleware'=>'auth:api'], function () {
     Route::post('/get_nominated_students_ids', 'AjaxController@get_nominated_students_ids');
     Route::post('/edit_comment_instruction', 'AjaxController@edit_comment_instruction');
     Route::post('/delete_comment_instruction', 'AjaxController@delete_comment_instruction');
-    Route::post('/get_comments_for_tag', 'AjaxController@get_comments_for_tag');
     Route::post('/get_annotations_for_tag', 'AjaxController@get_annotations_for_tag');
     Route::post('/edit_visibility', 'AjaxController@edit_visibility');
     Route::post('/edit_video_order', 'AjaxController@edit_video_order');
