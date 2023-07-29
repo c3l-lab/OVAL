@@ -13,6 +13,7 @@ use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\QuizResultController;
 use oval\Http\Controllers\TranscriptController;
 use oval\Http\Controllers\Video;
+use oval\Http\Controllers\Course;
 use oval\Http\Controllers\Lti\ConsumerController;
 use oval\Http\Controllers\Lti\RegistrationController;
 use oval\Http\Controllers\VideoController;
@@ -71,6 +72,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/annotations/column', [AnnotationController::class, 'column'])->name('annotations.column');
     Route::resource('annotations', AnnotationController::class);
 
+    Route::resource('courses.videos', Course\VideoController::class);
+
     Route::middleware([RequireAdmin::class])->group(function () {
         Route::post('/analysis_requests/batch_resend', [AnalysisRequestController::class, 'batch_resend'])->name('analysis_requests.batch_resend');
         Route::post('/analysis_requests/batch_reject', [AnalysisRequestController::class, 'batch_reject'])->name('analysis_requests.batch_reject');
@@ -103,7 +106,6 @@ Route::middleware(['auth'])->group(function () {
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/save_feedback', 'AjaxController@save_feedback');
     Route::post('/save_confidence_level', 'AjaxController@save_confidence_level');
-    Route::post('/get_videos_for_course', 'AjaxController@get_videos_for_course');
     Route::post('/check_if_course_wide_points', 'AjaxController@check_if_course_wide_points');
     Route::post('/save_points', 'AjaxController@save_points');
     Route::post('/get_points_for_group_video', 'AjaxController@get_points_for_group_video');

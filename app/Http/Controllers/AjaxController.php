@@ -46,22 +46,6 @@ class AjaxController extends Controller
     }
 
     /**
-     * Method called from route /get_videos_for_course
-     *
-     * This method returns videos which are assigned
-     * for the course whose id is passed in as parameter
-     *
-     * @param Request $req Request contains course_id
-     * @return array array with key [videos] whose value contains collection of Video objects
-     */
-    public function get_videos_for_course(Request $req)
-    {
-        $course = oval\Models\Course::find(intval($req->course_id));
-        $videos = $course->videos();
-        return compact('videos');
-    }
-
-    /**
      * Method called from /check_if_course_wide_points
      *
      * This method is used to check if the video for this course has course wide points.

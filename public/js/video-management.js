@@ -600,9 +600,8 @@ $('document').ready(function(){
 		modal_course_id = $(this).attr("id");
 		$("#points-form-course-name").text($(this).text());
 		$.ajax({
-				type: "POST",
-				url: "/get_videos_for_course",
-				data: {course_id: modal_course_id},
+				type: "GET",
+				url: "/courses/" + modal_course_id + "/videos",
 				success: function(data) {
 					var videos = data.videos;
 					var ul = $("#points-form-video-dropdown");
