@@ -530,27 +530,6 @@ class AjaxController extends Controller
 
     /*------ end analysis ajax funciton ------*/
 
-
-    /**
-     * Method called from route /edit_visibility
-     *
-     * This method saves visibility setting for the GroupVideo.
-     * If the GroupVideo is set to not visible, instructors can still see the page
-     * with message letting them know it is not visible for students.
-     *
-     * @param Request $req Contains group_video_id, visibility
-     * @return void
-     */
-    public function edit_visibility(Request $req)
-    {
-        $group_video_id = intval($req->group_video_id);
-        $vis = intval($req->visibility);
-
-        $group_video = oval\Models\GroupVideo::find($group_video_id);
-        $group_video->hide = $vis;
-        $group_video->save();
-    }
-
     /**
      * Method called from route /edit_video_order
      *

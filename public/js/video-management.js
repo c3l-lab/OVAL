@@ -706,8 +706,8 @@ $('document').ready(function(){
 		var visibility = $('input[name="visibility-radio"]:checked').val();
 		$.ajax({
 			type:"POST",
-			url: "/edit_visibility",
-			data: {group_video_id:group_video_id , visibility:visibility },
+			url: "/group_videos/" + group_video_id + "/toggle_visibility",
+			data: { visibility:visibility },
 			success: function() {
 				location.reload();
 			},

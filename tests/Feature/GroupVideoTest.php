@@ -131,4 +131,21 @@ class GroupVideoTest extends TestCase
         $reponse = $this->actingAs($user)->get('/group_videos/by_group?group_id=' . $group->id);
         $reponse->assertRedirectToRoute('group_videos.show', ['group_video' => $group->group_videos()->first()]);
     }
+
+    public function test_toggle_visibility(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->createWithVideoForUser($user);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
+
+        $response = $this->actingAs($user)->post('/group_videos/' . $groupVideo->id . '/toggle_visibility', [
+            "visibility" => 1
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('group_videos', [
+            'id' => $groupVideo->id,
+            'hide' => 1
+        ]);
+    }
 }

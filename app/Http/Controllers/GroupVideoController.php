@@ -171,6 +171,13 @@ class GroupVideoController extends Controller
         return compact('result');
     }
 
+    public function toggleVisibility(Request $request, GroupVideo $groupVideo)
+    {
+        $vis = intval($request->visibility);
+        $groupVideo->hide = $vis;
+        $groupVideo->save();
+    }
+
     public function toggleComments(Request $request, int $id)
     {
         $groupVideo = $this->getGroupVideo($id);
