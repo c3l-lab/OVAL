@@ -43,8 +43,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])->name('group_videos.show.embed');
     Route::post('/group_videos/{groupVideo}/toggle_visibility', [GroupVideoController::class, 'toggleVisibility'])->name('group_videos.toggle_visibility');
-    Route::post('/group_videos/{id}/toggle_comments', [GroupVideoController::class, 'toggleComments'])->name('group_videos.toggle_comments');
-    Route::post('/group_videos/{id}/toggle_annotations', [GroupVideoController::class, 'toggleAnnotations'])->name('group_videos.toggle_annotations');
+    Route::post('/group_videos/{groupVideo}/toggle_comments', [GroupVideoController::class, 'toggleComments'])->name('group_videos.toggle_comments');
+    Route::post('/group_videos/{groupVideo}/toggle_annotations', [GroupVideoController::class, 'toggleAnnotations'])->name('group_videos.toggle_annotations');
     Route::get('/group_videos/by_course', [GroupVideoController::class, 'byCourse'])->name('group_videos.by_course');
     Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])->name('group_videos.by_group');
     Route::resource('group_videos', GroupVideoController::class);

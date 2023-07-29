@@ -178,17 +178,15 @@ class GroupVideoController extends Controller
         $groupVideo->save();
     }
 
-    public function toggleComments(Request $request, int $id)
+    public function toggleComments(Request $request, GroupVideo $groupVideo)
     {
-        $groupVideo = $this->getGroupVideo($id);
         $groupVideo->show_comments = !$groupVideo->show_comments;
         $groupVideo->save();
         return response()->json(['success' => true]);
     }
 
-    public function toggleAnnotations(Request $request, int $id)
+    public function toggleAnnotations(Request $request, GroupVideo $groupVideo)
     {
-        $groupVideo = $this->getGroupVideo($id);
         $groupVideo->show_annotations = !$groupVideo->show_annotations;
         $groupVideo->save();
         return response()->json(['success' => true]);
@@ -223,12 +221,5 @@ class GroupVideoController extends Controller
             }
         }
         return view('pages.no-video');
-    }
-
-
-
-    private function getGroupVideo($id)
-    {
-        return GroupVideo::findOrFail($id);
     }
 }

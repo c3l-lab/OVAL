@@ -348,7 +348,7 @@
                                 </td>
                                 <td class="text-center">
                                     <label id="comments-switch" class="switch">
-                                        <input type="checkbox" {{ $gv->show_comments ? 'checked' : '' }} data-url="{{ route('group_videos.toggle_comments', ['id' => $gv->id]) }}" />
+                                        <input type="checkbox" {{ $gv->show_comments ? 'checked' : '' }} data-url="{{ route('group_videos.toggle_comments', ['groupVideo' => $gv]) }}" />
                                         <span class="slider round"></span>
                                         <br />
                                         <p>visible</p>
@@ -356,7 +356,7 @@
                                 </td>
                                 <td class="text-center">
                                     <label id="annotations-switch" class="switch">
-                                        <input type="checkbox" {{ $gv->show_annotations ? 'checked' : '' }} data-url="{{ route('group_videos.toggle_annotations', ['id' => $gv->id]) }}" />
+                                        <input type="checkbox" {{ $gv->show_annotations ? 'checked' : '' }} data-url="{{ route('group_videos.toggle_annotations', ['groupVideo' => $gv]) }}" />
                                         <span class="slider round"></span>
                                         <br />
                                         <p>visible</p>
