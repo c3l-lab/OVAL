@@ -41,7 +41,7 @@ $('document').ready(function () {
 								"<th>Number of annotations viewed</th>" +
 								"<th>Was the annotaions file downloaded</th>" +
 							 "</tr>";
-					
+
 					var output_head = ['Surname', 'First Name', 'User ID', 'The portion/percentage of video watched', 'First time the video was played', 'Last time the video was played', 'Number of Page Displays', 'Number of annotations viewed', 'Average time spent viewing each annotation', 'Was the annotaions file downloaded'];
 					output_arr.push(output_head);
 
@@ -60,18 +60,18 @@ $('document').ready(function () {
 									 "<td>" + res[i].annotations_download_status + "</td>" +
 								   "</tr>";
 
-						var output_item =[res[i].surname, 
-											res[i].first_name, 
-											res[i].student_id, 
-											parseFloat(res[i].portion)*100 + "%", 
-											res[i].first_play, 
-											res[i].last_play, 
+						var output_item =[res[i].surname,
+											res[i].first_name,
+											res[i].student_id,
+											parseFloat(res[i].portion)*100 + "%",
+											res[i].first_play,
+											res[i].last_play,
 											"<td>" + res[i].comment_view + "</td>" +
-											res[i].annotations_num, 
+											res[i].annotations_num,
 											res[i].annotations_download_status];
 						output_arr.push(output_item);
 
-						$(".analytics_wrap").append(item);		   
+						$(".analytics_wrap").append(item);
 					}
 
 					$("#analytics_modal").modal({ backdrop: 'static', keyboard: false });
@@ -82,7 +82,7 @@ $('document').ready(function () {
 
 					/*------ bind event to second table ------*/
 					$("#download_detail_csv").hide();
-					
+
 					$(".analytics_extra_wrap").empty();
 					$("#download_detail_csv").off('click');
 
@@ -98,7 +98,7 @@ $('document').ready(function () {
 			var $group_video_id = $(this).attr("groupvideoid");
 
 			$.ajax({
-				url: "/get_annotations_column",
+				url: "/annotations/column",
 				type: "GET",
 				data: {
 					user_id: $userlist,
@@ -124,13 +124,13 @@ $('document').ready(function () {
 								"<th>Number of annotations edited</th>" +
 								"<th>Number of annotations viewed</th>" +
 							   "</tr>";
-					
-					var output_head = ['Surname', 
-										'First Name', 
-										'User ID', 
-										'Number of annotations made', 
-										'Average annotation length (word count)', 
-										'Number of annotations edited', 
+
+					var output_head = ['Surname',
+										'First Name',
+										'User ID',
+										'Number of annotations made',
+										'Average annotation length (word count)',
+										'Number of annotations edited',
 										'Number of annotations viewed'];
 
 					output_arr.push(output_head);
@@ -148,17 +148,17 @@ $('document').ready(function () {
 									 "<td>" + res[i].annotation_viewed_num + "</td>" +
 								   "</tr>";
 
-						var output_item =[res[i].surname, 
-											res[i].first_name, 
-											res[i].student_id, 
-											res[i].annotation_num, 
+						var output_item =[res[i].surname,
+											res[i].first_name,
+											res[i].student_id,
+											res[i].annotation_num,
 											res[i].annotation_average_length,
 											res[i].annotation_edited_num,
 											res[i].annotation_viewed_num,
 										 ];
 						output_arr.push(output_item);
 
-						$(".analytics_wrap").append(item);		   
+						$(".analytics_wrap").append(item);
 					}
 
 					$("#analytics_modal").modal({ backdrop: 'static', keyboard: false });
@@ -169,7 +169,7 @@ $('document').ready(function () {
 
 					/*------ bind event to second table ------*/
 					$("#download_detail_csv").hide();
-					
+
 					$(".analytics_extra_wrap").empty();
 					$("#download_detail_csv").off('click');
 
@@ -212,7 +212,7 @@ $('document').ready(function () {
 								// "<th>Number of comments viewed</th>" +
 								// "<th>Average time spent viewing each comment</th>" +
 							   "</tr>";
-					
+
 					var output_head = ['Surname',
 										'First Name',
 										'User ID',
@@ -239,10 +239,10 @@ $('document').ready(function () {
 									//  "<td>" + seconds_to_HMS(res[i].comment_average_time) + "</td>" +
 								   "</tr>";
 
-						var output_item =[res[i].surname, 
-											res[i].first_name, 
-											res[i].student_id, 
-											res[i].comment_num, 
+						var output_item =[res[i].surname,
+											res[i].first_name,
+											res[i].student_id,
+											res[i].comment_num,
 											parseInt(res[i].comment_average_length),
 											res[i].comment_edited_num
 											// res[i].comment_viewed_num
@@ -250,7 +250,7 @@ $('document').ready(function () {
 										 ];
 						output_arr.push(output_item);
 
-						$(".analytics_wrap").append(item);		   
+						$(".analytics_wrap").append(item);
 					}
 
 					$("#analytics_modal").modal({ backdrop: 'static', keyboard: false });
@@ -261,7 +261,7 @@ $('document').ready(function () {
 
 					/*------ bind event to second table ------*/
 					$("#download_detail_csv").hide();
-					
+
 					$(".analytics_extra_wrap").empty();
 					$("#download_detail_csv").off('click');
 
@@ -305,13 +305,13 @@ $('document').ready(function () {
 									"<th>Duration of video viewed</th>" +
 									"<th>Quiz score</th>"
 					  				);
-					
 
 
-					var output_head = ['Surname', 
-										'First Name', 
-										'User ID', 
-										'Duration of video viewed', 
+
+					var output_head = ['Surname',
+										'First Name',
+										'User ID',
+										'Duration of video viewed',
 										'Quiz score'
 									  ];
 
@@ -319,7 +319,7 @@ $('document').ready(function () {
 						//var str = "Quiz Question " + i + 1 + " : " + res[0].quiz_name_list[i].name + " (attempt number)";
 						var str =  res[0].quiz_name_list[i].name + " (attempt number)";
 						var th = "<th itemname=" + res[0].quiz_name_list[i].name.replace(/ /g,"_") + " >" + str + "</th>"
-						
+
 						$head.append(th);
 						output_head.push(str);
 					}
@@ -336,14 +336,14 @@ $('document').ready(function () {
 										"<td>" + res[i].student_id + "</td>" +
 										"<td>" + parseFloat(res[i].portion).toFixed(2)*100 + "%" + "</td>" +
 										"<td>" + parseFloat(res[i].score_ratio).toFixed(2)*100 + "%" + "</td>");
-						
-						var output_item =[res[i].surname, 
-											res[i].first_name, 
-											res[i].student_id, 
-											parseFloat(res[i].portion).toFixed(2)*100, 
+
+						var output_item =[res[i].surname,
+											res[i].first_name,
+											res[i].student_id,
+											parseFloat(res[i].portion).toFixed(2)*100,
 											parseFloat(res[i].score_ratio).toFixed(2)*100
 										 ];
-						
+
 
 						$(".analytics_wrap tbody tr th").each(function(){
 							var item_name = $(this).attr("itemname");
@@ -362,7 +362,7 @@ $('document').ready(function () {
 											var td = "<td>" + res[i].answer_attempt[j].counter + "</td>";
 
 											$item.append(td);
-											output_item.push(res[i].answer_attempt[j].counter);		
+											output_item.push(res[i].answer_attempt[j].counter);
 											trigger = 1;
 
 										}
@@ -373,7 +373,7 @@ $('document').ready(function () {
 										var td = "<td></td>"
 										$item.append(td);
 										output_item.push("");
-	
+
 
 									}
 
@@ -387,12 +387,12 @@ $('document').ready(function () {
 								}
 
 							}
-							
+
 						});
-						
+
 						output_arr.push(output_item);
 
-						$(".analytics_wrap").append($item);		   
+						$(".analytics_wrap").append($item);
 					}
 
 					$("#download_csv").on('click', function(){
@@ -415,7 +415,7 @@ $('document').ready(function () {
 					for(var i = 0; i < res[0].quiz_name_list.length; i++){
 						var str =  res[0].quiz_name_list[i].name + " (attempt percentage)";
 						var th = "<th itemname=" + res[0].quiz_name_list[i].name.replace(/ /g,"_") + " >" + str + "</th>"
-						
+
 						$extra_head.append(th);
 					}
 
@@ -427,7 +427,7 @@ $('document').ready(function () {
 						$item.append("<td>" + res[i].surname + "</td>" +
 										"<td>" + res[i].first_name + "</td>" +
 										"<td>" + res[i].student_id + "</td>");
-						
+
 
 						$(".analytics_extra_wrap tbody tr th").each(function(){
 							var item_name = $(this).attr("itemname");
@@ -443,21 +443,21 @@ $('document').ready(function () {
 								}
 
 								var total = 0;
-								
+
 								$(".analytics_wrap tbody tr").each(function(){
 									total += Number($(this).find('td').eq(quiz_poistion).text());
 								});
 
-	
+
 								$item.append("<td>" + (Number($(".analytics_wrap tbody tr").eq(i+1).find("td").eq(quiz_poistion).text())/total)*100 + " % " + "</td>");
 
-								
-							}
-							
-						});
-						
 
-						$(".analytics_extra_wrap").append($item);		   
+							}
+
+						});
+
+
+						$(".analytics_extra_wrap").append($item);
 					}
 
 					/*------ output all student record data ------*/
@@ -479,16 +479,16 @@ $('document').ready(function () {
 
 								var detail_output_arr = [];
 
-								var detail_output_head = ['Surname', 
-										'First Name', 
-										'User ID', 
-										'Quiz Name', 
+								var detail_output_head = ['Surname',
+										'First Name',
+										'User ID',
+										'Quiz Name',
 										'Question Name',
 										'User Answer'
 									];
-								
+
 								detail_output_arr.push(detail_output_head);
-								
+
 								for(var i = 0; i < res.length; i++){
 									for(var j = 0; j < res[i].student_record_list.length; j++){
 										var data = JSON.parse(res[i].student_record_list[j].quiz_data);
@@ -505,7 +505,7 @@ $('document').ready(function () {
 								}
 
 								exportToCsv('student_all_record_report.csv', detail_output_arr);
-								
+
 							}
 						});
 
@@ -552,11 +552,11 @@ $('document').ready(function () {
 					   				"<th>Comment</th>" +
 									"<th>Point</th>" +
 									"<th>Confidence rating</th>");
-					
-					var output_head = ['Surname', 
-										'First Name', 
-										'User ID', 
-										'Comment', 
+
+					var output_head = ['Surname',
+										'First Name',
+										'User ID',
+										'Comment',
 										'Point',
 										'Confidence rating'
 									  ];
@@ -566,11 +566,11 @@ $('document').ready(function () {
 					$(".analytics_wrap").append($head);
 
 					for(var i = 0; i < res.length; i++){
-						
+
 						if(res[i].key_info.length > 0){
 
-							var output_item =[res[i].surname, 
-												res[i].first_name, 
+							var output_item =[res[i].surname,
+												res[i].first_name,
 												res[i].student_id
 											 ];
 
@@ -633,8 +633,8 @@ $('document').ready(function () {
 
 						}else{
 
-							var output_item =[res[i].surname, 
-												res[i].first_name, 
+							var output_item =[res[i].surname,
+												res[i].first_name,
 												res[i].student_id,
 												"",
 												"",
@@ -857,7 +857,7 @@ function draw_chart(){
 		gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
 	}
 
-	
+
 }
 
 /*------ general function ------*/
@@ -870,7 +870,7 @@ function seconds_to_HMS(second) {
     var hDisplay = h > 0 ? h + (h == 1 ? " hour : " : " hours : ") : "";
     var mDisplay = m > 0 ? m + (m == 1 ? " minute : " : " minutes : ") : "";
     var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-    return hDisplay + mDisplay + sDisplay; 
+    return hDisplay + mDisplay + sDisplay;
 }
 /*------ end general function ------*/
 

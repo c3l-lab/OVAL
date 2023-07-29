@@ -31,11 +31,13 @@
     @if ($group_video->show_annotations)
         @include('group_videos.show._annotations', [
             'group_video' => $group_video,
+            'course' => $course,
             'video' => $video,
         ])
     @else
         @include('group_videos.show._annotation_buttons', [
             'group_video' => $group_video,
+            'course' => $course,
         ])
     @endif
     </div>

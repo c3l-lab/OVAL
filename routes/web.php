@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use oval\Http\Controllers\AnnotationController;
 use oval\Http\Controllers\CommentController;
 use oval\Http\Controllers\CommentInstructionController;
 use oval\Http\Controllers\GroupVideoController;
@@ -49,6 +50,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('comments', CommentController::class);
     Route::resource('comment_instructions', CommentInstructionController::class);
 
+    Route::get('/annotations/download', [AnnotationController::class, 'download'])->name('annotations.download');
+    Route::get('/annotations/tag', [AnnotationController::class, 'tag'])->name('annotations.tag');
+    Route::get('/annotations/column', [AnnotationController::class, 'column'])->name('annotations.column');
+    Route::resource('annotations', AnnotationController::class);
+
     Route::prefix('lti')->group(function () {
         Route::middleware([RequireAdmin::class])->group(function () {
             Route::resources([
@@ -67,13 +73,8 @@ Route::get('/batch-upload', 'HomeController@batch_upload');
 
 // ----------- ajax routes ------------- //
 Route::group(['middleware'=>'auth:api'], function () {
-    Route::post('/get_annotations', 'AjaxController@get_annotations');
-    Route::post('/add_annotation', 'AjaxController@add_annotation');
-    Route::post('/edit_annotation', 'AjaxController@edit_annotation');
-    Route::post('/delete_annotation', 'AjaxController@delete_annotation');
     Route::post('/get_groups', 'AjaxController@get_groups');
     Route::post('/save_video_group', 'AjaxController@assign_video_to_groups');
-    Route::post('/download_annotations', 'AjaxController@download_annotations');
     Route::post('/save_feedback', 'AjaxController@save_feedback');
     Route::post('/get_group_info_for_video', 'AjaxController@get_group_info_for_video');
     Route::post('/save_confidence_level', 'AjaxController@save_confidence_level');
@@ -86,7 +87,6 @@ Route::group(['middleware'=>'auth:api'], function () {
     Route::post('/add_trackings', 'AjaxController@add_trackings');
     Route::post('/add_analysis_request', 'AjaxController@add_analysis_request');
     Route::post('/get_nominated_students_ids', 'AjaxController@get_nominated_students_ids');
-    Route::post('/get_annotations_for_tag', 'AjaxController@get_annotations_for_tag');
     Route::post('/edit_visibility', 'AjaxController@edit_visibility');
     Route::post('/edit_video_order', 'AjaxController@edit_video_order');
     Route::post('/edit_text_analysis_visibility', 'AjaxController@edit_text_analysis_visibility');
@@ -124,7 +124,6 @@ Route::get('/get_quiz', 'AjaxController@get_quiz');
 
 /*------ analysis api ------*/
 Route::get('/get_student_view', 'AjaxController@get_student_view');
-Route::get('/get_annotations_column', 'AjaxController@get_annotations_column');
 Route::get('/get_comment_column', 'AjaxController@get_comment_column');
 Route::get('/get_quiz_question', 'AjaxController@get_quiz_question');
 Route::get('/get_key_point', 'AjaxController@get_key_point');

@@ -74,8 +74,8 @@ function commaDelimitedToArray(commaDelimited) {
 function getAllAnnotations() {
 	annotations.splice(0, annotations.length);
 	$.ajax({
-		type: "POST",
-		url: "/get_annotations",
+		type: "GET",
+		url: "/annotations",
 		data: {course_id:course_id, group_id:group_id, video_id:video_id},
 		success: function(data) {
 			annotations = data.slice();
@@ -714,7 +714,7 @@ $(document).ready (
 			if (title==="ADD ANNOTATION") {
 				$.ajax({
 					type:"POST",
-					url: "/add_annotation",
+					url: "/annotations",
 					data: {group_video_id: group_video_id, start_time: item_start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids:nominated},
 					success: function(data) {
 						modal.modal("hide");
@@ -753,9 +753,9 @@ $(document).ready (
 			}
 			else if (title==="EDIT ANNOTATION") {
 				$.ajax({
-					type: "POST",
-					url: "/edit_annotation",
-					data: {annotation_id: item.id, start_time: item.start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids:nominated},
+					type: "PUT",
+					url: "/annotations/" + item.id,
+					data: {start_time: item.start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids:nominated},
 					success: function(data) {
 						modal.modal("hide");
 						getAllAnnotations();
@@ -802,9 +802,8 @@ $(document).ready (
 				if (confirm("Are you sure you want to delete?")) {
 					if (title==="EDIT ANNOTATION")  {
 						$.ajax({
-							type: "POST",
-							url: "/delete_annotation",
-							data: {annotation_id:item.id},
+							type: "DELETE",
+							url: "/annotations/" + item.id,
 							success: function(data) {
 								modal.modal("hide");
 								// getAnnotations(ALL);
@@ -970,30 +969,6 @@ $(document).ready (
 			saveFeedbacksAndConfidenceLevel(item);
 			$("#feedback").modal("hide");
 			getComments();
-		});
-		$(".annotations-buttons").on("click", ".download-comments", function(e) {
-			// var filter = $("input[name=filter]:checked").val();
-
-			$.ajax({
-				type: 'POST',
-				url: '/download_annotations',
-				// data: {filter: filter, group_video_id: group_video_id, course_id: course_id},
-				data: {group_video_id: group_video_id, course_id: course_id},
-
-				success: function(data) {
-					var a = document.createElement('a');
-					a.href = "data:attachment/csv;charset=utf-8," + encodeURIComponent(data);
-					a.target = "_blank";
-					a.download = "annotations.csv";
-					document.body.appendChild(a);
-					a.click();
-				},
-				error: function (request, status, error) {
-					console.log("error download-annotations - "+request.responseText);		////////
-				},
-				async: false
-			});
-
 		});
 		$("#annotation-filter input").on("change", function(e) {
 			var mode = $('input[name=filter]:checked').val();
@@ -1297,9 +1272,8 @@ $(document).ready (
 		$("#preview").on("click", ".annotation-tag", function()  {
 			var tag = $(this).text();
 			$.ajax({
-				type: "POST",
-				url: "/get_annotations_for_tag",
-				data: {tag:tag, group_video_id:group_video_id},
+				type: "GET",
+				url: "/annotations/tag?tag=" + tag + "&group_video_id=" + group_video_id,
 				success: function(data) {
 					var tag_modal = $("#same-tag-modal");
 					tag_modal.find("#same-tag-modal-title").text('ANNOTATIONS WITH TAG "'+tag+'"');

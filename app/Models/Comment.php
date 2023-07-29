@@ -73,11 +73,11 @@ class Comment extends Model
      * and "current" comments that are made by others that are visible to the user.
      * The returned array contains data ready for display.
      *
-     * @param integer $user_id
      * @param integer $group_video_id
+     * @param integer $user_id
      * @return array Array of array with keys - id, user_id, name, description, tags, is_mine, privacy, updated_at, created_at
      */
-    public static function group_video_comments($group_video_id, $user_id)
+    public static function groupVideoComments($group_video_id, $user_id)
     {
         $mine = static::where([
                         ['user_id', '=', $user_id],

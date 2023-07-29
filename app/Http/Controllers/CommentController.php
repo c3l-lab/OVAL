@@ -14,7 +14,7 @@ class CommentController extends Controller
     {
         $user = \Auth::user();
         $group_video_id = $request->query('group_video_id');
-        $comments = Comment::group_video_comments($group_video_id, $user->id);
+        $comments = Comment::groupVideoComments($group_video_id, $user->id);
         return $comments;
     }
 
