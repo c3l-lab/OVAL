@@ -97,7 +97,7 @@ jobs:
       - name: Run Laravel Server
         run: php artisan serve > /dev/null 2>&1 &
         env:
-          APP_URL: "http://127.0.0.1:8000"
+          APP_ENV: testing
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
 
       - name: Wait for Laravel Server
