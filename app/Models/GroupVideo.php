@@ -274,7 +274,7 @@ class GroupVideo extends Model
         $usersWithAccess = count($this->group()->members);
         $uniqueViewers = $this->numUniqueViews();
         $percent = 0;
-        if ($uniqueViewers != 0) {
+        if ($uniqueViewers != 0 && $usersWithAccess != 0) {
             $percent = $uniqueViewers/$usersWithAccess*100;
         }
         return round($percent, 2);

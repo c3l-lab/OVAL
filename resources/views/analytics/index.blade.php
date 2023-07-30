@@ -99,7 +99,14 @@ VIDEO USAGE ANALYTICS</div>
 
 								<br /><br />
 
-								<button class='quiz_question analytics_btn' userlist = {{$gv->memberList()}} groupvideoid = {{$gv->id}} > Details <i class="fa fa-info-circle" aria-hidden="true"></i></button><br />
+								<button
+									class='quiz_question analytics_btn'
+									data-userlist="{{$gv->memberList()}}"
+									data-groupvideoid="{{$gv->id}}"
+								>
+									Details <i class="fa fa-info-circle" aria-hidden="true"></i>
+								</button>
+								<br />
 
 							</td>
 						</tr>

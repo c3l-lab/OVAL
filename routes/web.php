@@ -13,6 +13,7 @@ use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\QuizResultController;
 use oval\Http\Controllers\TranscriptController;
 use oval\Http\Controllers\Video;
+use oval\Http\Controllers\GroupVideo;
 use oval\Http\Controllers\Course;
 use oval\Http\Controllers\Lti\ConsumerController;
 use oval\Http\Controllers\Lti\RegistrationController;
@@ -51,6 +52,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])->name('group_videos.by_group');
     Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
     Route::resource('group_videos', GroupVideoController::class);
+
+    Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('videos.quiz.result');
 
     Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
     Route::get('/comments/column', [CommentController::class, 'column'])->name('comments.column');
@@ -124,7 +127,6 @@ Route::post('/check_youtube_caption', 'GoogleAPIController@check_youtube_caption
 
 /*------ analysis api ------*/
 Route::get('/get_student_view', 'AjaxController@get_student_view');
-Route::get('/get_quiz_question', 'AjaxController@get_quiz_question');
 Route::get('/get_key_point', 'AjaxController@get_key_point');
 Route::get('/get_quiz_visable_status', 'AjaxController@get_quiz_visable_status');
 Route::get('/get_all_student_record', 'AjaxController@get_all_student_record');

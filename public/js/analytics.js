@@ -274,15 +274,14 @@ $('document').ready(function () {
 
 	$(".quiz_question").each(function (){
 		$(this).on("click", function () {
-			var $userlist = $(this).attr("userlist");
-			var $group_video_id = $(this).attr("groupvideoid");
+			var $userlist = $(this).data("userlist");
+			var $group_video_id = $(this).data("groupvideoid");
 
 			$.ajax({
-				url: "/get_quiz_question",
+				url: "/group_videos/" + $group_video_id + "/quiz/result",
 				type: "GET",
 				data: {
 					user_id: $userlist,
-					group_video_id: $group_video_id
 				},
 				error: function (xhr, status, errorThrown) {
 					if (status === 'error') {
