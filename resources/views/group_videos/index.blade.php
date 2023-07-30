@@ -340,10 +340,14 @@
                                             class="fa fa-comment-o"></i></button>
                                     <br />
                                     <label id="quiz-switch" class="switch">
-                                        <input type="checkbox" checked videoid="{{ $gv->video()->id }}">
+                                        <input
+                                            type="checkbox"
+                                            @checked($gv->quiz && $gv->quiz->visable == 1)
+                                            videoid="{{ $gv->video()->id }}"
+                                        >
                                         <span class="slider round"></span>
                                         <br />
-                                        <p>visible</p>
+                                        <p>{{  $gv->quiz && $gv->quiz->visable == 1 ? 'visible' : 'hidden' }}</p>
                                     </label>
                                 </td>
                                 <td class="text-center">

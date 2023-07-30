@@ -35,6 +35,11 @@ class Group extends Model
         return $this->belongsToMany('oval\Models\User', 'group_members');
     }
 
+    public function groupVideos()
+    {
+        return $this->hasMany(GroupVideo::class);
+    }
+
     /**
     *	Method to return students who belongs to this group
     *	@return collection of User objects

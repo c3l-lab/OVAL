@@ -103,6 +103,16 @@ class GroupVideo extends Model
         return $this->hasMany('oval\Models\Point');
     }
 
+    public function quiz()
+    {
+        return $this->hasOne(QuizCreation::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
+
     /**
     *	Method to return the Course the group of this GroupVideo belongs to
     *	@return Course object
@@ -111,15 +121,6 @@ class GroupVideo extends Model
     {
         $group = Group::find($this->group_id);
         return $group->course;
-    }
-
-    /**
-    *	Method to return the Group of this GroupVideo
-    *	@return Group object
-    **/
-    public function group()
-    {
-        return Group::find($this->group_id);
     }
 
     /**
@@ -236,7 +237,7 @@ class GroupVideo extends Model
     **/
     public function memberList()
     {
-        $usersWithAccess = $this->group()->members;
+        $usersWithAccess = $this->group->members;
         $list = '';
 
         for($i = 0; $i < count($usersWithAccess); $i++) {
@@ -271,7 +272,7 @@ class GroupVideo extends Model
     **/
     public function percentageUsersViewed()
     {
-        $usersWithAccess = count($this->group()->members);
+        $usersWithAccess = count($this->group->members);
         $uniqueViewers = $this->numUniqueViews();
         $percent = 0;
         if ($uniqueViewers != 0 && $usersWithAccess != 0) {

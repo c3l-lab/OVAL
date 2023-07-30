@@ -424,58 +424,6 @@ $(document).ready(function () {
 
     });
 
-    /*------ pre-set video quiz visable status ------*/
-    var video_id_list = "";
-    $('.switch').each(function () {
-        var input = $(this).children('input').attr('videoid');
-        video_id_list += input + ",";
-    });
-
-    video_id_list = video_id_list.substring(0, video_id_list.length - 1);
-
-    if (video_id_list.length > 0) {
-        $.ajax({
-            url: "/get_quiz_visable_status",
-            type: "GET",
-            data: {
-                videoid: video_id_list
-            },
-            error: function (xhr, status, errorThrown) {
-                if (status === 'error') {
-
-                    alert_modal("database query error!")
-
-                }
-            },
-            success: function (res) {
-
-                $('.switch').each(function () {
-                    var video_id = $(this).children('input').attr('videoid')
-                    var input = $(this).children('input').prop('checked');
-
-                    for (var i = 0; i < res.length; i++) {
-                        if (res[i].video_id == video_id) {
-                            switch (parseInt(res[i].visable)) {
-                                case 0:
-                                    $(this).children('input').prop('checked', false);
-                                    $(this).children('p').text('hidden');
-                                    break;
-                                case 1:
-                                    $(this).children('input').prop('checked', true);
-                                    $(this).children('p').text('visible');
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-
-                });
-            }
-        })
-    }
-
-    /*------ end pre-set video quiz visable status ------*/
     /*------ add/remove option ------*/
 
     $("#quiz_options_add").on("click", function () {

@@ -13,42 +13,38 @@ class GroupVideoController extends Controller
         $course_id = $request->query('course_id');
         $group_id = $request->query('group_id');
         $api_token = $user->api_token;
-        if ($user->isAnInstructor()) {
-            $courses_teaching = $user->coursesTeaching();
-            $course_id = $course_id ? $course_id : $request->session()->get('current-course', 0);
-            $course = $course_id ? \oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
-            if (!$user->isInstructorOf($course)) {
-                foreach ($courses_teaching as $c) {
-                    $course = $c;
-                    break;
-                }
+        $courses_teaching = $user->coursesTeaching();
+        $course_id = $course_id ? $course_id : $request->session()->get('current-course', 0);
+        $course = $course_id ? \oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
+        if (!$user->isInstructorOf($course)) {
+            foreach ($courses_teaching as $c) {
+                $course = $c;
+                break;
             }
-            $group = $group_id ? \oval\Models\Group::find($group_id) : $course->groups->first();
-            $videos_without_group = \oval\Models\Video::doesntHave('groups')->get();
-            $group_videos = $group->group_videos()->where('status', 'current');
-
-            \JavaScript::put([
-                'user_id' => $user->id,
-                'course_id' => $course->id,
-                'course_name' => $course->name,
-                'group_id' => $group->id,
-                'group_name' => $group->name,
-                'api_token' => $api_token,
-            ]);
-
-            // save current course id
-            session(['current-course' => $course->id]);
-
-            return view('group_videos.index', [
-                'user' => $user,
-                'course' => $course,
-                'group' => $group,
-                'videos_without_group' => $videos_without_group,
-                'group_videos' => $group_videos,
-            ]);
-        } else {
-            return view('pages.not-instructor', compact('user'));
         }
+        $group = $group_id ? \oval\Models\Group::find($group_id) : $course->groups->first();
+        $videos_without_group = \oval\Models\Video::doesntHave('groups')->get();
+        $group_videos = GroupVideo::with('quiz')->whereBelongsTo($group)->where('status', 'current')->get();
+
+        \JavaScript::put([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+            'course_name' => $course->name,
+            'group_id' => $group->id,
+            'group_name' => $group->name,
+            'api_token' => $api_token,
+        ]);
+
+        // save current course id
+        session(['current-course' => $course->id]);
+
+        return view('group_videos.index', [
+            'user' => $user,
+            'course' => $course,
+            'group' => $group,
+            'videos_without_group' => $videos_without_group,
+            'group_videos' => $group_videos,
+        ]);
     }
 
     public function show(Request $request, int $id)
@@ -71,7 +67,7 @@ class GroupVideoController extends Controller
 
         $group_video = \oval\Models\GroupVideo::findOrFail($group_video_id);
 
-        $group = $group_video->group();
+        $group = $group_video->group;
         $course = $group->course;
 
         if (

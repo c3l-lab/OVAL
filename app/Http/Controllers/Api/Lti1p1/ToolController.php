@@ -39,8 +39,8 @@ class ToolController extends Controller
             ['status', '=', 'current']
         ])->firstOrFail();
 
-        if (!empty($group_video->group())) {
-            $ltiLaunchService->addUserToGroup($group_video->group());
+        if (!empty($group_video->group)) {
+            $ltiLaunchService->addUserToGroup($group_video->group);
         }
 
         // if the request from studio, the user_id would be 'student'

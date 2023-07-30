@@ -73,7 +73,7 @@ class GroupVideoTest extends TestCase
                     ->first();
 
         $response = $this->actingAs($user)->get('/group_videos/' . $group_video->id);
-        $response->assertStatus(404);
+        $response->assertStatus(401);
     }
 
     public function test_destroy(): void
@@ -105,6 +105,7 @@ class GroupVideoTest extends TestCase
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
+        $user->makeInstructorOf($course);
 
         $response = $this->actingAs($user)->post('/group_videos/' . $groupVideo->id . '/archive');
 
@@ -152,6 +153,7 @@ class GroupVideoTest extends TestCase
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
+        $user->makeInstructorOf($course);
 
         $response = $this->actingAs($user)->post('/group_videos/' . $groupVideo->id . '/toggle_visibility', [
             "visibility" => 1
@@ -169,6 +171,7 @@ class GroupVideoTest extends TestCase
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
+        $user->makeInstructorOf($course);
 
         $response = $this->actingAs($user)->post('/group_videos/' . $groupVideo->id . '/toggle_analysis', [
             "visibility" => 0
@@ -186,6 +189,7 @@ class GroupVideoTest extends TestCase
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
+        $user->makeInstructorOf($course);
 
         $response = $this->actingAs($user)->post('/group_videos/sort', [
             "group_video_ids" => [$groupVideo->id]

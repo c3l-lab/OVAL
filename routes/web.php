@@ -43,17 +43,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('videos', VideoController::class);
 
     Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])->name('group_videos.show.embed');
-    Route::post('/group_videos/{groupVideo}/toggle_visibility', [GroupVideoController::class, 'toggleVisibility'])->name('group_videos.toggle_visibility');
-    Route::post('/group_videos/{groupVideo}/toggle_comments', [GroupVideoController::class, 'toggleComments'])->name('group_videos.toggle_comments');
-    Route::post('/group_videos/{groupVideo}/toggle_annotations', [GroupVideoController::class, 'toggleAnnotations'])->name('group_videos.toggle_annotations');
-    Route::post('/group_videos/{groupVideo}/toggle_analysis', [GroupVideoController::class, 'toggleAnalysis'])->name('group_videos.toggle_analysis');
-    Route::post('/group_videos/{groupVideo}/archive', [GroupVideoController::class, 'archive'])->name('group_videos.archive');
-    Route::get('/group_videos/by_course', [GroupVideoController::class, 'byCourse'])->name('group_videos.by_course');
-    Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])->name('group_videos.by_group');
-    Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
-    Route::resource('group_videos', GroupVideoController::class);
-
-    Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('videos.quiz.result');
 
     Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
     Route::get('/comments/column', [CommentController::class, 'column'])->name('comments.column');
@@ -93,6 +82,18 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware([RequireInstructor::class])->group(function () {
+        Route::post('/group_videos/{groupVideo}/toggle_visibility', [GroupVideoController::class, 'toggleVisibility'])->name('group_videos.toggle_visibility');
+        Route::post('/group_videos/{groupVideo}/toggle_comments', [GroupVideoController::class, 'toggleComments'])->name('group_videos.toggle_comments');
+        Route::post('/group_videos/{groupVideo}/toggle_annotations', [GroupVideoController::class, 'toggleAnnotations'])->name('group_videos.toggle_annotations');
+        Route::post('/group_videos/{groupVideo}/toggle_analysis', [GroupVideoController::class, 'toggleAnalysis'])->name('group_videos.toggle_analysis');
+        Route::post('/group_videos/{groupVideo}/archive', [GroupVideoController::class, 'archive'])->name('group_videos.archive');
+        Route::get('/group_videos/by_course', [GroupVideoController::class, 'byCourse'])->name('group_videos.by_course');
+        Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])->name('group_videos.by_group');
+        Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
+        Route::resource('group_videos', GroupVideoController::class);
+
+        Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('videos.quiz.result');
+
         Route::resource('analytics', AnalyticsController::class);
     });
 
@@ -128,5 +129,4 @@ Route::post('/check_youtube_caption', 'GoogleAPIController@check_youtube_caption
 /*------ analysis api ------*/
 Route::get('/get_student_view', 'AjaxController@get_student_view');
 Route::get('/get_key_point', 'AjaxController@get_key_point');
-Route::get('/get_quiz_visable_status', 'AjaxController@get_quiz_visable_status');
 Route::get('/get_all_student_record', 'AjaxController@get_all_student_record');

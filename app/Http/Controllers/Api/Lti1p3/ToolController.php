@@ -56,8 +56,8 @@ class ToolController extends Controller
 
         $group_video = GroupVideo::findOrFail($resourceId);
 
-        if (!empty($group_video->group()) && \Auth::user()) {
-            $ltiLaunchService->addUserToGroup($group_video->group());
+        if (!empty($group_video->group) && \Auth::user()) {
+            $ltiLaunchService->addUserToGroup($group_video->group);
         }
 
         if ($launch->isDeepLinkLaunch()) {
