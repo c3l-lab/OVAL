@@ -58,12 +58,12 @@ $(document).ready(function () {
                     var link = $(this).first().find('img').attr('src').split('/');
                     var link_tag = link[2];
 
-                    $quizButton = $('#set-quiz-btn');
-
                     switch (link_tag) {
                         case "img.youtube.com":
 
                             var video_key = link[4];
+
+                            $quizButton = $(this).find('.set-quiz-btn');
 
                             /*------ store data into tag ------*/
                             $quizButton.attr("identifier", video_key);

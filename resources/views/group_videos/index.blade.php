@@ -336,10 +336,10 @@
                                 </td>
                                 <td>
                                     <button
-                                        id="set-quiz-btn"
                                         type="button"
                                         data-group-video-id={{ $gv->id }}
-                                        class="quiz btn btn-link assign-grp-button" title="Set quiz"
+                                        class="set-quiz-btn quiz btn btn-link assign-grp-button"
+                                        title="Set quiz"
                                     >
                                         <i class="fa fa-comment-o"></i>
                                     </button>
