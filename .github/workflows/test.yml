@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   tests:
-    name: Run tests
+    name: Tests
     runs-on: ubuntu-latest
 
     services:
@@ -44,7 +44,7 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
 
   e2e:
-    name: Run E2E
+    name: E2E
     runs-on: ubuntu-latest
 
     services:
