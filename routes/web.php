@@ -55,18 +55,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/videos/{video}/groups/with_contents', [Video\GroupController::class, 'withContents'])->name('videos.groups.with_contents');
     Route::resource('videos.groups', Video\GroupController::class);
 
-    Route::post('/videos/{id}/quiz/toggle_visible', [Video\QuizController::class, 'toggleVisible'])->name('videos.quiz.toggle_visible');
-    Route::singleton('videos.quiz', Video\QuizController::class);
-
-    Route::get('/quiz_results/report', [QuizResultController::class, 'report'])->name('quiz_results.report');
-    Route::resource('quiz_results', QuizResultController::class);
-
     Route::get('/annotations/download', [AnnotationController::class, 'download'])->name('annotations.download');
     Route::get('/annotations/tag', [AnnotationController::class, 'tag'])->name('annotations.tag');
     Route::get('/annotations/column', [AnnotationController::class, 'column'])->name('annotations.column');
     Route::resource('annotations', AnnotationController::class);
 
     Route::resource('courses.videos', Course\VideoController::class);
+
+    Route::get('/quiz_results/report', [QuizResultController::class, 'report'])->name('quiz_results.report');
+    Route::resource('quiz_results', QuizResultController::class);
 
     Route::middleware([RequireAdmin::class])->group(function () {
         Route::post('/analysis_requests/batch_resend', [AnalysisRequestController::class, 'batch_resend'])->name('analysis_requests.batch_resend');
@@ -93,7 +90,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
         Route::resource('group_videos', GroupVideoController::class);
 
-        Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('videos.quiz.result');
+        Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('group_videos.quiz.result');
+        Route::post('/group_videos/{groupVideo}/quiz/toggle_visible', [GroupVideo\QuizController::class, 'toggleVisible'])->name('group_videos.quiz.toggle_visible');
+        Route::singleton('group_videos.quiz', GroupVideo\QuizController::class);
 
         Route::resource('analytics', AnalyticsController::class);
     });

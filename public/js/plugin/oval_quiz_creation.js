@@ -72,9 +72,10 @@ $(document).ready(function () {
                             /*------ bind click event to tag ------*/
                             $quizButton.on('click', function () {
                                 var identifier = $(this).attr("identifier");
+                                var group_video_id = $(this).data("group-video-id");
                                 var media_type = $(this).attr("media_type");
 
-                                change_tag_status(identifier, media_type);
+                                change_tag_status(identifier, media_type, group_video_id);
 
                                 setTimeout(function () {
 
@@ -101,7 +102,7 @@ $(document).ready(function () {
 
                                         $.ajax({
                                             type: "GET",
-                                            url: "/videos/" + identifier + "/quiz",
+                                            url: "/group_videos/" + group_video_id + "/quiz",
                                             success: function (res) {
 
                                                 if (res.quiz != null) {
@@ -154,12 +155,12 @@ $(document).ready(function () {
     $("#quiz-switch").each(function () {
         $(this).children('input').on('change', function () {
 
-            var videoid = $(this).attr('videoid');
+            var group_video_id = $(this).data('group-video-id');
 
             if ($(this).prop('checked')) {
 
                 $.ajax({
-                    url: "/videos/" + videoid + "/quiz/toggle_visible",
+                    url: "/group_videos/" + group_video_id + "/quiz/toggle_visible",
                     type: "post",
                     data: {
                         visable: 1,
@@ -181,7 +182,7 @@ $(document).ready(function () {
             } else {
 
                 $.ajax({
-                    url: "/videos/" + videoid + "/quiz/toggle_visible",
+                    url: "/group_videos/" + group_video_id + "/quiz/toggle_visible",
                     type: "post",
                     data: {
                         visable: 0,
@@ -414,10 +415,10 @@ $(document).ready(function () {
         } else {
 
             var creator_id = parseInt(user_id);
-            var identifier = $(this).attr("identifier");
+            var group_video_id = $(this).data("group-video-id");
             var media_type = $(this).attr("media_type");
 
-            submit_quiz_to_server(creator_id, identifier, media_type, set_quiz_meta);
+            submit_quiz_to_server(creator_id, group_video_id, media_type, set_quiz_meta);
 
         }
 
@@ -1045,10 +1046,10 @@ function reset() {
 
 }
 
-function submit_quiz_to_server(creator_id, identifier, media_type, quiz_data) {
+function submit_quiz_to_server(creator_id, group_video_id, media_type, quiz_data) {
     $.ajax({
         type: "PUT",
-        url: "/videos/" + identifier + "/quiz",
+        url: "/group_videos/" + group_video_id + "/quiz",
         data: {
             creator_id: creator_id,			//int
             media_type: media_type,		    //string
@@ -1068,11 +1069,12 @@ function submit_quiz_to_server(creator_id, identifier, media_type, quiz_data) {
     });
 }
 
-function change_tag_status(identifier, media_type) {
+function change_tag_status(identifier, media_type, group_video_id) {
     $("#quiz_submit_btn").attr("identifier", "");
     $("#quiz_submit_btn").attr("media_type", "");
     $("#quiz_submit_btn").attr("identifier", identifier);
     $("#quiz_submit_btn").attr("media_type", media_type);
+    $("#quiz_submit_btn").data("group-video-id", group_video_id);
 }
 
 function init_option(data) {

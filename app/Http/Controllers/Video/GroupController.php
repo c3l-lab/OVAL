@@ -41,17 +41,16 @@ class GroupController extends Controller
             ])
               ->first();
             $points = $group_video->relatedPoints();
-            $quiz = QuizCreation::where('identifier', '=', Video::find($video->id)->identifier)
-              ->first();
+            $quiz = $group_video->quiz;
 
             $group = [
               "course_id" => $g->course->id,
               "course_name" => $g->course->name,
               "id" => $g->id,
               "name" => $g->name,
-              "has_comment_instruction" => empty($comment_instruction) ? false : true,
-              "has_points" => $points->count() > 0 ? true : false,
-              "has_quiz" => empty($quiz) ? false : true,
+              "has_comment_instruction" => !empty($comment_instruction),
+              "has_points" => $points->count(),
+              "has_quiz" => !empty($quiz),
               "group_video_id" => $group_video->id,
               "course" => $group_video->course()->name,
               "def_group" => $group_video->course()->defaultGroup()->name,

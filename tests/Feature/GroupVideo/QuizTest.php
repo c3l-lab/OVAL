@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Video;
+namespace Tests\Feature\GroupVideo;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -12,30 +12,32 @@ use Tests\TestCase;
 
 class QuizTest extends TestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
 
     public function test_show(): void
     {
         $user = User::factory()->create();
-        $video = Video::factory()->create();
+        $course = Course::factory()->createWithVideoForUser($user);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
+
         QuizCreation::factory()->create([
-            'identifier' => $video->identifier,
+            'group_video_id' => $groupVideo->id,
         ]);
 
-        $response = $this->actingAs($user)->get("/videos/{$video->identifier}/quiz");
+        $response = $this->actingAs($user)->get("/group_videos/{$groupVideo->id}/quiz");
 
         $response->assertStatus(200);
         $response->assertJsonIsObject();
-        $response->assertJsonPath('quiz.identifier', $video->identifier);
+        $response->assertJsonPath('quiz.group_video_id', $groupVideo->id);
     }
 
     public function test_create(): void
     {
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
-        $video = $course->defaultGroup()->videos->first();
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
 
-        $response = $this->actingAs($user)->put("/videos/{$video->identifier}/quiz", [
+        $response = $this->actingAs($user)->put("/group_videos/{$groupVideo->id}/quiz", [
             "course_id" => $course->id,
             "media_type" => "youtube",
             "quiz_data" => [
@@ -57,7 +59,7 @@ class QuizTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('quiz_creation', [
-            'identifier' => $video->identifier,
+            'group_video_id' => $groupVideo->id,
         ]);
     }
 
@@ -65,12 +67,10 @@ class QuizTest extends TestCase
     {
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
-        $video = $course->defaultGroup()->videos->first();
-        QuizCreation::factory()->create([
-            'identifier' => $video->identifier,
-        ]);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
 
-        $response = $this->actingAs($user)->put("/videos/{$video->identifier}/quiz", [
+
+        $response = $this->actingAs($user)->put("/group_videos/{$groupVideo->id}/quiz", [
             "course_id" => $course->id,
             "media_type" => "youtube",
             "quiz_data" => [
@@ -92,7 +92,7 @@ class QuizTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('quiz_creation', [
-            'identifier' => $video->identifier,
+            'group_video_id' => $groupVideo->id,
         ]);
     }
 }

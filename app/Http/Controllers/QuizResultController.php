@@ -11,7 +11,7 @@ class QuizResultController extends Controller
     {
         $quiz_ans = new QuizResult();
         $quiz_ans->user_id = intval($request->user_id);
-        $quiz_ans->identifier = (string)($request->identifier);
+        $quiz_ans->group_video_id = $request->group_video_id;
         $quiz_ans->media_type = (string)($request->media_type);
         $quiz_ans->quiz_data = json_encode($request->quiz_data);
         $quiz_ans->save();
@@ -41,11 +41,9 @@ class QuizResultController extends Controller
 
             /*------ get all attempt record ------*/
             $student_record_list = \DB::table('quiz_result')
-                        ->join('videos', 'videos.identifier', '=', 'quiz_result.identifier')
-                        ->join('group_videos', 'group_videos.video_id', '=', 'videos.id')
                         ->select('quiz_result.quiz_data', 'quiz_result.created_at')
                         ->where([
-                            ['group_videos.id', '=', $request->group_video_id],
+                            ['group_video_id', '=', $request->group_video_id],
                             ['quiz_result.user_id', '=', $user_arr[$x]]
                         ])
                         ->orderBy('quiz_result.created_at', 'desc')

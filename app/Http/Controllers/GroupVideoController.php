@@ -117,8 +117,7 @@ class GroupVideoController extends Controller
             }
         }
 
-        $quizzes = \oval\Models\QuizCreation::where('identifier', '=', $video->identifier)->get();
-        $has_quiz = $quizzes->count() ? true : false;
+        $has_quiz = !empty($group_video->quiz);
 
         \JavaScript::put([
             'MINE' => 1,

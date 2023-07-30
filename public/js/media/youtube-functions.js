@@ -25,7 +25,7 @@ window.onYouTubeIframeAPIReady = function onYouTubeIframeAPIReady() {
 		}
 	});//end YT.Player
 
-	load_quiz(video_identifier);
+	load_quiz(group_video_id);
 }//end onYouTubeIframeAPIReady
 
 function pauseVideo() {
@@ -130,10 +130,10 @@ function checkQuiz() {
 	)
 }
 
-function load_quiz(video_identifier) {
+function load_quiz(groupVideoId) {
 	$.ajax({
 		type: "GET",
-		url: "/videos/" + video_identifier + "/quiz",
+		url: "/group_videos/" + groupVideoId + "/quiz",
 		success: function (res) {
 
 			if (res.quiz != null) {
@@ -256,7 +256,7 @@ function show_quiz_modal(data, cb) {
 				url: "/quiz_results",
 				data: {
 					user_id: user_id,					//int
-					identifier: video_identifier,  		//stirng
+					group_video_id: group_video_id,  		//stirng
 					media_type: 'youtube',		    	//string
 					quiz_data: data            			//obj
 				},

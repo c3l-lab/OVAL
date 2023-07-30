@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use oval\Models\Course;
 use oval\Models\QuizCreation;
 use oval\Models\User;
 use oval\Models\Video;
@@ -15,14 +16,12 @@ class QuizResultTest extends TestCase
     public function test_store(): void
     {
         $user = User::factory()->create();
-        $video = Video::factory()->create();
-        QuizCreation::factory()->create([
-            'identifier' => $video->identifier,
-        ]);
+        $course = Course::factory()->createWithVideoForUser($user);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
 
         $response = $this->actingAs($user)->post("/quiz_results", [
             "user_id" => $user->id,
-            "identifier" => $video->identifier,
+            "group_video_id" => $groupVideo->id,
             "media_type" => "youtube",
             "quiz_data" => [
                 [
@@ -44,7 +43,7 @@ class QuizResultTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('quiz_result', [
-            'identifier' => $video->identifier,
+            'group_video_id' => $groupVideo->id,
         ]);
     }
 }

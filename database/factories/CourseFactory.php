@@ -34,7 +34,6 @@ class CourseFactory extends Factory
         $group = $course->defaultGroup();
         $video = Video::factory()->create();
         $video->assignToGroup($group);
-        $user = User::factory()->create();
         $user->addToGroup($group);
         $user->makeInstructorOf($course);
         return $course;

@@ -5,9 +5,40 @@ namespace oval\Http\Controllers\GroupVideo;
 use Illuminate\Http\Request;
 use oval\Http\Controllers\Controller;
 use oval\Models\GroupVideo;
+use oval\Models\QuizCreation;
 
 class QuizController extends Controller
 {
+    public function show(Request $request, GroupVideo $groupVideo)
+    {
+        return [
+            'quiz' => $groupVideo->quiz,
+        ];
+    }
+
+    public function update(Request $request, GroupVideo $groupVideo)
+    {
+        $quiz = $groupVideo->quiz ?? new QuizCreation();
+        $quiz->creator_id = intval($request->creator_id);
+        $quiz->group_video_id = $groupVideo->id;
+        $quiz->media_type = (string)($request->media_type);
+        $quiz->quiz_data = json_encode($request->quiz_data);
+        $quiz->visable = 1;
+        $quiz->save();
+
+        return ['result' => 'success'];
+    }
+
+
+    public function toggleVisible(Request $request, GroupVideo $groupVideo)
+    {
+        $quiz = $groupVideo->quiz ?? new QuizCreation();
+        $quiz->visable = $request->visable;
+        $quiz->save();
+
+        return ['result' => 'success'];
+    }
+
     public function result(Request $request, GroupVideo $groupVideo)
     {
         $users = $groupVideo->usersWhoAccessed();
@@ -63,12 +94,10 @@ class QuizController extends Controller
 
             /*------ get quiz result ------*/
             $quiz_result = \DB::table('quiz_result')
-                ->join('videos', 'videos.identifier', '=', 'quiz_result.identifier')
-                ->join('group_videos', 'group_videos.video_id', '=', 'videos.id')
                 ->select('quiz_data')
                 ->where([
                     ['user_id', '=', $user->id],
-                    ['group_videos.id', '=', intval($request->group_video_id)]
+                    ['group_video_id', '=', intval($request->group_video_id)]
                 ])
                 ->get();
 
@@ -134,19 +163,9 @@ class QuizController extends Controller
             }
 
             /*------ get quiz list ------*/
-            $quiz_list = \DB::table('quiz_creation')
-                ->join('videos', 'videos.identifier', '=', 'quiz_creation.identifier')
-                ->join('group_videos', 'group_videos.video_id', '=', 'videos.id')
-                ->select('quiz_data')
-                ->where([
-                    ['group_videos.id', '=', intval($request->group_video_id)]
-                ])
-                ->orderBy('quiz_creation.created_at', 'desc')
-                ->first();
-
             $quiz_name_list = array();
-            if ($quiz_list) {
-                $list = json_decode($quiz_list->quiz_data);
+            if (!empty($groupVideo->quiz)) {
+                $list = json_decode($groupVideo->quiz->quiz_data);
 
                 for ($i = 0; $i < count($list); $i++) {
                     $temp = array('name' => $list[$i]->name);

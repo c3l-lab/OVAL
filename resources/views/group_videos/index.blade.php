@@ -335,15 +335,20 @@
                                         title="Manage points"><i class="fa fa-pencil-square-o group-icon"></i></button>
                                 </td>
                                 <td>
-                                    <button id="set-quiz-btn" type="button" videoid="{{ $gv->video()->id }}"
-                                        class="quiz btn btn-link assign-grp-button" title="Set quiz"><i
-                                            class="fa fa-comment-o"></i></button>
+                                    <button
+                                        id="set-quiz-btn"
+                                        type="button"
+                                        data-group-video-id={{ $gv->id }}
+                                        class="quiz btn btn-link assign-grp-button" title="Set quiz"
+                                    >
+                                        <i class="fa fa-comment-o"></i>
+                                    </button>
                                     <br />
                                     <label id="quiz-switch" class="switch">
                                         <input
                                             type="checkbox"
                                             @checked($gv->quiz && $gv->quiz->visable == 1)
-                                            videoid="{{ $gv->video()->id }}"
+                                            data-group-video-id="{{ $gv->id }}"
                                         >
                                         <span class="slider round"></span>
                                         <br />
