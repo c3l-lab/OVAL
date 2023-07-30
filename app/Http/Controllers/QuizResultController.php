@@ -18,4 +18,43 @@ class QuizResultController extends Controller
 
         return ['result' => 'success'];
     }
+
+    public function report(Request $request)
+    {
+        $user_arr = empty($request->user_id) ? [] : explode(',', $request->user_id);
+
+        $result_arr = [];
+
+        for($x = 0; $x < count($user_arr); $x++) {
+
+            /*------ get user surname, first name, student ID ------*/
+            $user_info = \DB::table('users')
+            ->select('first_name', 'last_name', 'email')
+            ->where([
+                ['id', '=', $user_arr[$x]]
+            ])
+            ->first();
+
+            $surname = $user_info->first_name;
+            $first_name = $user_info->last_name;
+            $student_id = $user_info->email;
+
+            /*------ get all attempt record ------*/
+            $student_record_list = \DB::table('quiz_result')
+                        ->join('videos', 'videos.identifier', '=', 'quiz_result.identifier')
+                        ->join('group_videos', 'group_videos.video_id', '=', 'videos.id')
+                        ->select('quiz_result.quiz_data', 'quiz_result.created_at')
+                        ->where([
+                            ['group_videos.id', '=', $request->group_video_id],
+                            ['quiz_result.user_id', '=', $user_arr[$x]]
+                        ])
+                        ->orderBy('quiz_result.created_at', 'desc')
+                        ->get();
+
+            array_push($result_arr, compact('surname', 'first_name', 'student_id', 'student_record_list', 'student_record_list'));
+
+        }
+
+        return $result_arr;
+    }
 }

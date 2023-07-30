@@ -463,7 +463,7 @@ $('document').ready(function () {
 					$("#download_detail_csv").on('click', function(){
 
 						$.ajax({
-							url: "/get_all_student_record",
+							url: "/quiz_results/report",
 							type: "GET",
 							data: {
 								user_id: $userlist,

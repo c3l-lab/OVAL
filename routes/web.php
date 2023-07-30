@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/videos/{id}/quiz/toggle_visible', [Video\QuizController::class, 'toggleVisible'])->name('videos.quiz.toggle_visible');
     Route::singleton('videos.quiz', Video\QuizController::class);
 
+    Route::get('/quiz_results/report', [QuizResultController::class, 'report'])->name('quiz_results.report');
     Route::resource('quiz_results', QuizResultController::class);
 
     Route::get('/annotations/download', [AnnotationController::class, 'download'])->name('annotations.download');
@@ -129,4 +130,3 @@ Route::post('/check_youtube_caption', 'GoogleAPIController@check_youtube_caption
 /*------ analysis api ------*/
 Route::get('/get_student_view', 'AjaxController@get_student_view');
 Route::get('/get_key_point', 'AjaxController@get_key_point');
-Route::get('/get_all_student_record', 'AjaxController@get_all_student_record');
