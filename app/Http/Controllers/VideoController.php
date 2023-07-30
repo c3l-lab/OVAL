@@ -4,8 +4,6 @@ namespace oval\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use GuzzleHttp;
-use oval\Classes\YoutubeDataHelper;
 use oval\Jobs\AnalyzeTranscript;
 use oval\Models\CommentInstruction;
 use oval\Models\Group;
@@ -20,7 +18,7 @@ class VideoController extends Controller
      */
     public function store(Request $request)
     {
-        $v = Video::where(['identifier'=>$request->video_id])->first();
+        $v = Video::where(['identifier' => $request->video_id])->first();
 
         if (empty($v)) {
             try {
@@ -93,19 +91,19 @@ class VideoController extends Controller
         $copy_origin = $copy_from_group_id == -1 ? null : GroupVideo::where([['group_id', '=', $copy_from_group_id], ['video_id', '=', $video->id]])->first();
 
         if (count($group_ids) > 0) {
-            foreach($group_ids as $gid) {
+            foreach ($group_ids as $gid) {
                 $group = Group::find($gid);
                 $video->assignToGroup($group);
             }
         }
-        if(!empty($copy_origin)) {
-            foreach($group_ids as $gid) {
+        if (!empty($copy_origin)) {
+            foreach ($group_ids as $gid) {
                 $gv = GroupVideo::where([
-                        ['group_id', '=', $gid],
-                        ['video_id', '=', $video->id]
-                    ])
+                    ['group_id', '=', $gid],
+                    ['video_id', '=', $video->id]
+                ])
                     ->first();
-                if($copy_comment_instruction == "true") {
+                if ($copy_comment_instruction == "true") {
                     $originCommentInstruction = CommentInstruction::where('group_video_id', '=', $copy_origin->id)->first();
                     if (!empty($originCommentInstruction)) {
                         $comment_instruction = CommentInstruction::where('group_video_id', '=', $gv->id)->first();
@@ -118,9 +116,9 @@ class VideoController extends Controller
                     }
                 }
 
-                if($copy_points == "true") {
+                if ($copy_points == "true") {
                     $points = Point::where('group_video_id', '=', $gv->id)->get();
-                    if($points->count() > 0) {
+                    if ($points->count() > 0) {
                         //delete them
                     }
                     $copy_points = Point::where('group_video_id', '=', $copy_origin->id)->get();

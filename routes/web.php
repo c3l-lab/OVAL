@@ -59,6 +59,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/groups/unassigned', [GroupController::class, 'unassigned'])->name('comments.unassigned');
     Route::resource('groups', GroupController::class);
+
+    Route::get('/videos/{video}/groups/with_contents', [Video\GroupController::class, 'withContents'])->name('videos.groups.with_contents');
     Route::resource('videos.groups', Video\GroupController::class);
 
     Route::post('/videos/{id}/quiz/toggle_visible', [Video\QuizController::class, 'toggleVisible'])->name('videos.quiz.toggle_visible');
@@ -113,7 +115,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/get_nominated_students_ids', 'AjaxController@get_nominated_students_ids');
     Route::post('/check_student_activity', 'AjaxController@check_student_activity');
     Route::post('/delete_keywords', 'AjaxController@delete_keywords');
-    Route::post('/get_groups_with_video', 'AjaxController@get_groups_with_video');
 });
 
 // ----------- youtube data api ------------- //

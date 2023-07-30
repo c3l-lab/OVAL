@@ -412,9 +412,8 @@ $('document').ready(function(){
 			modal_groups = [];
 
 			$.ajax({
-				type: "POST",
-				url: "/get_groups_with_video",
-				data: {video_id: modal_video_id},
+				type: "GET",
+				url: "/videos/" + modal_video_id + "/groups/with_contents",
 				success: function(data) {
 					if (data.length == 0) {
 						$("#copy-from-course").append('<option>No available courses</option>');
@@ -871,9 +870,8 @@ $('document').ready(function(){
 		modal_course_name = course_name;
 		modal_groups = [];
 		$.ajax({
-			type: "POST",
-			url: "/get_groups_with_video",
-			data: {video_id: modal_video_id},
+			type: "GET",
+			url: "/videos/" + modal_video_id + "/groups/with_contents",
 			success: function(data) {
 				modal_groups = data;
 				$('#assigned-groups-course-ul li[data-id="'+modal_course_id+'"]').click();
