@@ -9,7 +9,6 @@
         "oat-sa/imsglobal-lti": "^4.0",
         "laravel/framework": "^10.0",
         "laracasts/utilities": "^3.0",
-        "doctrine/dbal": "^3.6",
         "symfony/polyfill-uuid": "^1.22",
         "laravel/ui": "^4.2",
         "google/apiclient": "^2.13.1",
@@ -25,7 +24,9 @@
         "symfony/dom-crawler": "^6.2",
         "friendsofphp/php-cs-fixer": "^3.22",
         "nunomaduro/collision": "^7.7",
-        "fakerphp/faker": "^1.23"
+        "fakerphp/faker": "^1.23",
+        "laravel/dusk": "^7.9",
+        "doctrine/dbal": "^3.6"
     },
     "autoload": {
         "files": [

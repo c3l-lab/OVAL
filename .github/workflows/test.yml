@@ -1,4 +1,4 @@
-name: Run tests
+name: Run Tests
 
 on: [push]
 
@@ -42,3 +42,80 @@ jobs:
         run: php artisan test
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+
+  e2e:
+    name: Run E2E
+    runs-on: ubuntu-latest
+
+    services:
+      selenium:
+        image: selenium/standalone-chrome
+
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_USER: homestead
+          MYSQL_PASSWORD: secret
+          MYSQL_DATABASE: homestead
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, bcmath, soap, intl, gd, exif, iconv
+          coverage: xdebug
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+
+      - name: Run npm install
+        run: npm ci
+
+      - name: Build assets
+        run: npm run production
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.example .env
+          php artisan dusk:install
+          php artisan key:generate
+          php artisan config:clear
+          php artisan migrate
+
+      - name: Run Laravel Server
+        run: php artisan serve > /dev/null 2>&1 &
+
+      - name: Wait for Laravel Server
+        run: sleep 5
+
+      - name: Run tests
+        run: php artisan dusk
+        env:
+          APP_URL: "http://127.0.0.1:8000"
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          BROWSER: chrome
+
+      - name: Upload Screenshots
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshots
+          path: tests/Browser/screenshots
+      - name: Upload Console Logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: console
+          path: tests/Browser/console
