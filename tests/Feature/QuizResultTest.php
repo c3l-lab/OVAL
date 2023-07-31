@@ -44,6 +44,7 @@ class QuizResultTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseHas('quiz_result', [
             'group_video_id' => $groupVideo->id,
+            'user_id' => $user->id,
         ]);
     }
 }

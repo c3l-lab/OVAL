@@ -249,13 +249,10 @@ function show_quiz_modal(data, cb) {
 			// console.log(is_all_correct);
 
 			/*------ send data to server ------*/
-			var user_id = $(".greetings").attr('userid');
-
 			$.ajax({
 				type: "POST",
 				url: "/quiz_results",
 				data: {
-					user_id: user_id,					//int
 					group_video_id: group_video_id,  		//stirng
 					media_type: 'youtube',		    	//string
 					quiz_data: data            			//obj
