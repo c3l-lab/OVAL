@@ -51,13 +51,13 @@ class ToolController extends Controller
         $resourceId = $request->query("resource_id");
 
         if (empty($resourceId)) {
-            return redirect()->route('video_management');
+            return redirect()->route('group_videos.index');
         }
 
         $group_video = GroupVideo::findOrFail($resourceId);
 
-        if (!empty($group_video->group()) && \Auth::user()) {
-            $ltiLaunchService->addUserToGroup($group_video->group());
+        if (!empty($group_video->group) && \Auth::user()) {
+            $ltiLaunchService->addUserToGroup($group_video->group);
         }
 
         if ($launch->isDeepLinkLaunch()) {

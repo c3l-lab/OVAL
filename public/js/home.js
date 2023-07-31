@@ -74,8 +74,8 @@ function commaDelimitedToArray(commaDelimited) {
 function getAllAnnotations() {
 	annotations.splice(0, annotations.length);
 	$.ajax({
-		type: "POST",
-		url: "/get_annotations",
+		type: "GET",
+		url: "/annotations",
 		data: {course_id:course_id, group_id:group_id, video_id:video_id},
 		success: function(data) {
 			annotations = data.slice();
@@ -91,9 +91,8 @@ function getAllAnnotations() {
 function getComments() {
 	comments = [];
 	$.ajax ({
-		type: "POST",
-		url: "/get_comments",
-		data: {group_video_id: group_video_id},
+		type: "GET",
+		url: "/comments?group_video_id=" + group_video_id,
 		success: function (data) {
 			if (data) {
 				comments = data.slice();
@@ -715,7 +714,7 @@ $(document).ready (
 			if (title==="ADD ANNOTATION") {
 				$.ajax({
 					type:"POST",
-					url: "/add_annotation",
+					url: "/annotations",
 					data: {group_video_id: group_video_id, start_time: item_start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids:nominated},
 					success: function(data) {
 						modal.modal("hide");
@@ -730,7 +729,7 @@ $(document).ready (
 			else if (title==="ADD COMMENT") {
 				$.ajax({
 					type:"POST",
-					url: "/add_comment",
+					url: "/comments",
 					beforeSend: function(request) {
 			   			request.setRequestHeader("Authorization", "Bearer "+api_token);
 					},
@@ -754,9 +753,9 @@ $(document).ready (
 			}
 			else if (title==="EDIT ANNOTATION") {
 				$.ajax({
-					type: "POST",
-					url: "/edit_annotation",
-					data: {annotation_id: item.id, start_time: item.start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids:nominated},
+					type: "PUT",
+					url: "/annotations/" + item.id,
+					data: {start_time: item.start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids:nominated},
 					success: function(data) {
 						modal.modal("hide");
 						getAllAnnotations();
@@ -769,12 +768,12 @@ $(document).ready (
 			}
 			else if (title==="EDIT COMMENT") {
 				$.ajax({
-					type: "POST",
-					url: "/edit_comment",
+					type: "PUT",
+					url: "/comments/" + item.id,
 					beforeSend: function(request) {
 						request.setRequestHeader("Authorization", "Bearer "+api_token);
 					},
-					data: {comment_id:item.id, tags:tags, description:description, privacy:privacy, nominated_students_ids:nominated},
+					data: {tags:tags, description:description, privacy:privacy, nominated_students_ids:nominated},
 					success: function(data) {
 						if (points.length > 0) {
 							modal.modal('hide');
@@ -803,9 +802,8 @@ $(document).ready (
 				if (confirm("Are you sure you want to delete?")) {
 					if (title==="EDIT ANNOTATION")  {
 						$.ajax({
-							type: "POST",
-							url: "/delete_annotation",
-							data: {annotation_id:item.id},
+							type: "DELETE",
+							url: "/annotations/" + item.id,
 							success: function(data) {
 								modal.modal("hide");
 								// getAnnotations(ALL);
@@ -819,9 +817,8 @@ $(document).ready (
 					}
 					else if (title==="EDIT COMMENT") {
 						$.ajax({
-							type: "POST",
-							url: "/delete_comment",
-							data: {comment_id:item.id},
+							type: "DELETE",
+							url: "/comments/" + item.id,
 							success: function(data) {
 								getComments();
 								modal.modal("hide");
@@ -867,7 +864,7 @@ $(document).ready (
 			var description = $('#comment-instruction-description').val();
 			$.ajax  ({
 				type: "POST",
-				url: "/edit_comment_instruction",
+				url: "/comment_instructions",
 				data: {group_video_id: group_video_id, description: description},
 				success: function(data) {
 					comment_instruction = data;
@@ -886,9 +883,8 @@ $(document).ready (
 			}
 			if (confirm("Are you sure you want to delete this instruction?")) {
 				$.ajax  ({
-					type: "POST",
-					url: "/delete_comment_instruction",
-					data: {group_video_id: group_video_id},
+					type: "DELETE",
+					url: "/comment_instructions/" + group_video_id,
 					success: function(data) {
 						comment_instruction = null;
 						$("#comment-instruction-modal").modal('hide');
@@ -973,30 +969,6 @@ $(document).ready (
 			saveFeedbacksAndConfidenceLevel(item);
 			$("#feedback").modal("hide");
 			getComments();
-		});
-		$(".annotations-buttons").on("click", ".download-comments", function(e) {
-			// var filter = $("input[name=filter]:checked").val();
-
-			$.ajax({
-				type: 'POST',
-				url: '/download_annotations',
-				// data: {filter: filter, group_video_id: group_video_id, course_id: course_id},
-				data: {group_video_id: group_video_id, course_id: course_id},
-
-				success: function(data) {
-					var a = document.createElement('a');
-					a.href = "data:attachment/csv;charset=utf-8," + encodeURIComponent(data);
-					a.target = "_blank";
-					a.download = "annotations.csv";
-					document.body.appendChild(a);
-					a.click();
-				},
-				error: function (request, status, error) {
-					console.log("error download-annotations - "+request.responseText);		////////
-				},
-				async: false
-			});
-
 		});
 		$("#annotation-filter input").on("change", function(e) {
 			var mode = $('input[name=filter]:checked').val();
@@ -1251,9 +1223,8 @@ $(document).ready (
 		$("#comments").on("click", ".comment-tag", function(){
 			var tag = $(this).text();
 			$.ajax({
-				type: "POST",
-				url: "/get_comments_for_tag",
-				data: {tag:tag, group_video_id:group_video_id},
+				type: "GET",
+				url: "/comments/tag?tag=" + tag + "&group_video_id=" + group_video_id,
 				success: function(data) {
 					var tag_modal = $("#same-tag-modal");
 					tag_modal.find("#same-tag-modal-title").text('COMMENTS WITH TAG "'+tag+'"');
@@ -1301,9 +1272,8 @@ $(document).ready (
 		$("#preview").on("click", ".annotation-tag", function()  {
 			var tag = $(this).text();
 			$.ajax({
-				type: "POST",
-				url: "/get_annotations_for_tag",
-				data: {tag:tag, group_video_id:group_video_id},
+				type: "GET",
+				url: "/annotations/tag?tag=" + tag + "&group_video_id=" + group_video_id,
 				success: function(data) {
 					var tag_modal = $("#same-tag-modal");
 					tag_modal.find("#same-tag-modal-title").text('ANNOTATIONS WITH TAG "'+tag+'"');

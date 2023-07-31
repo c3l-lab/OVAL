@@ -11,7 +11,7 @@
 						<li>NO COURSES</li>
 					@else
 						@foreach ($user->enrolledCourses as $c)
-						<li><a href="/course/{{$c->id}}">{{ $c->name }}</a></li>
+						<li><a href="{{ route('group_videos.by_course', ['course_id' => $c->id]) }}">{{ $c->name }}</a></li>
 						@endforeach
 					@endif
 				  </ul>
@@ -28,7 +28,7 @@
 						<li>NO GROUPS</li>
 					@else
 						@foreach ($user->groupMemberOf->where('course_id', $course->id) as $g)
-						<li><a href="/group/{{$g->id}}">{{ $g->name }}</a></li>
+							<li><a href="{{ route('group_videos.by_group', ['group_id' => $g->id]) }}">{{ $g->name }}</a></li>
 						@endforeach
 					@endif
 					</ul>
@@ -42,11 +42,11 @@
 				  </a>
 					<ul class="dropdown-menu">
 					@if (count($user->viewableGroupVideos()) == 0)
-						<li>NO VIDEOS</li> 
+						<li>NO VIDEOS</li>
 					@else
-					
-					@foreach ($group->availableGroupVideosForUser($user) as $gv)  
-					<li><a href="/view/{{$gv->id}}">{{ $gv->video()->title }}</a></li>
+
+					@foreach ($group->availableGroupVideosForUser($user) as $gv)
+					<li><a href="/group_videos/{{$gv->id}}">{{ $gv->video()->title }}</a></li>
 					@endforeach
 					@endif
 

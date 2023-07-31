@@ -5,7 +5,7 @@ $('document').ready(function(){
 	$("#course-name").text(course_name);
 	$("#group-name").text(group_name);
 	$(".msg").hide();
-	
+
 	$('form[data-toggle="validator"]').validator ({
 		custom: {
 			filetype: function($el) {
@@ -14,7 +14,7 @@ $('document').ready(function(){
 				var extension = filename.replace(/^.*\./, '');
 				if (extension == filename) {
 					extension = '';
-				} 
+				}
 				else {
 					extension = extension.toLowerCase();
 				}
@@ -38,7 +38,7 @@ $('document').ready(function(){
 		var video_id = $(this).data('id');
 		$.ajax({
 			type: "POST",
-			url: "/add_analysis_request",
+			url: "/analysis_requests",
 			data: {video_id:video_id, user_id:user_id},
 			success: function(data) {
 				$(".msg").text(data.msg);

@@ -6,7 +6,7 @@
 
 <div class="container-fluid">
     <div class="page-title">
-            <a href="/video-management/{{ $course_id }}/{{ $group_id }}#assigned">
+            <a href="{{ route("group_videos.index", ["course_id" => $course_id, "group_id" => $group_id]) }}#assigned">
 				<i class="fa fa-laptop" aria-hidden="true"></i>
 				VIDEO MANAGEMENT
             </a>
@@ -14,15 +14,15 @@
             TEXT ANALYSIS DETAILS
         </div>
     <div class="admin-page-info-section">
-        <a href="/view/{{$course_id}}/{{$group_id}}/{{$video->id}}">
+        <a href="/group_videos/{{$course_id}}/{{$group_id}}/{{$video->id}}">
         	<img class="video-thumbnail" src="{{$video->thumbnail_url}}">
         </a>
         <h4 class="inline-with-img">
-        	<a href="/view/{{$course_id}}/{{$group_id}}/{{$video->id}}">
+        	<a href="/group_videos/{{$course_id}}/{{$group_id}}/{{$video->id}}">
         		{{$video->title}}
         	</a>
         </h4>
-        
+
     </div><!-- admin-page-section -->
 
     <div class="admin-page-section-header">

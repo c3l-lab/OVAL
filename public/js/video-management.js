@@ -9,14 +9,19 @@ var modal_groups;
 function saveVideo (v_id, u_id, media_type, point_instruction, points, c_id, request_analysis) {
 	$.ajax({
 		type: "POST",
-		url: "/add_video",
+		url: "/videos",
 		data: {video_id:v_id, media_type:media_type, point_instruction:point_instruction, points:points, course_id:c_id, request_analysis:request_analysis},
 		success: function(data) {
+			$("#loading-hud").hide();
+			if (data.error) {
+				alert(data.error);
+				return;
+			}
+
 			if(data.course_id){
 				var protocol = window.location.protocol;
 				var host = window.location.host;
-				// window.location.href = protocol+"//"+host+"/video-management/"+data.course_id+"?"+Math.random()+"#assigned";
-				window.location.href = protocol+"//"+host+"/video-management/"+c_id+"?"+Math.random()+"#v-"+data.video_id;
+				window.location.href = protocol+"//"+host+"/group_videos/?course_id="+c_id+"?"+Math.random()+"#v-"+data.video_id;
 			}
 			else {
 				window.location.hash = 'unassigned';
@@ -35,8 +40,8 @@ function saveVideo (v_id, u_id, media_type, point_instruction, points, c_id, req
 function modalGetGroups() {
 	$("#modal-course-name").text(modal_course_name);
 	$.ajax({
-		type: "POST",
-		url: "/get_group_info_for_video",
+		type: "GET",
+		url: "/groups/unassigned",
 		data: {course_id: modal_course_id, video_id: modal_video_id, user_id: user_id},
 		success: function(data) {
 			var groups = data.unassigned_groups;
@@ -66,11 +71,10 @@ function assignVideoToGroups(group_ids, copy_from_group_id, copy_comment_instruc
 	}
 	$.ajax({
 		type: "POST",
-		url: "/save_video_group",
+		url: "/videos/" + modal_video_id + "/assign",
 		data: {
 			group_ids: group_ids,
 			course_id: modal_course_id,
-			video_id: modal_video_id,
 			copy_from: copy_from_group_id,
 			copy_comment_instruction: copy_comment_instruction,
 			copy_points: copy_points,
@@ -79,7 +83,7 @@ function assignVideoToGroups(group_ids, copy_from_group_id, copy_comment_instruc
 		success: function () {
 			alert("Video is assigned to the Group");	/////
 			$("#modal-form").modal('hide');
-			window.location.href = "/video-management/"+modal_course_id+"?"+Math.random()+"#assigned";
+			window.location.href = "/group_videos/?course_id="+modal_course_id+"?"+Math.random()+"#assigned";
 		},
 		error: function(req, status, err) {
 			console.log("error save_video_group - "+status+": "+err);	///////
@@ -112,9 +116,8 @@ function checkIfCourseWidePoints (course_id, video_id) {
 
 function getGroupsForVideo() {
 		$.ajax({
-			type: "POST",
-			url: "/get_groups_for_video",
-			data: {video_id: modal_video_id},
+			type: "GET",
+			url: "/videos/" + modal_video_id + "/groups",
 			success: function(data) {
 				var groups = data.groups;
 				var ul = $("#points-form-groups-dropdown");
@@ -319,25 +322,6 @@ $('document').ready(function(){
 		return false;
 	});//end add-video-form submit
 
-	//-- delete video (unassigned to groups) --
-	$(".delete-button").click(function() {
-		var video_id = $(this).data("id");
-		if (confirm("Are you sure you want to delete?")) {
-			$.ajax({
-				type: "POST",
-				url: "/delete_video",
-				data: {video_id: video_id},
-				success: function() {
-					location.reload();
-				},
-				error: function(request, status, error) {
-					console.log("error with deleting video: "+error);	///////
-				},
-				async: false
-			});
-		}
-	});
-
 	//-- archive/un-archive --
 	$(".archive-button").on("click", function() {
 		var group_video_id = $(this).data('id');
@@ -351,8 +335,7 @@ $('document').ready(function(){
 				if (data.has_activity && confirm("There are student activities on this video for the group. Are you sure you would like to archive it?")) {
 					$.ajax({
 						type:"POST",
-						url: "/archive_group_video",
-						data: {group_video_id:group_video_id},
+						url: "/group_videos/" + group_video_id + "/archive",
 						success: function(data) {
 							window.location.reload();
 						},
@@ -363,9 +346,8 @@ $('document').ready(function(){
 				}
 				if (!data.has_activity && confirm("Are you sure you would like to make this video unavailable to the group?")) {
 					$.ajax({
-						type:"POST",
-						url: "/delete_group_video",
-						data: {group_video_id:group_video_id},
+						type:"delete",
+						url: "/group_videos/" + group_video_id,
 						success: function(data) {
 							window.location.reload();
 						},
@@ -391,9 +373,8 @@ $('document').ready(function(){
 
 		//--populate thumbnail and title for video--
 		$.ajax({
-			type: "POST",
-			url: "/get_video_info",
-			data: {video_id: modal_video_id},
+			type: "GET",
+			url: "/videos" + "/" + modal_video_id,
 			success: function (data) {
 				$("#modal-video-thumbnail").attr("src", data.thumbnail_url);
 				$("#modal-video-title").text(data.title);
@@ -431,9 +412,8 @@ $('document').ready(function(){
 			modal_groups = [];
 
 			$.ajax({
-				type: "POST",
-				url: "/get_groups_with_video",
-				data: {video_id: modal_video_id},
+				type: "GET",
+				url: "/videos/" + modal_video_id + "/groups/with_contents",
 				success: function(data) {
 					if (data.length == 0) {
 						$("#copy-from-course").append('<option>No available courses</option>');
@@ -570,9 +550,8 @@ $('document').ready(function(){
 
 		//--populate thumbnail and title for video--
 		$.ajax({
-			type: "POST",
-			url: "/get_video_info",
-			data: {video_id: modal_video_id},
+			type: "GET",
+			url: "/videos/" . model_video_id,
 			success: function (data) {
 				$("#points-form-thumbnail-img").attr("src", data.thumbnail_url);
 				$("#points-form-video-title").text(data.title);
@@ -617,9 +596,8 @@ $('document').ready(function(){
 		modal_course_id = $(this).attr("id");
 		$("#points-form-course-name").text($(this).text());
 		$.ajax({
-				type: "POST",
-				url: "/get_videos_for_course",
-				data: {course_id: modal_course_id},
+				type: "GET",
+				url: "/courses/" + modal_course_id + "/videos",
 				success: function(data) {
 					var videos = data.videos;
 					var ul = $("#points-form-video-dropdown");
@@ -724,8 +702,8 @@ $('document').ready(function(){
 		var visibility = $('input[name="visibility-radio"]:checked').val();
 		$.ajax({
 			type:"POST",
-			url: "/edit_visibility",
-			data: {group_video_id:group_video_id , visibility:visibility },
+			url: "/group_videos/" + group_video_id + "/toggle_visibility",
+			data: { visibility:visibility },
 			success: function() {
 				location.reload();
 			},
@@ -747,7 +725,7 @@ $('document').ready(function(){
 		});
 		$.ajax({
 			type: "POST",
-			url: "/edit_video_order",
+			url: "/group_videos/sort",
 			data: {group_video_ids: order},
 			success: function() {
 				$("#order-modal").modal('hide');
@@ -776,8 +754,8 @@ $('document').ready(function(){
 		var show = $('input[name="analysis-vis-radio"]:checked').val();
 		$.ajax({
 			type:"POST",
-			url: "/edit_text_analysis_visibility",
-			data: {group_video_id:group_video_id , visibility:show },
+			url: "/group_videos/" + group_video_id + "/toggle_analysis",
+			data: { visibility:show },
 			success: function() {
 				location.reload();
 			},
@@ -813,7 +791,7 @@ $('document').ready(function(){
 		var video_id = $(this).data('id');
 		$.ajax({
 			type: "POST",
-			url: "/add_analysis_request",
+			url: "/analysis_requests",
 			data: {video_id:video_id, user_id:user_id},
 			success: function(data) {
 				$(".msg").text(data.msg);
@@ -892,9 +870,8 @@ $('document').ready(function(){
 		modal_course_name = course_name;
 		modal_groups = [];
 		$.ajax({
-			type: "POST",
-			url: "/get_groups_with_video",
-			data: {video_id: modal_video_id},
+			type: "GET",
+			url: "/videos/" + modal_video_id + "/groups/with_contents",
 			success: function(data) {
 				modal_groups = data;
 				$('#assigned-groups-course-ul li[data-id="'+modal_course_id+'"]').click();
@@ -920,7 +897,7 @@ $('document').ready(function(){
 				var tr = $("<tr>").appendTo(table);
 				$("<td>", {
 							"class":"col-xs-6",
-							"html":"<a href='/view/"+val.group_video_id+"'>"+val.name+"</a>"
+							"html":"<a href='/group_videos/"+val.group_video_id+"'>"+val.name+"</a>"
 						}).appendTo(tr);
 				$("<td>", {
 							"class":"col-xs-2 text-center",

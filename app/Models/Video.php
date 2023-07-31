@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use GuzzleHttp;
+use oval\Classes\YoutubeDataHelper;
+use oval\Jobs\AnalyzeTranscript;
 
 /**
  * Model class for table 'videos'
@@ -137,6 +139,26 @@ class Video extends Model
         return $this->hasMany('oval\Models\AnalysisRequest');
     }
 
+    public static function createFromYoutube(string $identifier, User $user)
+    {
+        $client = new GuzzleHttp\Client();
+        $url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $identifier . '&key=' . config('youtube.api_key');
+        $response = $client->get($url);
+        $result = json_decode($response->getBody());
+
+        $v = new Video();
+        $v->identifier = $identifier;
+        $v->title = $result->items[0]->snippet->title;
+        $desc = $result->items[0]->snippet->description;
+        $v->description = strlen($desc)>507 ? substr($desc, 0, 510) : $desc;
+        $v->thumbnail_url = "https://img.youtube.com/vi/".$identifier."/1.jpg";
+        $v->duration = ISO8601ToSeconds($result->items[0]->contentDetails->duration);
+        $v->media_type = "youtube";
+        $v->added_by = $user->id;
+        $v->save();
+        return $v;
+    }
+
     /**
     *   Used for displaying duration in human-friendly format
     *   @return string duration in "x hours y minutes and z seconds" format
@@ -162,5 +184,82 @@ class Video extends Model
         }
 
         return $retVal;
+    }
+
+    public function downloadCaption()
+    {
+        $text = "";
+        $transcript = $this->transcript;
+        if (empty($transcript)) {
+            $transcript = new Transcript();
+            $transcript->video_id = $this->id;
+        }
+
+        $langs = config('youtube.transcript_lang');
+        $credentials = GoogleCredential::all();
+        $track_id = null;
+        $caption_array = null;
+        if (!empty($credentials) && count($credentials)>0) {
+            foreach ($credentials as $cred) {
+                $helper = new YoutubeDataHelper($cred->client_id, $cred->client_secret);
+                $helper->handle_access_token_refresh($cred);
+
+                $track_id = $helper->get_caption_track_id($this->identifier);
+                if(!empty($track_id)) {
+                    $caption_array = $helper->download_caption($track_id);
+                }
+                if (!empty($caption_array)) {
+                    break;
+                }
+            }
+        }
+        if (empty($caption_array)) {
+            $response = "";
+            $proxy_url = env('CURL_PROXY_URL', '');
+            $proxy_user = env('CURL_PROXY_USER', '');
+            $proxy_pass = env('CURL_PROXY_PASS', '');
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            if (!empty($proxy_url)) {
+                curl_setopt($ch, CURLOPT_PROXY, $proxy_url);
+            }
+            if (!empty($proxy_user)) {
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_user . ':' . $proxy_pass);
+            }
+            foreach ($langs as $l) {
+                curl_setopt($ch, CURLOPT_URL, 'http://video.google.com/timedtext?lang='.$l.'&v='.$this->identifier);
+                $response = curl_exec($ch);
+                if (!empty($response)) {
+                    $cc = simplexml_load_string($response);
+                    $caption_array = [];
+                    $text = "";
+                    foreach ($cc->text as $item) {
+                        $line = "{";
+                        $time = 0;
+                        foreach ($item->attributes() as $key=>$val) {
+                            if ($key == "start") {
+                                $time = floatval($val);
+                                $line .= '"start":'.$time.', ';
+                            } elseif ($key == "dur") {
+                                $time += floatval($val);
+                                $line .= '"end":'.$time.', ';
+                                $time = 0;
+                            }
+                        }
+                        $text .= $item;
+                        $line .= '"transcript":"'.$item.'"}';
+                        $caption_array[] = $line;
+                    }
+                    break;
+                }
+            }
+        }
+        if (!empty($caption_array)) {
+            $transcript->transcript = json_encode($caption_array);
+            $transcript->save();
+        }
+        return $text;
     }
 }

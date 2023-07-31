@@ -4,23 +4,78 @@ namespace oval\Http\Controllers;
 
 use Illuminate\Http\Request;
 use oval\Models\GroupVideo;
-use oval\Models\quiz_creation;
-use oval\Models\Tracking;
 
 class GroupVideoController extends Controller
 {
+    public function index(Request $request)
+    {
+        $user = \Auth::user();
+        $course_id = $request->query('course_id');
+        $group_id = $request->query('group_id');
+        $api_token = $user->api_token;
+        $courses_teaching = $user->coursesTeaching();
+        $course_id = $course_id ? $course_id : $request->session()->get('current-course', 0);
+        $course = $course_id ? \oval\Models\Course::find($course_id) : $user->enrolledCourses->first();
+        if (!$user->isInstructorOf($course)) {
+            foreach ($courses_teaching as $c) {
+                $course = $c;
+                break;
+            }
+        }
+        $group = $group_id ? \oval\Models\Group::find($group_id) : $course->groups->first();
+        $videos_without_group = \oval\Models\Video::doesntHave('groups')->get();
+        $group_videos = GroupVideo::with('quiz')->whereBelongsTo($group)->where('status', 'current')->get();
+
+        \JavaScript::put([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+            'course_name' => $course->name,
+            'group_id' => $group->id,
+            'group_name' => $group->name,
+            'api_token' => $api_token,
+        ]);
+
+        // save current course id
+        session(['current-course' => $course->id]);
+
+        return view('group_videos.index', [
+            'user' => $user,
+            'course' => $course,
+            'group' => $group,
+            'videos_without_group' => $videos_without_group,
+            'group_videos' => $group_videos,
+        ]);
+    }
+
+    public function show(Request $request, int $id)
+    {
+        return view('group_videos.show', $this->view($id));
+    }
     public function embed(Request $request, int $id)
     {
+        return view('group_videos.embed', $this->view($id));
+    }
 
+    private function view($id)
+    {
         $user = \Auth::user();
         $api_token = $user->api_token;
         $course = null;
         $group = null;
         $group_video = null;
+        $group_video_id = intval($id);
 
-        $group_video = $this->getGroupVideo($id);
-        $group = $group_video->group();
+        $group_video = \oval\Models\GroupVideo::findOrFail($group_video_id);
+
+        $group = $group_video->group;
         $course = $group->course;
+
+        if (
+            !$user->isInstructorOf($course) &&
+            (!$user->checkIfEnrolledIn($course) || !$user->checkIfInGroup($group) || $group_video->hide)
+        ) {
+            abort(404);
+        }
 
         $video = $group_video->video();
 
@@ -34,7 +89,7 @@ class GroupVideoController extends Controller
 
         // Log every user views
         if (!empty($user) && !empty($video)) {
-            $tracking = new Tracking();
+            $tracking = new \oval\Models\Tracking();
             $tracking->group_video_id = $group_video->id;
             $tracking->user_id = $user->id;
             $tracking->event = "View";
@@ -62,8 +117,7 @@ class GroupVideoController extends Controller
             }
         }
 
-        $quizzes = quiz_creation::where('identifier', '=', $video->identifier)->get();
-        $has_quiz = $quizzes->count() ? true : false;
+        $has_quiz = !empty($group_video->quiz);
 
         \JavaScript::put([
             'MINE' => 1,
@@ -96,35 +150,97 @@ class GroupVideoController extends Controller
         // save current course id
         session(['current-course' => $course->id]);
 
-        return view('group_videos.embed', [
+        return [
             'user' => $user,
             'course' => $course,
             'group' => $group,
             'video' => $video,
             'group_video' => $group_video,
             'has_quiz' => $has_quiz,
-        ]);
-
+        ];
     }
 
-    public function toggleComments(Request $request, int $id)
+    public function archive(GroupVideo $groupVideo)
     {
-        $groupVideo = $this->getGroupVideo($id);
+        $groupVideo->status = "archived";
+        $result = $groupVideo->save();
+        return compact('result');
+    }
+
+    public function destroy(int $id)
+    {
+        $result = GroupVideo::destroy($id);
+        return compact('result');
+    }
+
+    public function toggleVisibility(Request $request, GroupVideo $groupVideo)
+    {
+        $vis = intval($request->visibility);
+        $groupVideo->hide = $vis;
+        $groupVideo->save();
+    }
+
+    public function toggleComments(Request $request, GroupVideo $groupVideo)
+    {
         $groupVideo->show_comments = !$groupVideo->show_comments;
         $groupVideo->save();
         return response()->json(['success' => true]);
     }
 
-    public function toggleAnnotations(Request $request, int $id)
+    public function toggleAnnotations(Request $request, GroupVideo $groupVideo)
     {
-        $groupVideo = $this->getGroupVideo($id);
         $groupVideo->show_annotations = !$groupVideo->show_annotations;
         $groupVideo->save();
         return response()->json(['success' => true]);
     }
 
-    private function getGroupVideo($id)
+    public function toggleAnalysis(Request $request, GroupVideo $groupVideo)
     {
-        return GroupVideo::findOrFail($id);
+        $show = intval($request->visibility);
+        $groupVideo->show_analysis = $show;
+        $groupVideo->save();
+    }
+
+    public function byCourse(Request $request)
+    {
+        $user = \Auth::user();
+        $course_id = $request->query('course_id');
+        $course = \oval\Models\Course::find(intval($course_id));
+        if (!empty($course) && $user->checkIfEnrolledIn($course) == true) {
+            $group = $user->groupMemberOf->where('course_id', '=', $course->id)->first();
+            if (!empty($group)) {
+                $group_videos = $group->availableGroupVideosForUser($user);
+                if ($group_videos->count() > 0) {
+                    return redirect()->route('group_videos.show', ['group_video' => $group_videos->first()]);
+                }
+            }
+        }
+        return view('pages.no-video');
+    }
+
+    public function byGroup(Request $request)
+    {
+        $user = \Auth::user();
+        $group_id = $request->query('group_id');
+        $group = \oval\Models\Group::find(intval($group_id));
+        if (!empty($group) && $user->checkIfInGroup($group) == true) {
+            $group_videos = $group->availableGroupVideosForUser($user);
+            if ($group_videos->count() > 0) {
+                return redirect()->route('group_videos.show', ['group_video' => $group_videos->first()]);
+            }
+        }
+        return view('pages.no-video');
+    }
+
+    public function sort(Request $request)
+    {
+        $group_video_ids = $request->group_video_ids;
+        $i = 1;
+        foreach ($group_video_ids as $gv_id) {
+            $group_video = GroupVideo::find($gv_id);
+            $group_video->order = $i;
+            $group_video->save();
+            $i++;
+        }
     }
 }

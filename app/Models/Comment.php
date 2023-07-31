@@ -65,4 +65,73 @@ class Comment extends Model
     {
         return $this->belongsToMany('oval\Models\Tag', 'comment_tags')->withTimeStamps();
     }
+
+    /**
+     * Private method that returns comments for group_video_id passed in that are visible to user_id passed in
+     *
+     * This method fetches comments with status "current" that are made by the user whose ID is passed in,
+     * and "current" comments that are made by others that are visible to the user.
+     * The returned array contains data ready for display.
+     *
+     * @param integer $group_video_id
+     * @param integer $user_id
+     * @return array Array of array with keys - id, user_id, name, description, tags, is_mine, privacy, updated_at, created_at
+     */
+    public static function groupVideoComments($group_video_id, $user_id)
+    {
+        $mine = static::where([
+                        ['user_id', '=', $user_id],
+                        ['group_video_id', '=', $group_video_id],
+                        ['status', '=', 'current']
+                    ])
+                    ->get();
+        $others = static::where([
+                        ['user_id', '<>', $user_id],
+                        ['group_video_id', '=', $group_video_id],
+                        ['privacy', '<>', 'private'],
+                        ['status', '=', 'current']
+                    ])
+                    ->get();
+        foreach ($others as $key=>$val) {
+            if($val->privacy == 'nominated') {
+                $nominated = json_decode($val->visible_to);
+                if (!empty($nominated)) {
+                    if (!in_array($user_id, $nominated)) {
+                        unset($others[$key]);
+                    }
+                }
+            }
+        }
+        $all_comments = $mine->merge($others)->sortByDesc('updated_at')->values()->all();
+
+        $comments = [];
+        $course = GroupVideo::find($group_video_id)->course();
+        foreach ($all_comments as $c) {
+            $user = User::find($c->user_id);
+            if (empty($user)) {
+                $name = "Unknown User";
+                $mine = false;
+                $instructor = false;
+            } else {
+                $name = $user->fullName();
+                $mine = $c->user_id==$user_id ? true : false;
+                $instructor = $user->isInstructorOf($course);
+            }
+
+            $date = empty($c->updated_at) ? null : $c->updated_at->format('g:iA d M, Y');
+
+            $comments[] = [
+                "id" => $c->id,
+                "user_id" => $user_id,
+                "name" => $name,
+                "description" => $c->description,
+                "tags" => $c->tags->pluck('tag'),
+                "is_mine" => $mine,
+                "privacy" => $c->privacy,
+                "updated_at" => $date,
+                "by_instructor" => $instructor
+            ];
+        }
+        return $comments;
+    }
 }

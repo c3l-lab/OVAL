@@ -31,7 +31,7 @@ class ToolController extends Controller
         $resourceId = $req->query('resource_id');
 
         if (empty($resourceId)) {
-            return redirect()->route('video_management');
+            return redirect()->route('group_videos.index');
         }
 
         $group_video = GroupVideo::where([
@@ -39,8 +39,8 @@ class ToolController extends Controller
             ['status', '=', 'current']
         ])->firstOrFail();
 
-        if (!empty($group_video->group())) {
-            $ltiLaunchService->addUserToGroup($group_video->group());
+        if (!empty($group_video->group)) {
+            $ltiLaunchService->addUserToGroup($group_video->group);
         }
 
         // if the request from studio, the user_id would be 'student'

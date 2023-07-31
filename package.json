@@ -19,6 +19,7 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
+    "htmx.org": "^1.9.4",
     "js-cookie": "^3.0.5"
   },
   "lint-staged": {

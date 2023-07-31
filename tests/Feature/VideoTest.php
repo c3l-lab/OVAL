@@ -14,41 +14,14 @@ class VideoTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_default_video_page_without_video(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->get('/view');
-
-        $response->assertStatus(200);
-        $response->assertSee('There is no video for the ID you selected');
-    }
-
-    public function test_default_video_page_with_video(): void
-    {
-        $course = Course::factory()->has(
-            Group::factory()->has(
-                Video::factory()->count(1)
-            )->count(1)
-        )->create();
-        $user = User::factory()->create();
-        $user->addToGroup($course->defaultGroup());
-
-        $response = $this->actingAs($user)->get('/view');
-
-        $response->assertStatus(200);
-        $response->assertSee($course->name);
-    }
-
-    public function test_creating_video(): void
+    public function test_store(): void
     {
         $course = Course::factory()->has(Group::factory()->count(1))->create();
         $user = User::factory()->create();
 
         $youtubeId = "dQw4w9WgXcQ";
 
-        $response = $this->post('/add_video', [
-            "api_token" => $user->api_token,
+        $response = $this->actingAs($user)->post('/videos', [
             "video_id" => $youtubeId,
             "media_type" => "youtube",
             "course_id" => $course->id,
@@ -62,6 +35,7 @@ class VideoTest extends TestCase
                 ->has('video_id')
         );
 
+
         $this->assertDatabaseHas('videos', [
             'identifier' => $youtubeId,
             'title' => 'Rick Astley - Never Gonna Give You Up (Official Music Video)',
@@ -69,5 +43,51 @@ class VideoTest extends TestCase
             'thumbnail_url' => 'https://img.youtube.com/vi/dQw4w9WgXcQ/1.jpg',
             'media_type' => 'youtube',
         ]);
+    }
+
+    public function test_destory(): void
+    {
+        $video = Video::factory()->create();
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->delete(route('videos.destroy', $video->id));
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseMissing('videos', [
+            'id' => $video->id
+        ]);
+    }
+
+    public function test_assign(): void
+    {
+        $user = User::factory()->create();
+        $course1 = Course::factory()->createWithVideoForUser($user);
+        $course2 = Course::factory()->createWithVideoForUser($user);
+        $group1 = $course1->defaultGroup();
+        $group2 = $course2->defaultGroup();
+        $video = $group1->videos()->first();
+
+        $response = $this->actingAs($user)->post('/videos/' . $video->id . '/assign', [
+            "group_ids" => [$group2->id],
+            "copy_from" => $group1->id,
+            "copy_comment_instruction" => true,
+            "copy_points" => true,
+            "copy_quiz" => true,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertSame($group2->videos()->count(), 2);
+    }
+
+    public function test_show(): void
+    {
+        $video = Video::factory()->create();
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/videos/' . $video->id);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('id', $video->id);
     }
 }

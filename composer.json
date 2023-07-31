@@ -9,7 +9,6 @@
         "oat-sa/imsglobal-lti": "^4.0",
         "laravel/framework": "^10.0",
         "laracasts/utilities": "^3.0",
-        "doctrine/dbal": "^3.6",
         "symfony/polyfill-uuid": "^1.22",
         "laravel/ui": "^4.2",
         "google/apiclient": "^2.13.1",
@@ -25,45 +24,55 @@
         "symfony/dom-crawler": "^6.2",
         "friendsofphp/php-cs-fixer": "^3.22",
         "nunomaduro/collision": "^7.7",
-        "fakerphp/faker": "^1.23"
+        "fakerphp/faker": "^1.23",
+        "laravel/dusk": "^7.9",
+        "doctrine/dbal": "^3.6"
     },
     "autoload": {
-        "classmap": [
-            "database"
+        "files": [
+            "app/helpers.php"
         ],
         "psr-4": {
             "oval\\": "app/",
-            "Tests\\": "tests/"
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
-        ]
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "scripts": {
-        "post-root-package-install": [
-            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
-        "post-create-project-cmd": [
-            "php artisan key:generate"
-        ],
-        "post-install-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postInstall",
-            "php artisan optimize"
+
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "php artisan optimize"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
-        "test": [
-            "vendor/bin/phpunit"
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
         ]
     },
-    "config": {
-        "preferred-install": "dist",
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
+    "extra": {
+        "laravel": {
+            "dont-discover": []
         }
-    }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
