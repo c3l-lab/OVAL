@@ -64,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/quiz_results/report', [QuizResultController::class, 'report'])->name('quiz_results.report');
     Route::resource('quiz_results', QuizResultController::class);
+    Route::singleton('group_videos.quiz', GroupVideo\QuizController::class);
 
     Route::middleware([RequireAdmin::class])->group(function () {
         Route::post('/analysis_requests/batch_resend', [AnalysisRequestController::class, 'batch_resend'])->name('analysis_requests.batch_resend');
@@ -92,7 +93,6 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('group_videos.quiz.result');
         Route::post('/group_videos/{groupVideo}/quiz/toggle_visible', [GroupVideo\QuizController::class, 'toggleVisible'])->name('group_videos.quiz.toggle_visible');
-        Route::singleton('group_videos.quiz', GroupVideo\QuizController::class);
 
         Route::resource('analytics', AnalyticsController::class);
     });

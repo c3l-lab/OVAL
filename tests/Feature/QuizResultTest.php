@@ -20,7 +20,6 @@ class QuizResultTest extends TestCase
         $groupVideo = $course->defaultGroup()->group_videos()->first();
 
         $response = $this->actingAs($user)->post("/quiz_results", [
-            "user_id" => $user->id,
             "group_video_id" => $groupVideo->id,
             "media_type" => "youtube",
             "quiz_data" => [
