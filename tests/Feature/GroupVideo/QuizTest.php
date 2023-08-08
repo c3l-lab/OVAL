@@ -3,16 +3,14 @@
 namespace Tests\Feature\GroupVideo;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use oval\Models\Course;
 use oval\Models\QuizCreation;
 use oval\Models\User;
-use oval\Models\Video;
 use Tests\TestCase;
 
 class QuizTest extends TestCase
 {
-    // use RefreshDatabase;
+    use RefreshDatabase;
 
     public function test_show(): void
     {

@@ -939,5 +939,27 @@ $('document').ready(function(){
 		$("#assigned-group-list-ul").html("");
 	});
 
-
+	var controlsSettingModal = $('#controls-setting-modal');
+	controlsSettingModal.on("submit", "#controls-setting-form", function (event) {
+		event.preventDefault();
+		var settings = {};
+		$(this).find('input[type="checkbox"]').each(function (index, element) {
+			settings[$(element).attr("name")] = $(element).is(":checked");
+		});
+		$.ajax({
+			type: "PUT",
+			url: $(this).attr("action"),
+			contentType: "application/json; charset=utf-8",
+			data: JSON.stringify({
+				controls: settings
+			}),
+			success: function (data) {
+				if (data.success) {
+					controlsSettingModal.modal('hide');
+				} else {
+					alert("Something went wrong. Please try again.");
+				}
+			},
+		});
+	});
 });//doc ready

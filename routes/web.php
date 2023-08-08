@@ -91,6 +91,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
         Route::resource('group_videos', GroupVideoController::class);
 
+        Route::singleton('group_videos.controls', GroupVideo\ControlsController::class);
+
         Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('group_videos.quiz.result');
         Route::post('/group_videos/{groupVideo}/quiz/toggle_visible', [GroupVideo\QuizController::class, 'toggleVisible'])->name('group_videos.quiz.toggle_visible');
 

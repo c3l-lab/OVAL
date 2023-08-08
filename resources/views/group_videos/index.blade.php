@@ -242,6 +242,7 @@
                             <th>SET QUIZ</th>
                             <th>COMMENTS</th>
                             <th>ANNOTATIONS</th>
+                            <th>CONTROLS</th>
                             <th>DATE UPLOADED</th>
                             <th>DELETE</th>
                         </tr>
@@ -370,6 +371,19 @@
                                         <br />
                                         <p>visible</p>
                                     </label>
+                                </td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link"
+                                        hx-get="{{ route('group_videos.controls.edit', ['group_video' => $gv]) }}"
+                                        hx-target="#controls-setting-modal .modal-body"
+                                        hx-swap="innerHTML"
+                                        hx-on="htmx:afterOnLoad: $('#controls-setting-modal').modal('show');"
+                                        title="Controls setting"
+                                    >
+                                        <i class="fa fa-pencil-square-o group-icon"></i>
+                                    </button>
                                 </td>
                                 <td>{{ $gv->created_at }}</td>
                                 <td>

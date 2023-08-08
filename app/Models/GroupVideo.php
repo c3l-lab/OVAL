@@ -14,7 +14,11 @@ class GroupVideo extends Model
     use HasFactory;
     protected $table = 'group_videos';
     protected $fillable = ['group_id', 'video_id', 'hide', 'show_analysis'];
-    protected $casts = ['hide'=>'boolean', 'show_analysis'=>'boolean'];
+    protected $casts = [
+        'hide' => 'boolean',
+        'show_analysis' => 'boolean',
+        'controls' => 'array',
+    ];
 
 
     /**
@@ -34,7 +38,16 @@ class GroupVideo extends Model
     {
         $this->attributes = [
             'hide' => config('settings.defaults.group_video_hide'),
-            'show_analysis' => config('settings.defaults.group_video_show_analysis')
+            'show_analysis' => config('settings.defaults.group_video_show_analysis'),
+            'controls' => json_encode([
+                'fullscreen' => true,
+                'captions' => true,
+                'speed' => true,
+                'pause' => true,
+                'progress' => true,
+                'quality' => true,
+                'volume' => true,
+            ])
         ];
     }
 
