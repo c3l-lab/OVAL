@@ -67,7 +67,6 @@ class QuizTest extends TestCase
         $course = Course::factory()->createWithVideoForUser($user);
         $groupVideo = $course->defaultGroup()->group_videos()->first();
 
-
         $response = $this->actingAs($user)->put("/group_videos/{$groupVideo->id}/quiz", [
             "course_id" => $course->id,
             "media_type" => "youtube",
@@ -92,5 +91,31 @@ class QuizTest extends TestCase
         $this->assertDatabaseHas('quiz_creation', [
             'group_video_id' => $groupVideo->id,
         ]);
+    }
+
+    public function test_toggle_visible()
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->createWithVideoForUser($user);
+        $groupVideo = $course->defaultGroup()->group_videos()->first();
+
+        $response = $this->actingAs($user)->post("/group_videos/{$groupVideo->id}/quiz/toggle_visible", [
+            "visable" => 1,
+        ]);
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('quiz_creation', [
+            'group_video_id' => $groupVideo->id,
+            'visable' => 1,
+        ]);
+
+        $response = $this->actingAs($user)->post("/group_videos/{$groupVideo->id}/quiz/toggle_visible", [
+            "visable" => 0,
+        ]);
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('quiz_creation', [
+            'group_video_id' => $groupVideo->id,
+            'visable' => 0,
+        ]);
+        $this->assertDatabaseCount('quiz_creation', 1);
     }
 }

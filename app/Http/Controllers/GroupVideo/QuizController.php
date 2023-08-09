@@ -33,6 +33,7 @@ class QuizController extends Controller
     public function toggleVisible(Request $request, GroupVideo $groupVideo)
     {
         $quiz = $groupVideo->quiz ?? new QuizCreation();
+        $quiz->group_video_id = $groupVideo->id;
         $quiz->visable = $request->visable;
         $quiz->save();
 
