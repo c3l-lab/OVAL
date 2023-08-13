@@ -234,6 +234,7 @@
                             <th>ID</th>
                             <th>TITLE</th>
                             <th>DESCRIPTION</th>
+                            <th>CONTROLS</th>
                             <th>VIDEO ACCESS CONTROL</th>
                             <th>CONTENT ANALYSIS</th>
                             <th>DURATION</th>
@@ -242,7 +243,6 @@
                             <th>SET QUIZ</th>
                             <th>COMMENTS</th>
                             <th>ANNOTATIONS</th>
-                            <th>CONTROLS</th>
                             <th>DATE UPLOADED</th>
                             <th>DELETE</th>
                         </tr>
@@ -259,6 +259,19 @@
                                     </a>
                                 </td>
                                 <td>{{ $gv->video()->description }}</td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link"
+                                        hx-get="{{ route('group_videos.controls.edit', ['group_video' => $gv]) }}"
+                                        hx-target="#controls-setting-modal .modal-body"
+                                        hx-swap="innerHTML"
+                                        hx-on="htmx:afterOnLoad: $('#controls-setting-modal').modal('show');"
+                                        title="Controls setting"
+                                    >
+                                        <i class="fa fa-pencil-square-o group-icon"></i>
+                                    </button>
+                                </td>
                                 <td>
                                     <button type="button" class="btn btn-link visibility-button" data-toggle="modal"
                                         data-target="#visibility-modal" data-id="{{ $gv->id }}"
@@ -371,19 +384,6 @@
                                         <br />
                                         <p>visible</p>
                                     </label>
-                                </td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        class="btn btn-link"
-                                        hx-get="{{ route('group_videos.controls.edit', ['group_video' => $gv]) }}"
-                                        hx-target="#controls-setting-modal .modal-body"
-                                        hx-swap="innerHTML"
-                                        hx-on="htmx:afterOnLoad: $('#controls-setting-modal').modal('show');"
-                                        title="Controls setting"
-                                    >
-                                        <i class="fa fa-pencil-square-o group-icon"></i>
-                                    </button>
                                 </td>
                                 <td>{{ $gv->created_at }}</td>
                                 <td>
