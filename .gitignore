@@ -35,8 +35,10 @@ phpunit.xml.bak
 public/mix-manifest.json
 public/css/app.css
 public/css/theme.css
+public/css/player.css
 public/js/app.js
 public/js/theme.js
+public/js/player.js
 
 .php-cs-fixer.cache
 

@@ -107,7 +107,7 @@ $(document).ready(function () {
 
                                                 if (res.quiz != null) {
 
-                                                    set_quiz_meta = JSON.parse(res.quiz.quiz_data);
+                                                    set_quiz_meta = JSON.parse(res.quiz.quiz_data) || [];
 
                                                     for (var i = 0; i < set_quiz_meta.length; i++) {
                                                         set_quiz_meta[i].stop = parseInt(set_quiz_meta[i].stop);

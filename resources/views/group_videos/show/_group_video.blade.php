@@ -24,7 +24,10 @@
 
 <div id="left-side" class="{{ $group_video->show_comments ? "col-md-8" : "col-md-12" }}">
     <div id="video" class="video-width">
-        <div id="player"></div>
+        {{-- <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="{{ $video->identifier  }}"></div> --}}
+        <div class="plyr__video-embed" id="player">
+            <iframe src="https://www.youtube.com/embed/{{ $video->identifier }}"></iframe>
+        </div>
     </div><!-- .video -->
 
     <div class="video-width">

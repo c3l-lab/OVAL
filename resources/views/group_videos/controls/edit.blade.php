@@ -35,10 +35,10 @@
 
 
     <div class="form-group">
-        <label class="col-sm-4">Pausing</label>
+        <label class="col-sm-4">Play/Pause</label>
         <div class="col-sm-8">
             <label class="switch">
-                <input type="checkbox" name="pause" @checked($groupVideo->controls["pause"]) />
+                <input type="checkbox" name="play" @checked($groupVideo->controls["play"]) />
                 <span class="slider round"></span>
             </label>
         </div>
@@ -49,16 +49,6 @@
         <div class="col-sm-8">
             <label class="switch">
                 <input type="checkbox" name="progress" @checked($groupVideo->controls["progress"]) />
-                <span class="slider round"></span>
-            </label>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-sm-4">Quanlity</label>
-        <div class="col-sm-8">
-            <label class="switch">
-                <input type="checkbox" name="quality" @checked($groupVideo->controls["quality"]) />
                 <span class="slider round"></span>
             </label>
         </div>

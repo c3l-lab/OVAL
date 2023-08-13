@@ -43,9 +43,8 @@ class GroupVideo extends Model
                 'fullscreen' => true,
                 'captions' => true,
                 'speed' => true,
-                'pause' => true,
+                'play' => true,
                 'progress' => true,
-                'quality' => true,
                 'volume' => true,
             ])
         ];

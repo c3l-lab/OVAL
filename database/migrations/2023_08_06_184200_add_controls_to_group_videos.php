@@ -13,7 +13,7 @@ return new class () extends Migration {
         Schema::table('group_videos', function (Blueprint $table) {
             $table->json('controls');
         });
-        \DB::statement('UPDATE group_videos SET controls = \'{"fullscreen":true,"captions":true,"speed":true,"pause":true,"progress":true,"quality":true,"volume":true}\'');
+        \DB::statement('UPDATE group_videos SET controls = \'{"fullscreen":true,"captions":true,"speed":true,"play":true,"progress":true,"volume":true}\'');
     }
 
     /**

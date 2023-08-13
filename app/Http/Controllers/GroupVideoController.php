@@ -145,6 +145,9 @@ class GroupVideoController extends Controller
             'group_video_id' => $group_video->id,
             'points' => $group_video->relatedPoints(),
             'api_token' => $api_token,
+            'Oval' => [
+                'currentGroupVideo' => $group_video,
+            ]
         ]);
 
         // save current course id
