@@ -105,7 +105,6 @@ function onPlayerStateChange(event) {
 		action = "Paused";
 		if (player.pauseFromJs !== true && !groupVideo.controls.play) {
 			player.playVideo();
-			return;
 		}
 		player.pauseFromJs = false;
 	} else if (code == YT.PlayerState.ENDED) {
@@ -237,6 +236,9 @@ function showQuizModal(data, cb) {
 		})
 
 		$("#quiz_modal").on("hidden.bs.modal", function () {
+			if (player.getPlayerState() === 2) {
+				playVideo();
+			}
 			flag = false;
 		});
 
