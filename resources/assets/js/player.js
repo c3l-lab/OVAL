@@ -244,9 +244,6 @@ function showQuizModal(data, cb) {
 		})
 
 		$("#quiz_modal").on("hidden.bs.modal", function () {
-			if (player.getPlayerState() === 2) {
-				playVideo();
-			}
 			flag = false;
 		});
 
