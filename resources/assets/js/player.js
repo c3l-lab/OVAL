@@ -186,11 +186,15 @@ function loadQuiz(groupVideoId) {
 
 function showQuiz(data) {
 	pauseVideo();
-	document.exitFullscreen().then(() => {
+	if (document.fullscreenElement != null) {
+		document.exitFullscreen().then(() => {
+			showQuizModal(data);
+		}).catch(() => {
+			alert("unable to exit fullscreen.");
+		});
+	} else {
 		showQuizModal(data);
-	}).catch(() => {
-		alert("unable to exit fullscreen.");
-	});
+	}
 }
 
 function showQuizModal(data, cb) {
