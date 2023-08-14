@@ -234,7 +234,7 @@
                             <th>ID</th>
                             <th>TITLE</th>
                             <th>DESCRIPTION</th>
-                            <th>CONTROLS</th>
+                            <th>PLAYER CONTROLS</th>
                             <th>VIDEO ACCESS CONTROL</th>
                             <th>CONTENT ANALYSIS</th>
                             <th>DURATION</th>
