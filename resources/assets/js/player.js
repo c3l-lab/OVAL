@@ -41,6 +41,7 @@ function initPlayer(groupVideo) {
 		controls,
 		settings,
 		youtube: {
+			wmode: "transparent",
 			rel: 0,
 			enablejsapi: 1,
 			disablekb: 1,
