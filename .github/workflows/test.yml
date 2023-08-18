@@ -49,7 +49,7 @@ jobs:
 
     services:
       selenium:
-        image: selenium/standalone-chrome
+        image: selenium/standalone-chrome:beta
 
       mysql:
         image: mysql:8.0
