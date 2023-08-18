@@ -44,6 +44,7 @@ function initPlayer(groupVideo) {
 			rel: 0,
 			enablejsapi: 1,
 			disablekb: 1,
+			origin: domain,
 		}
 	});
 
