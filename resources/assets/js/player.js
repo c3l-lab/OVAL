@@ -45,7 +45,7 @@ function initPlayer(groupVideo) {
 			rel: 0,
 			enablejsapi: 1,
 			disablekb: 1,
-			origin: 'https://www.youtube.com',
+			origin: 'https://oval-dev.c3l.ai',
 		}
 	});
 
