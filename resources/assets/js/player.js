@@ -10,7 +10,7 @@ function main() {
 }
 
 function initPlayer(groupVideo) {
-	const controls = ['play-large'];
+	const controls = [];
 	if (groupVideo.controls.play) {
 		controls.push('play');
 	}
@@ -40,12 +40,13 @@ function initPlayer(groupVideo) {
 	plyr = new Plyr('#player', {
 		controls,
 		settings,
+		// this is required because of https://github.com/sampotts/plyr/issues/1993
+		autoplay: true,
 		youtube: {
 			wmode: "transparent",
 			rel: 0,
 			enablejsapi: 1,
 			disablekb: 1,
-			origin: 'https://oval-dev.c3l.ai',
 		}
 	});
 
@@ -91,6 +92,9 @@ function onPlayerReady(event) {
 	window.player = player = plyr.embed;
 	player.loadModule("captions");
 	window.setInterval(onTime, 1000);
+	// hacking for https://github.com/sampotts/plyr/issues/1993
+	const poster = document.querySelector(".plyr__poster");
+	poster.remove();
 	checkQuiz();
 }
 
