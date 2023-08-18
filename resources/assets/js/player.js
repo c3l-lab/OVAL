@@ -40,7 +40,27 @@ function initPlayer(groupVideo) {
 	plyr = new Plyr('#player', {
 		controls,
 		settings,
-		// this is required because of https://github.com/sampotts/plyr/issues/1993
+		/**
+		 * Since Plyr is just a wrapper for the YouTube player, when users click on
+		 * the play button, Playr will call play method on the YouTube player.
+		 * However, I don't know why, when the video page is embedded into another
+		 * page as an iframe, the play button won't work because of Chrome doesn't
+		 * allow calling the play method on video element without user interaction
+		 * on the actial document of the YouTube player.
+		 *
+		 * To fix this, we need to use the original play button from the YouTube
+		 * player. This is archeived by removing '.plyr__poster' element from the DOM
+		 * after the player is ready.
+		 *
+		 * And we also need to tell Plyr don't pause the video when it plays because of
+		 * https://github.com/sampotts/plyr/blob/0c9759455cbfcce888c66925c3b457ce06cee31e/src/js/plugins/youtube.js#L396-L398
+		 * by setting `autoplay` to true.
+		 *
+		 * Finally, the video won't really autoplay because of the autoplay policy of
+		 * mordern browsers.
+		 *
+		 * Related issue https://github.com/sampotts/plyr/issues/1993
+		 */
 		autoplay: true,
 		youtube: {
 			wmode: "transparent",
@@ -92,9 +112,11 @@ function onPlayerReady(event) {
 	window.player = player = plyr.embed;
 	player.loadModule("captions");
 	window.setInterval(onTime, 1000);
-	// hacking for https://github.com/sampotts/plyr/issues/1993
-	const poster = document.querySelector(".plyr__poster");
-	poster.remove();
+	/**
+	 * Hacking for https://github.com/sampotts/plyr/issues/1993
+	 * See comments above for autoplay
+	 */
+	document.querySelector(".plyr__poster").remove();
 	checkQuiz();
 }
 
