@@ -45,18 +45,18 @@ function initPlayer(groupVideo) {
 		 * the play button, Playr will call play method on the YouTube player.
 		 * However, I don't know why, when the video page is embedded into another
 		 * page as an iframe, the play button won't work because of Chrome doesn't
-		 * allow calling the play method on video element without user interaction
-		 * on the actial document of the YouTube player.
+		 * allow calling the play method on the video element without user interaction
+		 * on the actual document of the YouTube player.
 		 *
 		 * To fix this, we need to use the original play button from the YouTube
 		 * player. This is archeived by removing '.plyr__poster' element from the DOM
 		 * after the player is ready.
 		 *
-		 * And we also need to tell Plyr don't pause the video when it plays because of
+		 * And we also need to tell Plyr not to pause the video when it plays because of
 		 * https://github.com/sampotts/plyr/blob/0c9759455cbfcce888c66925c3b457ce06cee31e/src/js/plugins/youtube.js#L396-L398
 		 * by setting `autoplay` to true.
 		 *
-		 * Finally, the video won't really autoplay because of the autoplay policy of
+		 * Finally, the video won't really autoplay due to the autoplay policy of
 		 * mordern browsers.
 		 *
 		 * Related issue https://github.com/sampotts/plyr/issues/1993
