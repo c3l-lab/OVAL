@@ -56,13 +56,14 @@ function initPlayer(groupVideo) {
 		 * https://github.com/sampotts/plyr/blob/0c9759455cbfcce888c66925c3b457ce06cee31e/src/js/plugins/youtube.js#L396-L398
 		 * by setting `autoplay` to true.
 		 *
-		 * Finally, the video won't really autoplay due to the autoplay policy of
-		 * mordern browsers.
+		 * Finally, the video will not actually autoplay because we have disabled it
+		 * again below.
 		 *
 		 * Related issue https://github.com/sampotts/plyr/issues/1993
 		 */
 		autoplay: true,
 		youtube: {
+			autoplay: 0,
 			wmode: "transparent",
 			rel: 0,
 			enablejsapi: 1,
