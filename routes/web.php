@@ -63,7 +63,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('courses.videos', Course\VideoController::class);
 
-    Route::get('/quiz_results/report', [QuizResultController::class, 'report'])->name('quiz_results.report');
+    Route::get('/quiz_results/detail', [QuizResultController::class, 'detail'])->name('quiz_results.detail');
     Route::resource('quiz_results', QuizResultController::class);
     Route::singleton('group_videos.quiz', GroupVideo\QuizController::class);
 
