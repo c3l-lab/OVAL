@@ -35,7 +35,7 @@ class AjaxController extends Controller
         foreach ($answers as $a) {
             $feedback = new oval\Models\Feedback();
             $feedback->comment_id = $comment_id;
-            $feedback->point_id= $a['point_id'];
+            $feedback->point_id = $a['point_id'];
             $feedback->answer = $a['answer'];
             $feedback->save();
         }
@@ -171,7 +171,7 @@ class AjaxController extends Controller
                                          ->first();
 
                 if(!empty($latest_portion_record)) {
-                    $portion = (float)($latest_portion_record->info)/(float)($latest_portion_record->duration);
+                    $portion = (float)($latest_portion_record->info) / (float)($latest_portion_record->duration);
                 } else {
                     $portion = 0;
                 }
@@ -194,7 +194,7 @@ class AjaxController extends Controller
 
             if(count($play_record) > 0) {
                 $last_play  = $play_record[0]->event_time;
-                $first_play = $play_record[count($play_record)-1]->event_time;
+                $first_play = $play_record[count($play_record) - 1]->event_time;
             } else {
                 $first_play = 'Never played';
                 $last_play = 'Never played';
@@ -239,7 +239,7 @@ class AjaxController extends Controller
             }
 
             if($annotations_num > 0) {
-                $annotations_average_time = $total/$annotations_num;
+                $annotations_average_time = $total / $annotations_num;
             } else {
                 $annotations_average_time = 0;
             }
@@ -256,7 +256,7 @@ class AjaxController extends Controller
                                     ])
                                     ->first();
 
-            if(count($annotations_download) > 0) {
+            if(@$annotations_download && count($annotations_download) > 0) {
                 $annotations_download_status = "Downloaded";
             } else {
                 $annotations_download_status = "Never download";
@@ -294,7 +294,7 @@ class AjaxController extends Controller
                             ['comments.status', '=', 'current']
                         ])
                         ->get();
-            if ($key_info->count() >0) {
+            if ($key_info->count() > 0) {
                 array_push($result_arr, compact('surname', 'first_name', 'student_id', 'key_info'));
             }
         }
@@ -319,7 +319,7 @@ class AjaxController extends Controller
         $has_quiz_answers = false;//todo: implement this
 
         $has_activity = false;
-        if (count($group_video->annotations)>0 || count($group_video->comments)>0 || $has_quiz_answers==true) {
+        if (count($group_video->annotations) > 0 || count($group_video->comments) > 0 || $has_quiz_answers == true) {
             $has_activity = true;
         }
         return compact('group_video_id', 'has_activity');
