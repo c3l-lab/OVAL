@@ -45,7 +45,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])->name('group_videos.show.embed');
 
     Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
-    Route::get('/comments/column', [CommentController::class, 'column'])->name('comments.column');
+    Route::get('/comments/report', [CommentController::class, 'report'])->name('comments.report');
+    Route::get('/comments/detail', [CommentController::class, 'detail'])->name('comments.detail');
     Route::resource('comments', CommentController::class);
     Route::resource('comment_instructions', CommentInstructionController::class);
 

@@ -124,7 +124,7 @@ class CommentTest extends TestCase
         ]);
     }
 
-    public function test_column(): void
+    public function test_report(): void
     {
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
@@ -139,7 +139,7 @@ class CommentTest extends TestCase
             'event' => 'View'
         ]);
 
-        $response = $this->actingAs($user)->get('/comments/column?group_video_id=' . $groupVideo->id);
+        $response = $this->actingAs($user)->get('/comments/report?group_video_id=' . $groupVideo->id);
 
         $response->assertStatus(200);
         $response->assertJsonPath('0.surname', $user->last_name);

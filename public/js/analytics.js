@@ -187,7 +187,7 @@ $('document').ready(function () {
 			var $group_video_id = $(this).attr("groupvideoid");
 
 			$.ajax({
-				url: "/comments/column",
+				url: "/comments/report",
 				type: "GET",
 				data: {
 					user_id: $userlist,
@@ -262,12 +262,12 @@ $('document').ready(function () {
 					});
 
 					/*------ bind event to second table ------*/
-					$("#download_detail_csv").hide();
+					$("#download_detail_csv").show();
 
 					$(".analytics_extra_wrap").empty();
-					$("#download_detail_csv").off('click');
-
-
+					$("#download_detail_csv").on('click', function () {
+						window.location.href = "/comments/detail?group_video_id=" + $group_video_id;
+					});
 				}
 
 			})

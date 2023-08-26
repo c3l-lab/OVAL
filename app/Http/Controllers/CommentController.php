@@ -132,7 +132,7 @@ class CommentController extends Controller
         $comment->save();
     }
 
-    public function column(Request $request)
+    public function report(Request $request)
     {
         $group_video = GroupVideo::find(intval($request->group_video_id));
         $users = $group_video->usersWhoAccessed();
@@ -222,5 +222,54 @@ class CommentController extends Controller
         }
 
         return $result_arr;
+    }
+
+    public function detail(Request $request)
+    {
+        $fileName = "comments_detail.csv";
+
+        $comments = Comment::with('user', 'tags')->where([
+            'status' => 'current',
+            'group_video_id' => $request->group_video_id
+        ])->get();
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $columns = array('Video ID', 'User email', 'Comment', 'Tags', 'Created', 'Updated');
+
+        $callback = function () use ($comments, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($comments as $comment) {
+                $row['Video ID']  = $comment->group_video_id;
+                $row['User email'] = isset($comment->user) ? $comment->user->email : '';
+                $row['Comment']  = $comment->description;
+                $row['Tags'] = join(",", array_map(function ($tag) {
+                    return $tag['tag'];
+                }, $comment->tags->toArray()));
+                $row['Created']  = $comment->created_at;
+                $row['Updated']  = $comment->updated_at;
+
+                fputcsv($file, array(
+                    $row['Video ID'],
+                    $row['User email'],
+                    $row['Comment'],
+                    $row['Tags'],
+                    $row['Created'],
+                    $row['Updated']
+                ));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

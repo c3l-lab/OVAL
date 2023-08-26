@@ -4,6 +4,8 @@ namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Model class for table 'comments'
@@ -24,9 +26,9 @@ class Comment extends Model
     *	Returns the User that wrote this Comment.
     *	@return User
     **/
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo('oval\Models\User');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -61,9 +63,9 @@ class Comment extends Model
     *   Many-to-Many relationship.
     *   @return collection of Tag objects
     **/
-    public function tags()
+    public function tags(): BelongsToMany
     {
-        return $this->belongsToMany('oval\Models\Tag', 'comment_tags')->withTimeStamps();
+        return $this->belongsToMany(Tag::class, 'comment_tags')->withTimeStamps();
     }
 
     /**
@@ -92,7 +94,7 @@ class Comment extends Model
                         ['status', '=', 'current']
                     ])
                     ->get();
-        foreach ($others as $key=>$val) {
+        foreach ($others as $key => $val) {
             if($val->privacy == 'nominated') {
                 $nominated = json_decode($val->visible_to);
                 if (!empty($nominated)) {
@@ -114,7 +116,7 @@ class Comment extends Model
                 $instructor = false;
             } else {
                 $name = $user->fullName();
-                $mine = $c->user_id==$user_id ? true : false;
+                $mine = $c->user_id == $user_id ? true : false;
                 $instructor = $user->isInstructorOf($course);
             }
 
