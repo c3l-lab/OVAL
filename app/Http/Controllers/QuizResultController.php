@@ -21,7 +21,7 @@ class QuizResultController extends Controller
 
     public function detail(Request $request)
     {
-        $fileName = "quiz_resultss_detail.csv";
+        $fileName = "quiz_results_detail.csv";
 
         $quizResults = QuizResult::with('author')->where([
             'group_video_id' => $request->group_video_id
