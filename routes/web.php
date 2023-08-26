@@ -57,7 +57,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/annotations/download', [AnnotationController::class, 'download'])->name('annotations.download');
     Route::get('/annotations/tag', [AnnotationController::class, 'tag'])->name('annotations.tag');
-    Route::get('/annotations/column', [AnnotationController::class, 'column'])->name('annotations.column');
+    Route::get('/annotations/report', [AnnotationController::class, 'report'])->name('annotations.report');
+    Route::get('/annotations/detail', [AnnotationController::class, 'detail'])->name('annotations.detail');
     Route::resource('annotations', AnnotationController::class);
 
     Route::resource('courses.videos', Course\VideoController::class);

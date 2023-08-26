@@ -4,6 +4,8 @@ namespace oval\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Annotation extends Model
 {
@@ -17,9 +19,9 @@ class Annotation extends Model
      *	Returns who wrote this annotation.
      *	@return User object
      **/
-    public function writtenBy()
+    public function author(): BelongsTo
     {
-        return $this->belongsTo('oval\Models\User');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -39,9 +41,9 @@ class Annotation extends Model
      *	Returns Tags for this annotation.
      *	@return collection of Tag objects
      **/
-    public function tags()
+    public function tags(): BelongsToMany
     {
-        return $this->belongsToMany('oval\Models\Tag', 'annotation_tags')->withTimeStamps();
+        return $this->belongsToMany(Tag::class, 'annotation_tags')->withTimeStamps();
     }
 
     public static function groupVideoAnnotations($group_video_id, $user_id)

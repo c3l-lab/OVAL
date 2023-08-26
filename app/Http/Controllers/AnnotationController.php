@@ -229,7 +229,7 @@ class AnnotationController extends Controller
         return $retval;
     }
 
-    public function column(Request $request)
+    public function report(Request $request)
     {
         $group_video = GroupVideo::find(intval($request->group_video_id));
         $users = $group_video->usersWhoAccessed();
@@ -336,5 +336,56 @@ class AnnotationController extends Controller
 
         return $result_arr;
 
+    }
+
+    public function detail(Request $request)
+    {
+        $fileName = "annotations_detail.csv";
+
+        $annotations = Annotation::with('author', 'tags')->where([
+            'status' => 'current',
+            'group_video_id' => $request->group_video_id
+        ])->get();
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $columns = array('Video ID', 'User email', 'Time in Video', 'Annotation', 'Tags', 'Created', 'Updated');
+
+        $callback = function () use ($annotations, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($annotations as $annotation) {
+                $row['Video ID']  = $annotation->group_video_id;
+                $row['User email'] = isset($annotation->author) ? $annotation->author->email : '';
+                $row['Time in Video'] = $annotation->start_time;
+                $row['Annotation']  = $annotation->description;
+                $row['Tags'] = join(",", array_map(function ($tag) {
+                    return $tag['tag'];
+                }, $annotation->tags->toArray()));
+                $row['Created']  = $annotation->created_at;
+                $row['Updated']  = $annotation->updated_at;
+
+                fputcsv($file, array(
+                    $row['Video ID'],
+                    $row['User email'],
+                    $row['Time in Video'],
+                    $row['Annotation'],
+                    $row['Tags'],
+                    $row['Created'],
+                    $row['Updated']
+                ));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
