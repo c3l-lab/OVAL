@@ -216,7 +216,7 @@ function saveTracking (record) {
 	var data = [record];
 	$.ajax({
 		type:"POST",
-		url: "/add_trackings",
+		url: "/trackings",
 		data: {data: data, group_video_id: group_video_id},
 		success: function(data) {
 		},
@@ -252,7 +252,7 @@ function trackingInitial(record, trackings) {
 			trackings = [];
 			$.ajax({
 				type:"POST",
-				url: "/add_trackings",
+				url: "/trackings",
 				data: {data: temp, group_video_id: group_video_id},
 				success: function(data) {
 					window.localStorage.setItem('trackings', JSON.stringify(trackings));

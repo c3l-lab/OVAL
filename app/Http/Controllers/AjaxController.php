@@ -75,33 +75,6 @@ class AjaxController extends Controller
         return compact('is_course_wide');
     }
 
-
-    /**
-     * Method called from route /add_trackings
-     *
-     * This method saves trackings passed in as parameter
-     * @author Harry
-     *
-     * @param Request $req Request contains
-     * 								group_video_id,
-     * 								data (array of array with keys [event, target, info, event_time])
-     * @return void
-     */
-    public function add_trackings(Request $req)
-    {
-        $records = $req->data;
-        foreach ($records as $record) {
-            $tracking = new oval\Models\Tracking();
-            $tracking->group_video_id = intval($req->group_video_id);
-            $tracking->user_id = Auth::user()->id;
-            $tracking->event = $record['event'];
-            $tracking->target = $record['target'];
-            $tracking->info = $record['info'];
-            $tracking->event_time = date("Y-m-d H:i:s", (int)($record['event_time'] / 1000));
-            $result = $tracking->save();
-        }
-    }
-
     /**
      * Method called from route /get_nominated_students_ids
      *

@@ -7,6 +7,22 @@ use oval\Models\Tracking;
 
 class TrackingController extends Controller
 {
+    public function store(Request $req)
+    {
+        $records = $req->data;
+        foreach ($records as $record) {
+            $tracking = new Tracking();
+            $tracking->group_video_id = intval($req->group_video_id);
+            $tracking->user_id = \Auth::user()->id;
+            $tracking->event = $record['event'];
+            $tracking->target = $record['target'];
+            $tracking->info = $record['info'];
+            $tracking->event_time = date("Y-m-d H:i:s", (int)($record['event_time'] / 1000));
+            $result = $tracking->save();
+        }
+    }
+
+
     public function export(Request $request)
     {
         $fileName = "trackings.csv";

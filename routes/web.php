@@ -123,7 +123,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/save_points', 'AjaxController@save_points');
     Route::post('/get_points_for_group_video', 'AjaxController@get_points_for_group_video');
     Route::post('/delete_points', 'AjaxController@delete_points');
-    Route::post('/add_trackings', 'AjaxController@add_trackings');
     Route::post('/get_nominated_students_ids', 'AjaxController@get_nominated_students_ids');
     Route::post('/check_student_activity', 'AjaxController@check_student_activity');
     Route::post('/delete_keywords', 'AjaxController@delete_keywords');
