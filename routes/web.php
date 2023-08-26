@@ -11,6 +11,7 @@ use oval\Http\Controllers\GroupController;
 use oval\Http\Controllers\GroupVideoController;
 use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\QuizResultController;
+use oval\Http\Controllers\TrackingController;
 use oval\Http\Controllers\TranscriptController;
 use oval\Http\Controllers\Video;
 use oval\Http\Controllers\GroupVideo;
@@ -67,6 +68,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/quiz_results/detail', [QuizResultController::class, 'detail'])->name('quiz_results.detail');
     Route::resource('quiz_results', QuizResultController::class);
     Route::singleton('group_videos.quiz', GroupVideo\QuizController::class);
+
+    Route::get('trackings/export', [TrackingController::class, 'export'])->name('trackings.export');
+    Route::resource('trackings', TrackingController::class);
 
     Route::middleware([RequireAdmin::class])->group(function () {
         Route::post('/analysis_requests/batch_resend', [AnalysisRequestController::class, 'batch_resend'])->name('analysis_requests.batch_resend');

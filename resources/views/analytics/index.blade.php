@@ -66,6 +66,7 @@
                             <th>Key Points</th>
                             <!-- <th>User Actions</th> -->
                             <th>Quiz Questions</th>
+                            <th>Tracking</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -136,6 +137,12 @@
                                     </button>
                                     <br />
 
+                                </td>
+                                <td>
+                                    <br /><br />
+                                    <a href="{{ route('trackings.export', ['group_video_id' => $gv->id]) }}">
+                                        <button class="analytics_btn">Download</button>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
