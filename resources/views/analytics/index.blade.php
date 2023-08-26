@@ -52,6 +52,7 @@ VIDEO USAGE ANALYTICS</div>
 				<table class="table table-striped">
 					<thead>
 						<tr style="border-bottom:1px solid var(--table-border-color)">
+							<th>ID</th>
 							<th>Video</th>
 							<th>Student Views</th>
 							<th>Annotations</th>
@@ -63,6 +64,9 @@ VIDEO USAGE ANALYTICS</div>
 					<tbody>
 						@foreach ($group->group_videos() as $gv)
 						<tr>
+							<td>
+								{{ $gv->id }}
+							</td>
 							<td class="img-cel">
 								<a href="/group_videos/{{$gv->id}}">
 									<img class="video-thumbnail" src="{{ $gv->video()->thumbnail_url }}">
