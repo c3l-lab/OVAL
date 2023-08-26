@@ -316,6 +316,10 @@ $('document').ready(function () {
 										'Quiz score'
 									  ];
 
+					if (res.length === 0) {
+						alert("No quiz found for this video.");
+					}
+
 					for(var i = 0; i < res[0].quiz_name_list.length; i++){
 						//var str = "Quiz Question " + i + 1 + " : " + res[0].quiz_name_list[i].name + " (attempt number)";
 						var str =  res[0].quiz_name_list[i].name + " (attempt number)";
