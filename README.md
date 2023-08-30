@@ -11,4 +11,4 @@ OVAL 2.0 is an interactive video platform designed to be integrated into a learn
 
 ## License
 
-[BSD 2-Clause](LICENSE.md)
+[BSD 2-Clause](LICENSE)
