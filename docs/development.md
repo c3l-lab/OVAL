@@ -33,6 +33,14 @@ $ composer install
 $ npm install
 ```
 
+### Build assets
+
+This command will compile the assets and watch for changes. Leave it running and open a new terminal window to continue.
+
+```bash
+$ npm run watch
+```
+
 ### Using Sail
 
 ```bash
