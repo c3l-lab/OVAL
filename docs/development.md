@@ -1,5 +1,7 @@
 # Development Guide
 
+We strongly recommand use either [Homestead](https://laravel.com/docs/10.x/homestead) or [Sail](https://laravel.com/docs/10.x/sail) for local development.
+
 ## Prerequisites
 
 - PHP >= 8.2
@@ -9,31 +11,28 @@
 - [VirtualBox](https://www.virtualbox.org/) - only required if using Homestead
 - [Docker Desktop](https://www.docker.com/products/docker-desktop) or [OrbStack](https://orbstack.dev) - only required if using Sail
 
-## Development
 
-We strongly recommand use either [Homestead](https://laravel.com/docs/10.x/homestead) or [Sail](https://laravel.com/docs/10.x/sail) for local development.
-
-### Clone the repository
+## Clone the repository
 
 ```bash
 $ git clone git@github.com:c3l-lab/OVAL.git
 $ cd OVAL
 ```
 
-### Create a `.env` file
+## Create a `.env` file
 
 ```bash
 $ cp .env.example .env
 ```
 
-### Install dependencies
+## Install dependencies
 
 ```bash
 $ composer install
 $ npm install
 ```
 
-### Build assets
+## Build assets
 
 This command will compile the assets and watch for changes. Leave it running and open a new terminal window to continue.
 
@@ -41,7 +40,7 @@ This command will compile the assets and watch for changes. Leave it running and
 $ npm run watch
 ```
 
-### Using Sail
+## Using Sail
 
 ```bash
 $ ./vendor/bin/sail up
@@ -56,7 +55,9 @@ $ ./vendor/bin/sail artisan db:seed
 
 Open the application in your browser at [http://localhost](http://localhost).
 
-### Using Homestead
+For more information about Sail, please refer to the [official documentation](https://laravel.com/docs/10.x/sail).
+
+## Using Homestead
 
 ```bash
 $ cp Homestead.example.yaml Homestead.yaml
@@ -90,6 +91,8 @@ $ php artisan db:seed
 ```
 
 Open the application in your browser at [http://oval.test](http://oval.test).
+
+For more information about Homestead, please refer to the [official documentation](https://laravel.com/docs/10.x/homestead).
 
 ## Default User
 
