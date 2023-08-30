@@ -48,11 +48,6 @@ $ ./vendor/bin/sail artisan db:seed
 
 Open the application in your browser at [http://localhost](http://localhost).
 
-```
-Email: admin@example.com
-Password: password
-```
-
 ### Using Homestead
 
 ```bash
