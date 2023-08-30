@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "13ff9697710ea9b51a4d7895ee94b97e",
+    "content-hash": "f018ff16cac6f9b337e4cd1fc1cc34ca",
     "packages": [
         {
             "name": "brick/math",
@@ -7282,6 +7282,60 @@
                 "source": "https://github.com/laravel/dusk/tree/v7.9.3"
             },
             "time": "2023-08-03T16:00:26+00:00"
+        },
+        {
+            "name": "laravel/homestead",
+            "version": "v14.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/homestead.git",
+                "reference": "63065d73e93310464a1d5026f588f21a02892c2a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/homestead/zipball/63065d73e93310464a1d5026f588f21a02892c2a",
+                "reference": "63065d73e93310464a1d5026f588f21a02892c2a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0 || <8.3",
+                "symfony/console": "^5.0 || ^6.0",
+                "symfony/process": "^5.0 || ^6.0",
+                "symfony/yaml": "^5.0 || ^6.0"
+            },
+            "require-dev": {
+                "dms/phpunit-arraysubset-asserts": "^0.2.1",
+                "phpunit/phpunit": "^9.5"
+            },
+            "bin": [
+                "bin/homestead"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Homestead\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                },
+                {
+                    "name": "Joe Ferguson",
+                    "email": "joe@joeferguson.me"
+                }
+            ],
+            "description": "A virtual machine for web artisans.",
+            "support": {
+                "issues": "https://github.com/laravel/homestead/issues",
+                "source": "https://github.com/laravel/homestead/tree/v14.4.2"
+            },
+            "time": "2023-08-22T18:07:00+00:00"
         },
         {
             "name": "laravel/sail",

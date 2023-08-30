@@ -43,3 +43,4 @@ public/js/player.js
 .php-cs-fixer.cache
 
 coverage
+.vagrant/
