@@ -5,6 +5,7 @@ OVAL 2.0 is an interactive video platform designed to be integrated into a learn
 ## Documentation
 
 - [Development](docs/development.md)
+- [Deployment](docs/deployment.md)
 - [Setting up LTI in Canvas](docs/setting-up-lti-in-canvas.md)
 - [Setting up LTI in Open edX](docs/setting-up-lti-in-opened.md)
 
