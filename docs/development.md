@@ -120,4 +120,4 @@ Current deployment overview:
 
 ![Deployment overview](images/deployment.png)
 
-The development and production instances are hosted on the AWS. The deployment process is automated through the utilization of AWS CodePipeline and CodeBuild. Triggering the deployment process requires a push to either the main or dev branch of the GitHub repository or manannly click the relase button in the CodePipeline console. The build configuration is specified in the `cicd/buildspec.yml` file, while the Nginx configuration is defined within the `.platform/nginx` folder.
+The development and production instances are hosted on the AWS. The deployment process is automated through the utilization of AWS CodePipeline and CodeBuild. Triggering the deployment process requires a push to either the main or dev branch of the GitHub repository or mannually clicking the release button in the CodePipeline console. The build configuration is specified in the `cicd/buildspec.yml` file, while the Nginx configuration is defined within the `.platform/nginx` folder.
