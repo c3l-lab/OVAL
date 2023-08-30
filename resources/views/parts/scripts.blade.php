@@ -1,11 +1,11 @@
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery.js"></script>
 <!-- NiceScroll -->
-<script type="text/javascript" src="{{ URL::secureAsset('js/jquery.nicescroll.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jquery.nicescroll.min.js') }}"></script>
 <!-- Bootstrap -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <!-- Jasny Bootstrap -->
-<script type="text/javascript" src="{{ URL::secureAsset('js/jasny-bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jasny-bootstrap.min.js') }}"></script>
 
 @yield('additional-js')
 
@@ -36,5 +36,5 @@
 </script>
 @endif
 
-<script type="text/javascript" src="{{ URL::secureAsset('js/app.js') }}"></script>
-<script type="text/javascript" src="{{ URL::secureAsset('js/theme.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/theme.js') }}"></script>

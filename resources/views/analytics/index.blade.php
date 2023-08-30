@@ -157,9 +157,9 @@
 
 
 @section('javascript')
-    <!-- <script type="text/javascript" src="{{ URL::secureAsset('js/plugin/d3.min.js') }}"></script> -->
-    <script type="text/javascript" src="{{ URL::secureAsset('js/plugin/jquery.tooltip.js') }}"></script>
-    <script type="text/javascript" src="{{ URL::secureAsset('js/analytics.js') }}"></script>
+    <!-- <script type="text/javascript" src="{{ asset('js/plugin/d3.min.js') }}"></script> -->
+    <script type="text/javascript" src="{{ asset('js/plugin/jquery.tooltip.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/analytics.js') }}"></script>
 @endsection
 
 

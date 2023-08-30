@@ -4,8 +4,8 @@
 
 
 @section('additional-css')
-    <link rel="stylesheet" type="text/css" href="{{ URL::secureAsset('css/multi-select.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ URL::secureAsset('css/bootstrap-tagsinput.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/multi-select.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-tagsinput.css') }}">
 @endsection
 
 @section('content')
@@ -421,6 +421,6 @@
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
 
-    <script type="text/javascript" src="{{ URL::secureAsset('js/video-management.js') }}"></script>
-    <script type="text/javascript" src="{{ URL::secureAsset('js/plugin/oval_quiz_creation.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/video-management.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugin/oval_quiz_creation.js') }}"></script>
 @endsection
