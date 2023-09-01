@@ -46,7 +46,7 @@ Feel free to submit pull requests for new features or bug fixes, or create an is
 - [Development](docs/development.md)
 - [Deployment](docs/deployment.md)
 - [Setting up LTI in Canvas](docs/setting-up-lti-in-canvas.md)
-- [Setting up LTI in Open edX](docs/setting-up-lti-in-opened.md)
+- [Setting up LTI in Open edX](docs/setting-up-lti-in-openedx.md)
 
 ## License
 
