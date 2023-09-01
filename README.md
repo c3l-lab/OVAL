@@ -4,6 +4,8 @@
 
 OVAL Interactive Video Player is a robust, feature-rich video player that takes user engagement to the next level. Designed with educators, and researchers in mind, OVAL offers a range of interactive options to facilitate active learning and data-driven insights. It allows seamless embedding into Learning Management Systems (LMS) via LTI and utilises YouTube as the video source.
 
+![Screenshot of OVAL](docs/images/full-view.png)
+
 ## Features
 
 ### Annotation
