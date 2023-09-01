@@ -1,6 +1,45 @@
-# OVAL 2.0 - Interactive Video Platform
+# OVAL Interactive Video Player
 
-OVAL 2.0 is an interactive video platform designed to be integrated into a learning management system (LMS) via Learning Tools Interoperability (LTI). The web application is built with Laravel 10 and PHP 8.2. This README and upgrades from original Oval v1 (from fork [Argsen/oval](https://github.com/Argsen/oval)) was written in assistance with ChatGPT. This guide will help you set up the OVAL software for a development environment using Laravel Homestead, including the requirements and database migrations.
+## Overview
+
+OVAL Interactive Video Player is a robust, feature-rich video player that takes user engagement to the next level. Designed with educators, and researchers in mind, OVAL offers a range of interactive options to facilitate active learning and data-driven insights. It allows seamless embedding into Learning Management Systems (LMS) via LTI and utilises YouTube as the video source.
+
+## Features
+
+### Annotation
+- Annotate videos in real-time.
+- View annotations made by other users for collaborative learning and insights.
+
+### Commenting
+- Engage in discussions by adding comments directly on the video timeline.
+
+### Video Source
+- Uses YouTube as the primary video source, offering a wide range of content options.
+
+### Quizzes
+- Integrate multiple-choice or free-text quizzes at predetermined points within the video to test user comprehension.
+
+### Tracking
+- Full tracking of all user interactions, including annotations, comments, quiz responses, and viewing behaviour.
+
+### LMS and LTI
+- Easily embed the video player into any LMS supporting LTI.
+- Access a standalone full-page version of the player when needed.
+
+### Customisation Options
+- Enable or disable annotations and comments.
+- Choose which video player controls are available to the users.
+
+### Data Export
+- Export all user interaction data for further analysis, making it easier to improve content and understand user behaviour.
+
+## Getting Started
+
+To get started with OVAL Interactive Video Player, follow the installation guide in the `docs` folder.
+
+## Contribution
+
+Feel free to submit pull requests for new features or bug fixes, or create an issue to discuss modifications.
 
 ## Documentation
 
