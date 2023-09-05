@@ -13,7 +13,7 @@
    - **Display Name**: set your preferred name
    - **LTI Version**: LTI 1.1/1.2
    - **LTI ID**: find on the **Manage LTI 1.1 Connections** page on Oval
-   - **LTI URL**: https://oval.c3l.ai/api/lti/1.1/launch?resource_type=group_video&resouce_id=1
+   - **LTI URL**: https://oval.c3l.ai/api/lti/1.1/launch?resource_type=group_video&resource_id=1
    - **Request user's username**: True
    - **Request user's email**: True
    - Click the **Save** button.
@@ -30,7 +30,7 @@
 
    - **Display Name**: set your preferred name
    - **LTI Version**: LTI 1.3
-   - **Tool Launch URL**: https://oval.c3l.ai/api/lti/1.3/launch?resource_type=group_video&resouce_id=1
+   - **Tool Launch URL**: https://oval.c3l.ai/api/lti/1.3/launch?resource_type=group_video&resource_id=1
    - **Tool Initiate Login URL**: https://oval.c3l.ai/api/lti/1.3/login
    - **Tool Public Key Mode**: Keyset URL
    - **Tool Keyset URL**: https://oval.c3l.ai/api/lti/1.3/jwks
