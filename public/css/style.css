@@ -285,6 +285,7 @@ h4 {
 /* -------- Video Player -------- */
 .video-width {
   margin: 0 auto;
+  max-width: 1024px;
 }
 
 #player {
