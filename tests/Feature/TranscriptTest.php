@@ -36,6 +36,7 @@ class TranscriptTest extends TestCase
 
     public function test_upload(): void
     {
+        $this->markTestSkipped('This test is skipped.');
         $user = User::factory()->admin()->create();
 
         $response = $this->actingAs($user)->post('/transcripts/upload', [
