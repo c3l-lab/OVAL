@@ -13,7 +13,7 @@
 			</ul>
 
 			<div class="oval-branding">
-				<img src="{{URL::secureAsset('img/OVAL-IconSmallNoFill01.png')}}" height="30">
+				<img src="{{asset('img/OVAL-IconSmallNoFill01.png')}}" height="30">
 				<span class="oval-name hidden-xs">
 					Online Video Annotation for Learning
 				</span>

@@ -7,42 +7,43 @@ use Packback\Lti1p3;
 class LtiCache implements Lti1p3\Interfaces\ICache
 {
     public const NONCE_PREFIX = 'nonce_';
+    private $cache = Cache::store('file');
 
     public function getLaunchData(string $key): ?array
     {
-        return \Cache::get($key);
+        return $this->cache->get($key);
     }
 
     public function cacheLaunchData(string $key, array $jwtBody): void
     {
         $duration = \Config::get('cache.duration.default');
-        \Cache::put($key, $jwtBody, $duration);
+        $this->cache->put($key, $jwtBody, $duration);
     }
 
     public function cacheNonce(string $nonce, string $state): void
     {
         $duration = \Config::get('cache.duration.default');
-        \Cache::put(static::NONCE_PREFIX.$nonce, $state, $duration);
+        $this->cache->put(static::NONCE_PREFIX.$nonce, $state, $duration);
     }
 
     public function checkNonceIsValid(string $nonce, string $state): bool
     {
-        return \Cache::get(static::NONCE_PREFIX.$nonce, false) === $state;
+        return $this->cache->get(static::NONCE_PREFIX.$nonce, false) === $state;
     }
 
     public function cacheAccessToken(string $key, string $accessToken): void
     {
         $duration = \Config::get('cache.duration.min');
-        \Cache::put($key, $accessToken, $duration);
+        $this->cache->put($key, $accessToken, $duration);
     }
 
     public function getAccessToken(string $key): ?string
     {
-        return \Cache::has($key) ? \Cache::get($key) : null;
+        return $this->cache->has($key) ? $this->cache->get($key) : null;
     }
 
     public function clearAccessToken(string $key): void
     {
-        \Cache::forget($key);
+        $this->cache->forget($key);
     }
 }

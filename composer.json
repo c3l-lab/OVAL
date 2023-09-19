@@ -18,15 +18,17 @@
         "laravel/tinker": "^2.8"
     },
     "require-dev": {
+        "doctrine/dbal": "^3.6",
+        "fakerphp/faker": "^1.23",
+        "friendsofphp/php-cs-fixer": "^3.22",
+        "laravel/dusk": "^7.9",
+        "laravel/homestead": "^14.4",
+        "laravel/sail": "^1.24",
         "mockery/mockery": "^1.5",
+        "nunomaduro/collision": "^7.7",
         "phpunit/phpunit": "^10.0",
         "symfony/css-selector": "^6.2",
-        "symfony/dom-crawler": "^6.2",
-        "friendsofphp/php-cs-fixer": "^3.22",
-        "nunomaduro/collision": "^7.7",
-        "fakerphp/faker": "^1.23",
-        "laravel/dusk": "^7.9",
-        "doctrine/dbal": "^3.6"
+        "symfony/dom-crawler": "^6.2"
     },
     "autoload": {
         "files": [

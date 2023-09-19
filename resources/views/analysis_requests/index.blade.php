@@ -317,6 +317,6 @@
 @endsection
 
 @section('javascript')
- <script type="text/javascript" src="{{ URL::secureAsset('js/admin-page.js') }}"></script>
+ <script type="text/javascript" src="{{ asset('js/admin-page.js') }}"></script>
  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
 @endsection

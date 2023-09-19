@@ -1,47 +1,100 @@
-var tag = document.createElement('script');
-tag.src = "https://youtube.com/iframe_api";
-tag.id = "youtubeScript";
-var firstScriptTag = document.getElementsByTagName('script')[1];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+import Plyr from 'plyr/dist/plyr.js';
 
-var player;
+let plyr = null;
+let player = null;
 
-window.onYouTubeIframeAPIReady = function onYouTubeIframeAPIReady() {
-	player = new YT.Player('player', {
-		width: '100%',
-		height: '100%',
-		videoId: video_identifier,
-		playerVars: {
+function main() {
+	const groupVideo = window.Oval.currentGroupVideo;
+	initPlayer(groupVideo);
+	loadQuiz(groupVideo.id);
+}
+
+function initPlayer(groupVideo) {
+	const controls = [];
+	if (groupVideo.controls.play) {
+		controls.push('play');
+	}
+	if (groupVideo.controls.progress) {
+		controls.push('progress');
+	}
+	if (groupVideo.controls.volume) {
+		controls.push('volume');
+	}
+
+	const settings = [];
+	if (groupVideo.controls.speed) {
+		settings.push('speed');
+	}
+	if (groupVideo.controls.captions) {
+		settings.push('captions');
+	}
+
+	if (settings.length > 0) {
+		controls.push('settings');
+	}
+
+	if (groupVideo.controls.fullscreen) {
+		controls.push('fullscreen');
+	}
+
+	plyr = new Plyr('#player', {
+		controls,
+		settings,
+		/**
+		 * Since Plyr is just a wrapper for the YouTube player, when users click on
+		 * the play button, Playr will call play method on the YouTube player.
+		 * However, I don't know why, when the video page is embedded into another
+		 * page as an iframe, the play button won't work because of Chrome doesn't
+		 * allow calling the play method on the video element without user interaction
+		 * on the actual document of the YouTube player.
+		 *
+		 * To fix this, we need to use the original play button from the YouTube
+		 * player. This is archeived by removing '.plyr__poster' element from the DOM
+		 * after the player is ready.
+		 *
+		 * And we also need to tell Plyr not to pause the video when it plays because of
+		 * https://github.com/sampotts/plyr/blob/0c9759455cbfcce888c66925c3b457ce06cee31e/src/js/plugins/youtube.js#L396-L398
+		 * by setting `autoplay` to true.
+		 *
+		 * Finally, the video will not actually autoplay because we have disabled it
+		 * again below.
+		 *
+		 * Related issue https://github.com/sampotts/plyr/issues/1993
+		 */
+		autoplay: true,
+		youtube: {
+			autoplay: 0,
 			wmode: "transparent",
 			rel: 0,
 			enablejsapi: 1,
-			origin: domain,
-			controls: 0,
 			disablekb: 1,
-		},
-		events: {
-			'onReady': onPlayerReady,
-			'onStateChange': onPlayerStateChange
 		}
-	});//end YT.Player
+	});
 
-	load_quiz(group_video_id);
-}//end onYouTubeIframeAPIReady
+	plyr.on('ready', onPlayerReady);
+	plyr.on('statechange', onPlayerStateChange);
 
-function pauseVideo() {
+	document.addEventListener('fullscreenchange', (e) => {
+		if (document.fullscreenElement != null && !groupVideo.controls.fullscreen) {
+			document.exitFullscreen();
+		}
+	});
+}
+
+window.pauseVideo = function pauseVideo() {
 	player.pauseFromJs = true;
 	player.pauseVideo();
 }
 
-function playVideo() {
+window.playVideo = function playVideo() {
 	player.playVideo();
 }
 
-function goTo(time) {
+window.goTo = function goTo(time) {
 	player.seekTo(time, true);
 }
 
-function currentVideoTime() {
+window.currentVideoTime = function currentVideoTime() {
 	return Math.floor(player.getCurrentTime());
 }
 
@@ -57,42 +110,46 @@ function onTime() {
 };
 
 function onPlayerReady(event) {
+	window.player = player = plyr.embed;
 	player.loadModule("captions");
-	event.target.pauseVideo();
 	window.setInterval(onTime, 1000);
+	/**
+	 * Hacking for https://github.com/sampotts/plyr/issues/1993
+	 * See comments above for autoplay
+	 */
+	document.querySelector(".plyr__poster").remove();
 	checkQuiz();
 }
 
 function onPlayerStateChange(event) {
-	var videoTime = player.getCurrentTime().toFixed(1);
-	var event_time = Date.now();
-	var action = "";
+	const groupVideo = window.Oval.currentGroupVideo;
+	const videoTime = player.getCurrentTime().toFixed(1);
+	const event_time = Date.now();
+	let action = "";
+	const code = event.detail.code;
 
-	if (event.data == YT.PlayerState.PLAYING) {
+	if (code == YT.PlayerState.PLAYING) {
 		action = "Play";
-	} else if (event.data == YT.PlayerState.PAUSED) {
+	} else if (code == YT.PlayerState.PAUSED) {
 		action = "Paused";
-		if (player.pauseFromJs !== true) {
+		if (player.pauseFromJs !== true && !groupVideo.controls.play) {
 			player.playVideo();
 		}
 		player.pauseFromJs = false;
-	} else if (event.data == YT.PlayerState.ENDED) {
+	} else if (code == YT.PlayerState.ENDED) {
 		action = "Ended";
 		$("#current-keywords").html("&nbsp;");
-	} else if (event.data == YT.PlayerState.BUFFERING) {
+	} else if (code == YT.PlayerState.BUFFERING) {
 		action = "Buffering";
-	} else if (event.data == YT.PlayerState.CUED) {
+	} else if (code == YT.PlayerState.CUED) {
 		action = "Cued";
 	}
 	saveTracking({ event: action, target: null, info: videoTime, event_time: event_time });
 }
 
-/*------ quiz client plugin for youtube ------*/
-
-var quiz_meta = [];
-var is_visable = true;
-
-var flag = false; //true for modal fired, false for not fired
+let quiz_meta = [];
+let is_visable = true;
+let flag = false; //true for modal fired, false for not fired
 
 function checkQuiz() {
 	var intervalID_youtubeplayer = window.setInterval(
@@ -119,7 +176,7 @@ function checkQuiz() {
 
 				if (current_video_time === quiz_stop) {
 					setTimeout(function () {
-						show_quiz(quiz_meta[meta_position]);
+						showQuiz(quiz_meta[meta_position]);
 					}, 1000);
 				}
 
@@ -130,12 +187,11 @@ function checkQuiz() {
 	)
 }
 
-function load_quiz(groupVideoId) {
+function loadQuiz(groupVideoId) {
 	$.ajax({
 		type: "GET",
 		url: "/group_videos/" + groupVideoId + "/quiz",
 		success: function (res) {
-
 			if (res.quiz != null) {
 				quiz_meta = JSON.parse(res.quiz.quiz_data);
 				switch (parseInt(res.quiz.visable)) {
@@ -157,12 +213,20 @@ function load_quiz(groupVideoId) {
 	});
 }
 
-function show_quiz(data) {
+function showQuiz(data) {
 	pauseVideo();
-	show_quiz_modal(data)
+	if (document.fullscreenElement != null) {
+		document.exitFullscreen().then(() => {
+			showQuizModal(data);
+		}).catch(() => {
+			alert("unable to exit fullscreen.");
+		});
+	} else {
+		showQuizModal(data);
+	}
 }
 
-function show_quiz_modal(data, cb) {
+function showQuizModal(data, cb) {
 	if (!flag) {
 		$("#quiz_modal").off("hidden.bs.modal");
 		$(".client_question_list_wrap").empty();
@@ -262,11 +326,11 @@ function show_quiz_modal(data, cb) {
 
 						// if(!is_all_correct){
 
-						var feedback_arr = show_feedback_hint(data);
+						var feedback_arr = showFeedbackHint(data);
 
 						if (feedback_arr.length > 0) {
 							$("#quiz_modal").modal('hide');
-							show_feedback_modal(feedback_arr);
+							showFeedbackModal(feedback_arr);
 						} else {
 
 							setTimeout(function () {
@@ -292,20 +356,8 @@ function show_quiz_modal(data, cb) {
 	//return cb();
 }
 
-function alert_modal_client(message) {
-	$("#alert_dialog_content").empty();
 
-	var content = "<h3>" + message + "</h3>";
-	$("#alert_dialog_content").append(content);
-
-	$("#alert_dialog").modal({
-		backdrop: 'static',
-		keyboard: false
-	});
-
-}
-
-function show_feedback_hint(quiz_data) {
+function showFeedbackHint(quiz_data) {
 
 	var return_obj = [];
 
@@ -395,7 +447,7 @@ function show_feedback_hint(quiz_data) {
 
 }
 
-function show_feedback_modal(feedback_array) {
+function showFeedbackModal(feedback_array) {
 
 	$("#feedback_dialog_content_table_head").nextAll('tr').remove();
 
@@ -453,3 +505,6 @@ function encodeText(txt) {
 	return txt.replace(/\&/g, '&amp;').replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace(/\"/g, '&quot;').replace(/\'/g, '&apos;');
 }
 /*------ string process functions ------*/
+
+
+main();

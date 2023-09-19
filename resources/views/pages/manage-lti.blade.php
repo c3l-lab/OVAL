@@ -154,5 +154,5 @@
 
 @section('javascript')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
-    <script type="text/javascript" src="{{ URL::secureAsset('js/manage-lti.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/manage-lti.js') }}"></script>
 @endsection

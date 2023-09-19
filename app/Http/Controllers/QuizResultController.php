@@ -19,40 +19,55 @@ class QuizResultController extends Controller
         return ['result' => 'success'];
     }
 
-    public function report(Request $request)
+    public function detail(Request $request)
     {
-        $user_arr = empty($request->user_id) ? [] : explode(',', $request->user_id);
+        $fileName = "quiz_results_detail.csv";
 
-        $result_arr = [];
+        $quizResults = QuizResult::with('author')->where([
+            'group_video_id' => $request->group_video_id
+        ])->get();
 
-        for($x = 0; $x < count($user_arr); $x++) {
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
 
-            /*------ get user surname, first name, student ID ------*/
-            $user_info = \DB::table('users')
-            ->select('first_name', 'last_name', 'email')
-            ->where([
-                ['id', '=', $user_arr[$x]]
-            ])
-            ->first();
+        $columns = array('Video ID', 'User email', 'Quiz Name', 'Question Name', 'User Answer', 'Created', 'Updated');
 
-            $surname = $user_info->first_name;
-            $first_name = $user_info->last_name;
-            $student_id = $user_info->email;
+        $callback = function () use ($quizResults, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
 
-            /*------ get all attempt record ------*/
-            $student_record_list = \DB::table('quiz_result')
-                        ->select('quiz_result.quiz_data', 'quiz_result.created_at')
-                        ->where([
-                            ['group_video_id', '=', $request->group_video_id],
-                            ['quiz_result.user_id', '=', $user_arr[$x]]
-                        ])
-                        ->orderBy('quiz_result.created_at', 'desc')
-                        ->get();
+            foreach ($quizResults as $quizResult) {
+                $quiz = json_decode($quizResult->quiz_data);
 
-            array_push($result_arr, compact('surname', 'first_name', 'student_id', 'student_record_list', 'student_record_list'));
+                foreach ($quiz->items as $question) {
+                    $row['Video ID']  = $quizResult->group_video_id;
+                    $row['User email'] = isset($quizResult->author) ? $quizResult->author->email : '';
+                    $row['Quiz Name'] = $quiz->name;
+                    $row['Question Name']  = $question->title;
+                    $row['User Answer'] = json_encode($question->ans);
+                    $row['Created']  = $quizResult->created_at;
+                    $row['Updated']  = $quizResult->updated_at;
 
-        }
+                    fputcsv($file, array(
+                        $row['Video ID'],
+                        $row['User email'],
+                        $row['Quiz Name'],
+                        $row['Question Name'],
+                        $row['User Answer'],
+                        $row['Created'],
+                        $row['Updated']
+                    ));
+                }
+            }
 
-        return $result_arr;
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

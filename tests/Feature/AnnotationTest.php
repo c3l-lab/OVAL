@@ -128,7 +128,7 @@ class AnnotationTest extends TestCase
         ]);
     }
 
-    public function test_column(): void
+    public function test_report(): void
     {
         $user = User::factory()->create();
         $course = Course::factory()->createWithVideoForUser($user);
@@ -143,7 +143,7 @@ class AnnotationTest extends TestCase
             'event' => 'View'
         ]);
 
-        $response = $this->actingAs($user)->get('/annotations/column?group_video_id=' . $groupVideo->id);
+        $response = $this->actingAs($user)->get('/annotations/report?group_video_id=' . $groupVideo->id);
 
         $response->assertStatus(200);
         $response->assertJsonPath('0.surname', $user->last_name);

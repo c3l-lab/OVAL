@@ -11,6 +11,7 @@ use oval\Http\Controllers\GroupController;
 use oval\Http\Controllers\GroupVideoController;
 use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\QuizResultController;
+use oval\Http\Controllers\TrackingController;
 use oval\Http\Controllers\TranscriptController;
 use oval\Http\Controllers\Video;
 use oval\Http\Controllers\GroupVideo;
@@ -45,7 +46,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])->name('group_videos.show.embed');
 
     Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
-    Route::get('/comments/column', [CommentController::class, 'column'])->name('comments.column');
+    Route::get('/comments/report', [CommentController::class, 'report'])->name('comments.report');
+    Route::get('/comments/detail', [CommentController::class, 'detail'])->name('comments.detail');
     Route::resource('comments', CommentController::class);
     Route::resource('comment_instructions', CommentInstructionController::class);
 
@@ -57,14 +59,18 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/annotations/download', [AnnotationController::class, 'download'])->name('annotations.download');
     Route::get('/annotations/tag', [AnnotationController::class, 'tag'])->name('annotations.tag');
-    Route::get('/annotations/column', [AnnotationController::class, 'column'])->name('annotations.column');
+    Route::get('/annotations/report', [AnnotationController::class, 'report'])->name('annotations.report');
+    Route::get('/annotations/detail', [AnnotationController::class, 'detail'])->name('annotations.detail');
     Route::resource('annotations', AnnotationController::class);
 
     Route::resource('courses.videos', Course\VideoController::class);
 
-    Route::get('/quiz_results/report', [QuizResultController::class, 'report'])->name('quiz_results.report');
+    Route::get('/quiz_results/detail', [QuizResultController::class, 'detail'])->name('quiz_results.detail');
     Route::resource('quiz_results', QuizResultController::class);
     Route::singleton('group_videos.quiz', GroupVideo\QuizController::class);
+
+    Route::get('trackings/export', [TrackingController::class, 'export'])->name('trackings.export');
+    Route::resource('trackings', TrackingController::class);
 
     Route::middleware([RequireAdmin::class])->group(function () {
         Route::post('/analysis_requests/batch_resend', [AnalysisRequestController::class, 'batch_resend'])->name('analysis_requests.batch_resend');
@@ -91,6 +97,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
         Route::resource('group_videos', GroupVideoController::class);
 
+        Route::singleton('group_videos.controls', GroupVideo\ControlsController::class);
+
         Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('group_videos.quiz.result');
         Route::post('/group_videos/{groupVideo}/quiz/toggle_visible', [GroupVideo\QuizController::class, 'toggleVisible'])->name('group_videos.quiz.toggle_visible');
 
@@ -115,7 +123,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/save_points', 'AjaxController@save_points');
     Route::post('/get_points_for_group_video', 'AjaxController@get_points_for_group_video');
     Route::post('/delete_points', 'AjaxController@delete_points');
-    Route::post('/add_trackings', 'AjaxController@add_trackings');
     Route::post('/get_nominated_students_ids', 'AjaxController@get_nominated_students_ids');
     Route::post('/check_student_activity', 'AjaxController@check_student_activity');
     Route::post('/delete_keywords', 'AjaxController@delete_keywords');

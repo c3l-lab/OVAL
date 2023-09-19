@@ -679,3 +679,5 @@
 		</div><!-- .modal-content -->
 	</div><!-- .modal-dialog -->
 </div><!-- .#modal-form -->
+
+@include('group_videos.index._controls_setting_modal')

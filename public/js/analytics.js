@@ -98,7 +98,7 @@ $('document').ready(function () {
 			var $group_video_id = $(this).attr("groupvideoid");
 
 			$.ajax({
-				url: "/annotations/column",
+				url: "/annotations/report",
 				type: "GET",
 				data: {
 					user_id: $userlist,
@@ -168,11 +168,13 @@ $('document').ready(function () {
 					});
 
 					/*------ bind event to second table ------*/
-					$("#download_detail_csv").hide();
+					$("#download_detail_csv").show();
 
 					$(".analytics_extra_wrap").empty();
-					$("#download_detail_csv").off('click');
 
+					$("#download_detail_csv").on('click', function () {
+						window.location.href = "/annotations/detail?group_video_id=" + $group_video_id;
+					});
 				}
 
 			})
@@ -185,7 +187,7 @@ $('document').ready(function () {
 			var $group_video_id = $(this).attr("groupvideoid");
 
 			$.ajax({
-				url: "/comments/column",
+				url: "/comments/report",
 				type: "GET",
 				data: {
 					user_id: $userlist,
@@ -260,12 +262,12 @@ $('document').ready(function () {
 					});
 
 					/*------ bind event to second table ------*/
-					$("#download_detail_csv").hide();
+					$("#download_detail_csv").show();
 
 					$(".analytics_extra_wrap").empty();
-					$("#download_detail_csv").off('click');
-
-
+					$("#download_detail_csv").on('click', function () {
+						window.location.href = "/comments/detail?group_video_id=" + $group_video_id;
+					});
 				}
 
 			})
@@ -313,6 +315,10 @@ $('document').ready(function () {
 										'Duration of video viewed',
 										'Quiz score'
 									  ];
+
+					if (res.length === 0) {
+						alert("No quiz found for this video.");
+					}
 
 					for(var i = 0; i < res[0].quiz_name_list.length; i++){
 						//var str = "Quiz Question " + i + 1 + " : " + res[0].quiz_name_list[i].name + " (attempt number)";
@@ -460,54 +466,8 @@ $('document').ready(function () {
 					}
 
 					/*------ output all student record data ------*/
-					$("#download_detail_csv").on('click', function(){
-
-						$.ajax({
-							url: "/quiz_results/report",
-							type: "GET",
-							data: {
-								user_id: $userlist,
-								group_video_id: $group_video_id
-							},
-							error: function (xhr, status, errorThrown) {
-								if (status === 'error') {
-									//error handler
-								}
-							},
-							success: function (res) {
-
-								var detail_output_arr = [];
-
-								var detail_output_head = ['Surname',
-										'First Name',
-										'User ID',
-										'Quiz Name',
-										'Question Name',
-										'User Answer'
-									];
-
-								detail_output_arr.push(detail_output_head);
-
-								for(var i = 0; i < res.length; i++){
-									for(var j = 0; j < res[i].student_record_list.length; j++){
-										var data = JSON.parse(res[i].student_record_list[j].quiz_data);
-										for(var k = 0; k < data.items.length; k++){
-											var detail_output_item = [res[i].surname,
-																	  res[i].first_name,
-																	  res[i].student_id,
-																	  decodeText(data.name),
-																	  decodeText(data.items[k].title),
-																	  decodeText(String(data.items[k].user_ans))];
-											detail_output_arr.push(detail_output_item);
-										}
-									}
-								}
-
-								exportToCsv('student_all_record_report.csv', detail_output_arr);
-
-							}
-						});
-
+					$("#download_detail_csv").on('click', function () {
+						window.location.href = "/quiz_results/detail?group_video_id=" + $group_video_id;
 					});
 
 					/*------ show modal ------*/

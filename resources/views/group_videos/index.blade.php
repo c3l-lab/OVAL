@@ -4,8 +4,8 @@
 
 
 @section('additional-css')
-    <link rel="stylesheet" type="text/css" href="{{ URL::secureAsset('css/multi-select.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ URL::secureAsset('css/bootstrap-tagsinput.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/multi-select.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-tagsinput.css') }}">
 @endsection
 
 @section('content')
@@ -234,6 +234,7 @@
                             <th>ID</th>
                             <th>TITLE</th>
                             <th>DESCRIPTION</th>
+                            <th>PLAYER CONTROLS</th>
                             <th>VIDEO ACCESS CONTROL</th>
                             <th>CONTENT ANALYSIS</th>
                             <th>DURATION</th>
@@ -258,6 +259,19 @@
                                     </a>
                                 </td>
                                 <td>{{ $gv->video()->description }}</td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link"
+                                        hx-get="{{ route('group_videos.controls.edit', ['group_video' => $gv]) }}"
+                                        hx-target="#controls-setting-modal .modal-body"
+                                        hx-swap="innerHTML"
+                                        hx-on="htmx:afterOnLoad: $('#controls-setting-modal').modal('show');"
+                                        title="Controls setting"
+                                    >
+                                        <i class="fa fa-pencil-square-o group-icon"></i>
+                                    </button>
+                                </td>
                                 <td>
                                     <button type="button" class="btn btn-link visibility-button" data-toggle="modal"
                                         data-target="#visibility-modal" data-id="{{ $gv->id }}"
@@ -407,6 +421,6 @@
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
 
-    <script type="text/javascript" src="{{ URL::secureAsset('js/video-management.js') }}"></script>
-    <script type="text/javascript" src="{{ URL::secureAsset('js/plugin/oval_quiz_creation.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/video-management.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugin/oval_quiz_creation.js') }}"></script>
 @endsection
