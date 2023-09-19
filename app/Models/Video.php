@@ -5,9 +5,8 @@ namespace oval\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use GuzzleHttp;
 use oval\Classes\YoutubeDataHelper;
-use oval\Jobs\AnalyzeTranscript;
+use oval\Services\YoutubeService;
 
 /**
  * Model class for table 'videos'
@@ -114,7 +113,7 @@ class Video extends Model
     {
         $keywords = $this->keywords
                     ->filter(function ($kw) {
-                        return ($kw->type=="keywords" || $kw->type=="concepts");
+                        return ($kw->type == "keywords" || $kw->type == "concepts");
                     })
                     ->pluck('keyword')
                     ->unique();
@@ -141,16 +140,14 @@ class Video extends Model
 
     public static function createFromYoutube(string $identifier, User $user)
     {
-        $client = new GuzzleHttp\Client();
-        $url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' . $identifier . '&key=' . config('youtube.api_key');
-        $response = $client->get($url);
-        $result = json_decode($response->getBody());
+        $youtubeService = app(YoutubeService::class);
+        $result = $youtubeService->fetchContentDetails($identifier);
 
         $v = new Video();
         $v->identifier = $identifier;
         $v->title = $result->items[0]->snippet->title;
         $desc = $result->items[0]->snippet->description;
-        $v->description = strlen($desc)>507 ? substr($desc, 0, 510) : $desc;
+        $v->description = strlen($desc) > 507 ? substr($desc, 0, 510) : $desc;
         $v->thumbnail_url = "https://img.youtube.com/vi/".$identifier."/1.jpg";
         $v->duration = ISO8601ToSeconds($result->items[0]->contentDetails->duration);
         $v->media_type = "youtube";
@@ -170,11 +167,11 @@ class Video extends Model
         $min = 0;
         $sec = $this->duration;
         if($sec > 60) {
-            $min = (int)($this->duration/60);
-            $sec = $this->duration%60;
+            $min = (int)($this->duration / 60);
+            $sec = $this->duration % 60;
             if ($min > 60) {
-                $hour = $min/60;
-                $min = $min%60;
+                $hour = $min / 60;
+                $min = $min % 60;
                 $retVal = $hour." hours ".$min." minutes and ".$sec." seconds";
             } else {
                 $retVal = $min." minutes and ".$sec." seconds";
@@ -199,7 +196,7 @@ class Video extends Model
         $credentials = GoogleCredential::all();
         $track_id = null;
         $caption_array = null;
-        if (!empty($credentials) && count($credentials)>0) {
+        if (!empty($credentials) && count($credentials) > 0) {
             foreach ($credentials as $cred) {
                 $helper = new YoutubeDataHelper($cred->client_id, $cred->client_secret);
                 $helper->handle_access_token_refresh($cred);
@@ -238,7 +235,7 @@ class Video extends Model
                     foreach ($cc->text as $item) {
                         $line = "{";
                         $time = 0;
-                        foreach ($item->attributes() as $key=>$val) {
+                        foreach ($item->attributes() as $key => $val) {
                             if ($key == "start") {
                                 $time = floatval($val);
                                 $line .= '"start":'.$time.', ';

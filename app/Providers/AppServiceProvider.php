@@ -9,6 +9,7 @@ use oval\Services\Lti1p3\LtiCache;
 use oval\Services\Lti1p3\LtiCookie;
 use oval\Services\Lti1p3\LtiDatabase;
 use oval\Services\Lti1p3\LtiService;
+use oval\Services\YoutubeService;
 use Packback\Lti1p3\LtiServiceConnector;
 
 class AppServiceProvider extends ServiceProvider
@@ -47,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
                 'timeout' => 30,
             ]));
         });
+        $this->app->bind(YoutubeService::class, YoutubeService::class);
 
         view()->composer('*', function ($view) {
             $user = \Auth::user();

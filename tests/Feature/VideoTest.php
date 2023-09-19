@@ -4,10 +4,12 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Mockery\MockInterface;
 use oval\Models\Course;
 use oval\Models\Group;
 use oval\Models\User;
 use oval\Models\Video;
+use oval\Services\YoutubeService;
 use Tests\TestCase;
 
 class VideoTest extends TestCase
@@ -16,6 +18,20 @@ class VideoTest extends TestCase
 
     public function test_store(): void
     {
+        $this->mock(YoutubeService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchContentDetails')->andReturn(json_decode(json_encode([
+                "items" => [[
+                    "snippet" => [
+                        "title" => "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+                        "description" => "foo",
+                    ],
+                    "contentDetails" => [
+                        "duration" => "PT3M33S"
+                    ]
+                ]]
+            ])));
+        });
+
         $course = Course::factory()->has(Group::factory()->count(1))->create();
         $user = User::factory()->create();
 
