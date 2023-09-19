@@ -49,7 +49,7 @@ class QuizResultController extends Controller
                     $row['User email'] = isset($quizResult->author) ? $quizResult->author->email : '';
                     $row['Quiz Name'] = $quiz->name;
                     $row['Question Name']  = $question->title;
-                    $row['User Answer'] = json_encode($question->ans);
+                    $row['User Answer'] = json_encode(empty($question->ans) ? $question->user_ans : $question->ans);
                     $row['Created']  = $quizResult->created_at;
                     $row['Updated']  = $quizResult->updated_at;
 
