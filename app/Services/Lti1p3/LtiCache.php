@@ -7,7 +7,12 @@ use Packback\Lti1p3;
 class LtiCache implements Lti1p3\Interfaces\ICache
 {
     public const NONCE_PREFIX = 'nonce_';
-    private $cache = Cache::store('file');
+    private $cache;
+
+    public function __construct()
+    {
+        $this->cache = \Cache::store('file');
+    }
 
     public function getLaunchData(string $key): ?array
     {
