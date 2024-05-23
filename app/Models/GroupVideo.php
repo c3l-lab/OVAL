@@ -49,7 +49,6 @@ class GroupVideo extends Model
                 'volume' => true,
             ]),
             'annotation_config' => json_encode([
-                'visibility' => true,
                 'label' => 'New Annotation',
                 'header_name' => "ADD ANNOTATION",
                 'downloadable' => true,
