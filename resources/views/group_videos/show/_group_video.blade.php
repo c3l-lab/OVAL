@@ -35,6 +35,11 @@
                 'course' => $course,
                 'video' => $video,
             ])
+        @else
+            @include('group_videos.show._annotation_buttons', [
+                'group_video' => $group_video,
+                'course' => $course,
+            ])
         @endif
     </div>
 

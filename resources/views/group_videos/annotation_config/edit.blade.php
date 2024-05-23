@@ -21,6 +21,16 @@
     </div>
 
     <div class="form-group">
+        <label class="col-sm-4">Show annotation button</label>
+        <div class="col-sm-8">
+            <label class="switch">
+                <input type="checkbox" name="is_show_annotation_button" @checked($groupVideo->annotation_config['is_show_annotation_button']) />
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
         <label class="col-sm-4">Label</label>
         <div class="col-sm-8">
             <input class="p-2 border-2 border-solid border-gray-600" type="text" name="label"

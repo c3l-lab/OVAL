@@ -969,6 +969,7 @@ $('document').ready(function () {
 		var settings = {
 			show_annotations: $("input[name='show_annotations']").is(":checked"),
 			downloadable: $("input[name='downloadable']").is(":checked"),
+			is_show_annotation_button: $("input[name='is_show_annotation_button']").is(":checked"),
 			label: $("input[name='label']").val(),
 			header_name: $("input[name='header_name']").val()
 		};

@@ -232,7 +232,7 @@
                             <th>ID</th>
                             <th>TITLE</th>
                             <th>DESCRIPTION</th>
-                            <th>ANNOTATION CONTROLS</th>
+                            <th>ANNOTATION CONFIG</th>
                             <th>PLAYER CONTROLS</th>
                             <th>VIDEO ACCESS CONTROL</th>
                             <th>CONTENT ANALYSIS</th>

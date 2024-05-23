@@ -8,8 +8,10 @@
             </button>
         </a>
     @endif
-    <button type="button" class="btn btn-link add-annotation" title="Add an annotation">
-        {{ $group_video->annotation_config['label'] }}
-        <i class="fa fa-plus-circle"></i>
-    </button>
+    @if ($group_video->annotation_config['is_show_annotation_button'])
+        <button type="button" class="btn btn-link add-annotation" title="Add an annotation">
+            {{ $group_video->annotation_config['label'] }}
+            <i class="fa fa-plus-circle"></i>
+        </button>
+    @endif
 </div><!-- .annotations-buttons -->
