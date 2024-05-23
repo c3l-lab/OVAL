@@ -15,7 +15,7 @@ class Tracking extends Model
 
     protected $table = 'trackings';
     protected $fillable = [
-      'group_video_id', 'user_id', 'event', 'target', 'info', 'event_time'
+      'group_video_id', 'user_id', 'event', 'target', 'info', 'event_time', 'ref_id', 'ref_type'
     ];
     public $timestamps = false;
 

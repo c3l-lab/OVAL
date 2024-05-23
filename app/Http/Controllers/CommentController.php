@@ -82,6 +82,18 @@ class CommentController extends Controller
             "privacy" => $comment->privacy,
             "updated_at" => $comment->updated_at
         );
+
+        //track
+        $record = [
+            'event' => 'click',
+            'target' => '#save',
+            'info' => 'Save comment',
+            'event_time' => $comment->created_at,
+            'ref_id' => $comment->id,
+            'ref_type' => 'comment'
+        ];
+        $this->track($comment->group_video_id, $record);
+
         return $c;
     }
 
@@ -120,6 +132,18 @@ class CommentController extends Controller
             "privacy" => $comment->privacy,
             "updated_at" => $comment->updated_at
         );
+
+        //track
+        $record = [
+            'event' => 'click',
+            'target' => '#edit',
+            'info' => 'Edit comment:'.$old->id,
+            'event_time' => $comment->created_at,
+            'ref_id' => $comment->id,
+            'ref_type' => 'comment'
+        ];
+        $this->track($comment->group_video_id, $record);
+
         return $c;
     }
 
@@ -130,6 +154,17 @@ class CommentController extends Controller
     {
         $comment->status = "deleted";
         $comment->save();
+
+        //track
+        $record = [
+            'event' => 'click',
+            'target' => '#delete',
+            'info' => 'Delete comment',
+            'event_time' => $comment->updated_at,
+            'ref_id' => $comment->id,
+            'ref_type' => 'comment'
+        ];
+        $this->track($comment->group_video_id, $record);
     }
 
     public function report(Request $request)
