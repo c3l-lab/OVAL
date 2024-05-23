@@ -136,7 +136,7 @@ class CommentController extends Controller
         //track
         $record = [
             'event' => 'click',
-            'target' => '#edit',
+            'target' => '.edit-comment-button',
             'info' => 'Edit comment:'.$old->id,
             'event_time' => $comment->created_at,
             'ref_id' => $comment->id,
