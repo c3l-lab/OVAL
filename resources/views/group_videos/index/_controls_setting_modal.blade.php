@@ -6,6 +6,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i class="fa fa-close" aria-hidden="true"></i>
                 </button>
+                <h4 class="modal-title">Config player controls</h4>
             </div><!-- .modal-header -->
 
 
