@@ -143,14 +143,9 @@
                                     <!-- <td><button type="button" videoid="{{ $video->id }}" class="btn btn-link assign-grp-button" title="Set quiz"><i class="fa fa-comment-o"></i></button></td> -->
                                     <td>{{ $video->created_at }}</td>
                                     <td>
-                                        <button
-                                            hx-delete="{{ route('videos.destroy', ['video' => $video]) }}"
-                                            hx-confirm="Are you sure you want to delete?"
-                                            hx-target="closest tr"
-                                            hx-swap="delete"
-                                            class="btn btn-link delete-button"
-                                            title="Delete"
-                                        >
+                                        <button hx-delete="{{ route('videos.destroy', ['video' => $video]) }}"
+                                            hx-confirm="Are you sure you want to delete?" hx-target="closest tr"
+                                            hx-swap="delete" class="btn btn-link delete-button" title="Delete">
                                             <i class="fa fa-trash-o delete-icon"></i>
                                         </button>
                                     </td>
@@ -185,7 +180,9 @@
                                 <li>NO COURSES</li>
                             @else
                                 @foreach ($user->coursesTeaching() as $c)
-                                    <li><a href="{{ route('group_videos.index', ['course_id' => $c->id]) }}">{{ $c->name }}</a></li>
+                                    <li><a
+                                            href="{{ route('group_videos.index', ['course_id' => $c->id]) }}">{{ $c->name }}</a>
+                                    </li>
                                 @endforeach
                             @endif
                         </ul>
@@ -207,7 +204,8 @@
                             @elseif ($course)
                                 @foreach ($user->groupMemberOf->where('course_id', $course->id) as $g)
                                     <li>
-                                        <a href="{{ route('group_videos.index', [ "course_id" => $course->id, "group_id" => $g->id ]) }}">{{ $g->name }}</a>
+                                        <a
+                                            href="{{ route('group_videos.index', ['course_id' => $course->id, 'group_id' => $g->id]) }}">{{ $g->name }}</a>
                                     </li>
                                 @endforeach
                             @else
@@ -234,6 +232,7 @@
                             <th>ID</th>
                             <th>TITLE</th>
                             <th>DESCRIPTION</th>
+                            <th>ANNOTATION CONTROLS</th>
                             <th>PLAYER CONTROLS</th>
                             <th>VIDEO ACCESS CONTROL</th>
                             <th>CONTENT ANALYSIS</th>
@@ -260,15 +259,20 @@
                                 </td>
                                 <td>{{ $gv->video()->description }}</td>
                                 <td>
-                                    <button
-                                        type="button"
-                                        class="btn btn-link"
+                                    <button type="button" class="btn btn-link"
+                                        hx-get="{{ route('group_videos.annotation_config.edit', ['group_video' => $gv]) }}"
+                                        hx-target="#annotation-config-modal .modal-body" hx-swap="innerHTML"
+                                        hx-on="htmx:afterOnLoad: $('#annotation-config-modal').modal('show');"
+                                        title="Annotation setting">
+                                        <i class="fa fa-pencil-square-o group-icon"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-link"
                                         hx-get="{{ route('group_videos.controls.edit', ['group_video' => $gv]) }}"
-                                        hx-target="#controls-setting-modal .modal-body"
-                                        hx-swap="innerHTML"
+                                        hx-target="#controls-setting-modal .modal-body" hx-swap="innerHTML"
                                         hx-on="htmx:afterOnLoad: $('#controls-setting-modal').modal('show');"
-                                        title="Controls setting"
-                                    >
+                                        title="Controls setting">
                                         <i class="fa fa-pencil-square-o group-icon"></i>
                                     </button>
                                 </td>
@@ -299,31 +303,30 @@
                                     </button>
                                 </td>
                                 <td>
-                                   <button type="button" class="btn btn-link text-analysis-button"
-                                       data-toggle="modal" data-target="#text-analysis-modal"
-                                       data-id="{{ $gv->id }}" data-show="{{ $gv->show_analysis }}"
-                                       title="Edit visibility of text analysis">
-                                       @if ($gv->show_analysis == true)
-                                           Visible
-                                           <i class="fa fa-eye" aria-hidden="true"></i>
-                                       @else
-                                           Hidden
-                                           <i class="fa fa-eye-slash" aria-hidden="true"></i>
-                                       @endif
-                                   </button>
-                                   <br />
+                                    <button type="button" class="btn btn-link text-analysis-button" data-toggle="modal"
+                                        data-target="#text-analysis-modal" data-id="{{ $gv->id }}"
+                                        data-show="{{ $gv->show_analysis }}" title="Edit visibility of text analysis">
+                                        @if ($gv->show_analysis == true)
+                                            Visible
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        @else
+                                            Hidden
+                                            <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                        @endif
+                                    </button>
+                                    <br />
 
-                                   @if ($gv->video()->keywords->count() > 0)
-                                       <button type="button" class="btn btn-link text-analysis-button"
-                                           data-toggle="modal" data-target="#edit-keywords-modal"
-                                           data-vid="{{ $gv->video()->id }}"
-                                           data-keywords="{{ $gv->video()->keywords_for_edits() }}"
-                                           title="Edit keywords">
-                                           <i class="fa fa-info-pencil" aria-hidden="true"></i>
-                                           Edit
-                                       </button>
-                                       <br />
-                                   @endif
+                                    @if ($gv->video()->keywords->count() > 0)
+                                        <button type="button" class="btn btn-link text-analysis-button"
+                                            data-toggle="modal" data-target="#edit-keywords-modal"
+                                            data-vid="{{ $gv->video()->id }}"
+                                            data-keywords="{{ $gv->video()->keywords_for_edits() }}"
+                                            title="Edit keywords">
+                                            <i class="fa fa-info-pencil" aria-hidden="true"></i>
+                                            Edit
+                                        </button>
+                                        <br />
+                                    @endif
                                 </td>
                                 <td>{{ $gv->video()->formattedDuration() }}</td>
                                 <td>
@@ -349,29 +352,23 @@
                                         title="Manage points"><i class="fa fa-pencil-square-o group-icon"></i></button>
                                 </td>
                                 <td>
-                                    <button
-                                        type="button"
-                                        data-group-video-id={{ $gv->id }}
-                                        class="set-quiz-btn quiz btn btn-link assign-grp-button"
-                                        title="Set quiz"
-                                    >
+                                    <button type="button" data-group-video-id={{ $gv->id }}
+                                        class="set-quiz-btn quiz btn btn-link assign-grp-button" title="Set quiz">
                                         <i class="fa fa-comment-o"></i>
                                     </button>
                                     <br />
                                     <label id="quiz-switch" class="switch">
-                                        <input
-                                            type="checkbox"
-                                            @checked($gv->quiz && $gv->quiz->visable == 1)
-                                            data-group-video-id="{{ $gv->id }}"
-                                        >
+                                        <input type="checkbox" @checked($gv->quiz && $gv->quiz->visable == 1)
+                                            data-group-video-id="{{ $gv->id }}">
                                         <span class="slider round"></span>
                                         <br />
-                                        <p>{{  $gv->quiz && $gv->quiz->visable == 1 ? 'visible' : 'hidden' }}</p>
+                                        <p>{{ $gv->quiz && $gv->quiz->visable == 1 ? 'visible' : 'hidden' }}</p>
                                     </label>
                                 </td>
                                 <td class="text-center">
                                     <label id="comments-switch" class="switch">
-                                        <input type="checkbox" {{ $gv->show_comments ? 'checked' : '' }} data-url="{{ route('group_videos.toggle_comments', ['groupVideo' => $gv]) }}" />
+                                        <input type="checkbox" {{ $gv->show_comments ? 'checked' : '' }}
+                                            data-url="{{ route('group_videos.toggle_comments', ['groupVideo' => $gv]) }}" />
                                         <span class="slider round"></span>
                                         <br />
                                         <p>visible</p>
@@ -379,7 +376,8 @@
                                 </td>
                                 <td class="text-center">
                                     <label id="annotations-switch" class="switch">
-                                        <input type="checkbox" {{ $gv->show_annotations ? 'checked' : '' }} data-url="{{ route('group_videos.toggle_annotations', ['groupVideo' => $gv]) }}" />
+                                        <input type="checkbox" {{ $gv->show_annotations ? 'checked' : '' }}
+                                            data-url="{{ route('group_videos.toggle_annotations', ['groupVideo' => $gv]) }}" />
                                         <span class="slider round"></span>
                                         <br />
                                         <p>visible</p>
