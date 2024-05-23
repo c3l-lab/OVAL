@@ -1,5 +1,5 @@
 <div class="annotations-buttons">
-    @if ($group_video->show_annotations && $group_video->annotation_config['downloadable'])
+    @if ($group_video->annotation_config['downloadable'])
         <a href="{{ route('annotations.download', ['group_video_id' => $group_video->id, 'course_id' => $course->id]) }}"
             target="_blank">
             <button type="button" class="btn btn-link download-comments" title="Download annotations and comments">
