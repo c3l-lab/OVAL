@@ -478,7 +478,14 @@ $(document).ready(
 				modal.find(".meta-data").hide();
 				modal.find(".edit-instruction").hide();
 				modal.find("#annotation-instruction").hide();
-				modal.find("input[name='privacy-radio'][value='all']").prop("checked", true);
+
+				if (window.Oval.currentGroupVideo.show_annotations === 0) {
+					modal.find('#annotation-visibility-form').css('display', 'none');
+					modal.find("input[name='privacy-radio'][value='private']").prop("checked", true);
+				} else {
+					modal.find("input[name='privacy-radio'][value='all']").prop("checked", true);
+				}
+
 				modal.find("#nominated-selection").hide();
 				modal.modal("show");
 			}
@@ -711,7 +718,7 @@ $(document).ready(
 
 			var tags = commaDelimitedToArray(tags_string);
 
-			if (title === "ADD ANNOTATION") {
+			if (title === window.Oval.currentGroupVideo.annotation_config.header_name) {
 				$.ajax({
 					type: "POST",
 					url: "/annotations",
@@ -1347,8 +1354,5 @@ $(document).ready(
 		for (var i = 0; i < trackingsArr.length; i++) {
 			trackingInitial(trackingsArr[i], trackings);
 		}
-
-
 	}//function()
-
 ); //document ready
