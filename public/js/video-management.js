@@ -963,9 +963,13 @@ $('document').ready(function () {
 		});
 	});
 
-	var annotationConfigModal = $('#annotation-config-modal');
-	annotationConfigModal.on("submit", "#annotation-config-modal", function (event) {
+	$('#annotation-config-modal').on("submit", "#annotation-config-form", function (event) {
 		event.preventDefault();
+		const modal = $('#annotation-config-modal');
+		const modalDialog = modal.find(".modal-dialog");
+		const form = $(this);
+		modalDialog.addClass('modal-loading');
+
 		var settings = {
 			show_annotations: $("input[name='show_annotations']").is(":checked"),
 			downloadable: $("input[name='downloadable']").is(":checked"),
@@ -973,20 +977,55 @@ $('document').ready(function () {
 			label: $("input[name='label']").val(),
 			header_name: $("input[name='header_name']").val()
 		};
+
+		var groupVideoId = modal.data('group-video-id');
 		$.ajax({
 			type: "PUT",
-			url: $(this).attr("action"),
+			url: `/group_videos/${groupVideoId}/config/annotation`,
 			contentType: "application/json; charset=utf-8",
 			data: JSON.stringify({
 				annotation_config: settings
 			}),
 			success: function (data) {
 				if (data.success) {
-					annotationConfigModal.modal('hide');
+					modal.modal('hide');
+					const configButton = $(`.annotation-config-button[data-group-video-id="${groupVideoId}"]`);
+					configButton.data("show-annotations", settings.show_annotations ? 1 : 0);
+					configButton.data("downloadable", settings.downloadable ? 1 : 0);
+					configButton.data("is-show-annotation-button", settings.is_show_annotation_button ? 1 : 0);
+					configButton.data("label", settings.label);
+					configButton.data("header-name", settings.header_name);
+					form.find("input[name='label']").val(settings.label);
+					form.find("input[name='header_name']").val(settings.header_name);
 				} else {
 					alert("Something went wrong. Please try again.");
 				}
 			},
+			complete: function () {
+				modalDialog.removeClass('modal-loading');
+			}
 		});
+	});
+
+	$('.annotation-config-button').click(function (e) {
+		e.preventDefault();
+		const groupVideo = {
+			groupVideoId: $(this).data("group-video-id"),
+			showAnnotations: $(this).data("show-annotations") === 1,
+			downloadable: $(this).data("downloadable") === 1,
+			isShowAnnotationButton: $(this).data("is-show-annotation-button") === 1,
+			label: $(this).data("label"),
+			headerName: $(this).data("header-name")
+		}
+		const annotationConfigModal = $('#annotation-config-modal');
+
+		annotationConfigModal.data('group-video-id', groupVideo.groupVideoId);
+
+		annotationConfigModal.find("input[name='show_annotations']").prop("checked", groupVideo.showAnnotations);
+		annotationConfigModal.find("input[name='downloadable']").prop("checked", groupVideo.downloadable);
+		annotationConfigModal.find("input[name='is_show_annotation_button']").prop("checked", groupVideo.isShowAnnotationButton);
+		annotationConfigModal.find("input[name='label']").val(groupVideo.label);
+		annotationConfigModal.find("input[name='header_name']").val(groupVideo.headerName);
+		annotationConfigModal.modal('show');
 	});
 });//doc ready

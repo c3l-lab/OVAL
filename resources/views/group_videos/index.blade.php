@@ -241,7 +241,6 @@
                             <th>KEY POINTS</th>
                             <th>SET QUIZ</th>
                             <th>COMMENTS</th>
-                            <th>ANNOTATIONS</th>
                             <th>DATE UPLOADED</th>
                             <th>DELETE</th>
                         </tr>
@@ -259,11 +258,13 @@
                                 </td>
                                 <td>{{ $gv->video()->description }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-link"
-                                        hx-get="{{ route('group_videos.annotation_config.edit', ['group_video' => $gv]) }}"
-                                        hx-target="#annotation-config-modal .modal-body" hx-swap="innerHTML"
-                                        hx-on="htmx:afterOnLoad: $('#annotation-config-modal').modal('show');"
-                                        title="Annotation setting">
+                                    <button type="button" class="btn btn-link annotation-config-button"
+                                        title="Annotation setting" data-group-video-id="{{ $gv->id }}"
+                                        data-show-annotations="{{ $gv->show_annotations }}"
+                                        data-downloadable="{{ data_get($gv->annotation_config, 'downloadable', true) }}"
+                                        data-is-show-annotation-button="{{ data_get($gv->annotation_config, 'is_show_annotation_button', true) }}"
+                                        data-label="{{ data_get($gv->annotation_config, 'label', 'New Annotation') }}"
+                                        data-header-name="{{ data_get($gv->annotation_config, 'header_name', 'ADD ANNOTATION') }}">
                                         <i class="fa fa-pencil-square-o group-icon"></i>
                                     </button>
                                 </td>
@@ -369,15 +370,6 @@
                                     <label id="comments-switch" class="switch">
                                         <input type="checkbox" {{ $gv->show_comments ? 'checked' : '' }}
                                             data-url="{{ route('group_videos.toggle_comments', ['groupVideo' => $gv]) }}" />
-                                        <span class="slider round"></span>
-                                        <br />
-                                        <p>visible</p>
-                                    </label>
-                                </td>
-                                <td class="text-center">
-                                    <label id="annotations-switch" class="switch">
-                                        <input type="checkbox" {{ $gv->show_annotations ? 'checked' : '' }}
-                                            data-url="{{ route('group_videos.toggle_annotations', ['groupVideo' => $gv]) }}" />
                                         <span class="slider round"></span>
                                         <br />
                                         <p>visible</p>
