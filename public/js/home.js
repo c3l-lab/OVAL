@@ -801,7 +801,7 @@ $(document).ready(
 		});
 		modal.on("click", "#delete", function () {
 			var title = $("#modalLabel").text();
-			if ((title === "ADD ANNOTATION") || (title === "ADD COMMENT")) {
+			if ((title === window.Oval.currentGroupVideo.annotation_config.header_name) || (title === "ADD COMMENT")) {
 				$("#annotation-modal .close").click();
 				return;
 			}
