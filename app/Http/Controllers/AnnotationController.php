@@ -29,6 +29,15 @@ class AnnotationController extends Controller
         $all_annotations = Annotation::groupVideoAnnotations($group_video_id, $user->id);
         $annotations = [];
 
+        $structured_annotation_ids = $all_annotations
+            ->filter(function ($e) {
+                return $e->is_structured_annotation && is_numeric($e->description);
+            })
+            ->map(function ($e) {
+                return (int) $e->description;
+            });
+        $structured_annotations = QuizCreation::whereIn('id', $structured_annotation_ids)->get(['id', 'quiz_data']);
+
         foreach ($all_annotations as $a) {
             $author = User::find($a->user_id);
             if (empty($author)) {
@@ -43,6 +52,14 @@ class AnnotationController extends Controller
 
             $date = empty($a->updated_at) ? null : $a->updated_at->format('g:iA d M, Y');
 
+            if($a->is_structured_annotation && is_numeric($a->description)) {
+                $structured_annotation = $structured_annotations->first(function ($e) use ($a) {
+                    return $e->id == (int) $a->description;
+                });
+
+                $a->description = $structured_annotation->quiz_data;
+            }
+
             $annotations[] = [
                 "id" => $a->id,
                 "start_time" => $a->start_time,
@@ -52,7 +69,8 @@ class AnnotationController extends Controller
                 "tags" => $a->tags->pluck('tag'),
                 "mine" => $mine,
                 "privacy" => $a->privacy,
-                "by_instructor" => $instructor
+                "by_instructor" => $instructor,
+                "is_structured_annotation" => $a->is_structured_annotation,
             ];
         }
         return $annotations;
@@ -72,7 +90,6 @@ class AnnotationController extends Controller
         //structured annotation logic
         json_decode($request->description);
         if(json_last_error() === JSON_ERROR_NONE) {
-            $annotation->description = "";
             $annotation->is_structured_annotation = true;
 
             $quiz = new QuizCreation();
@@ -82,6 +99,8 @@ class AnnotationController extends Controller
             $quiz->quiz_data = $request->description;
             $quiz->visable = 1;
             $quiz->save();
+
+            $annotation->description = $quiz->id;
         } else {
             $annotation->description = htmlspecialchars($request->description, ENT_QUOTES);
         }

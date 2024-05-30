@@ -81,9 +81,6 @@ function getAllAnnotations() {
 			annotations = data.slice();
 			layoutAnnotations();
 			trackingInitial({ event: 'click', target: '#annotations-list .annotation-button', info: 'View an annotation' }, trackings);
-		},
-		error: function (request, status, error) {
-			console.log("error get_annotations - " + error);	/////
 		}
 	});
 }
@@ -326,7 +323,15 @@ function layoutAnnotations(mode) {
 			else {
 				icon_tag = '<i class="fa fa-circle-o" aria-hidden="true"></i>';
 			}
-			anno_list.append('<div class="annotation-icon" style="' + style + '"><button type="button" class="btn btn-link annotation-button" data-id="' + a.id + '">' + icon_tag + '</button></div>');
+			const annotation_node = `
+				<div class="annotation-icon" style="${style}">
+					<button type="button" class="btn btn-link annotation-button" data-id="${a.id}">
+						${icon_tag}
+					</button>
+				</div>
+			`;
+
+			anno_list.append(annotation_node);
 		});
 		adjustAnnotationsListDiv();
 	}
@@ -389,9 +394,6 @@ function saveFeedbacksAndConfidenceLevel(comment) {
 		type: "POST",
 		url: "/save_feedback",
 		data: { comment_id: item.id, answers: answers, confidence_level: confidence_level },
-		error: function (request, status, error) {
-			console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-		},
 		async: false
 	});
 }
@@ -724,7 +726,7 @@ $(document).ready(
 			var nominated = null;
 
 			const is_structured_annotation =
-				(!modal.find('.anno-dynamic-content').hasClass('hidden')) &&
+				(modal.find('#toggle-anno-question-mode-switch').is(':checked')) &&
 				title === window.Oval.currentGroupVideo.annotation_config.header_name
 			if (is_structured_annotation) {
 				if (privacy === "nominated") nominated = $("#nominated-students-list").val();
@@ -741,10 +743,17 @@ $(document).ready(
 							window.quiz_obj.items = [];
 							$(".question_warp ul ul").empty();
 						},
-						error: function (request, status, error) {
-							console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-						},
 						async: false
+					});
+				} else {
+					$("#alert_dialog_content").empty();
+
+					var content = "<h3>" + "There is no question in th question list" + "</h3>";
+					$("#alert_dialog_content").append(content);
+
+					$("#alert_dialog").modal({
+						backdrop: 'static',
+						keyboard: false
 					});
 				}
 
@@ -774,9 +783,6 @@ $(document).ready(
 						modal.modal("hide");
 						getAllAnnotations();
 					},
-					error: function (request, status, error) {
-						console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-					},
 					async: false
 				});
 			}
@@ -799,9 +805,6 @@ $(document).ready(
 						}
 						getComments();
 					},
-					error: function (request, status, error) {
-						console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-					},
 					async: false
 				});
 			}
@@ -813,9 +816,6 @@ $(document).ready(
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
-					},
-					error: function (request, status, error) {
-						console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
 					},
 					async: false
 				});
@@ -839,9 +839,6 @@ $(document).ready(
 						}
 						getComments();
 					},
-					error: function (request, status, error) {
-						console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-					},
 					async: false
 				});
 			}
@@ -863,9 +860,6 @@ $(document).ready(
 								// getAnnotations(ALL);
 								getAllAnnotations();
 							},
-							error: function (request, status, error) {
-								console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-							},
 							async: false
 						});
 					}
@@ -876,9 +870,6 @@ $(document).ready(
 							success: function (data) {
 								getComments();
 								modal.modal("hide");
-							},
-							error: function (request, status, error) {
-								console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
 							},
 							async: false
 						});
@@ -1045,7 +1036,29 @@ $(document).ready(
 			// 	tags += unescapeHtml(val)+",";
 			// });
 			// tags = tags.slice(0,-1);
-			var description = annotation.description;
+
+			let description = "";
+			if (annotation.is_structured_annotation === 1) {
+				try {
+					const structured_annotation = JSON.parse(annotation.description);
+
+					const $preview = preview.find(".preview-comment");
+					$preview.empty();
+
+					structured_annotation.forEach((e, index) => {
+						const content = `<div><b>type:</b> ${e.type} | <b>answer:</b> ${e.ans}</div>`;
+						$preview.append(content);
+						if (index !== structured_annotation.length - 1) {
+							$preview.append('<hr style="height: 1px; background-color: red;">');
+						}
+					});
+				} catch (e) {
+					preview.find(".preview-comment").text("");
+				}
+			} else {
+				preview.find(".preview-comment").text(unescapeHtml(annotation.description));
+			}
+
 			var creationDate = annotation.date;
 			var privacyIcon = annotation.privacy === "all" ? "<i class=\"fa fa-eye\"></i>" : "<i class=\"fa fa-eye-slash\"></i>";
 
@@ -1054,7 +1067,6 @@ $(document).ready(
 			preview.find(".privacy-icon").html(privacyIcon);
 			preview.find(".username").text(userName);
 			preview.find(".date").text(creationDate);
-			preview.find(".preview-comment").text(unescapeHtml(description));
 			// preview.find(".preview-tags").text(unescapeHtml(tags));
 			preview.find(".preview-tags").html("");
 			$.each(annotation.tags, function (i, val) {
@@ -1317,9 +1329,6 @@ $(document).ready(
 						}).appendTo(comment_div);
 					});
 					tag_modal.modal("show");
-				},
-				error: function (req, status, error) {
-					console.log("error /get_comments_for_tag - " + error);	/////
 				}
 			});
 		});
@@ -1371,9 +1380,6 @@ $(document).ready(
 					});
 					$("#preview").hide();
 					tag_modal.modal("show");
-				},
-				error: function (req, status, error) {
-					console.log("error /get_annotations_for_tag - " + error);	/////
 				}
 			});
 		});
