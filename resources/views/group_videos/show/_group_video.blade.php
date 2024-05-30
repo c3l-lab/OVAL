@@ -3,7 +3,8 @@
 @if ($user->isInstructorOf($course) && $group_video->hide == 1)
     <div class="msg">
         THIS VIDEO IS SET TO "HIDDEN" AND IS NOT VISIBLE TO STUDENTS.<br />
-        Set it to "visible" in <a href="{{ route('group_videos.index') }}">Video Management page</a> to make it available for student
+        Set it to "visible" in <a href="{{ route('group_videos.index') }}">Video Management page</a> to make it available
+        for student
         use.
     </div>
 @endif
@@ -22,24 +23,24 @@
     @endif
 @endif
 
-<div id="left-side" class="{{ $group_video->show_comments ? "col-md-8" : "col-md-12" }}">
+<div id="left-side" class="{{ $group_video->show_comments ? 'col-md-8' : 'col-md-12' }}">
     <div id="video" class="video-width">
         <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="{{ $video->identifier }}"></div>
     </div><!-- .video -->
 
     <div class="video-width">
-    @if ($group_video->show_annotations)
-        @include('group_videos.show._annotations', [
-            'group_video' => $group_video,
-            'course' => $course,
-            'video' => $video,
-        ])
-    @else
-        @include('group_videos.show._annotation_buttons', [
-            'group_video' => $group_video,
-            'course' => $course,
-        ])
-    @endif
+        @if ($group_video->show_annotations)
+            @include('group_videos.show._annotations', [
+                'group_video' => $group_video,
+                'course' => $course,
+                'video' => $video,
+            ])
+        @else
+            @include('group_videos.show._annotation_buttons', [
+                'group_video' => $group_video,
+                'course' => $course,
+            ])
+        @endif
     </div>
 
 </div><!-- left column .col-md-8 -->

@@ -38,13 +38,17 @@ class GroupVideoController extends Controller
         // save current course id
         session(['current-course' => $course->id]);
 
-        return view('group_videos.index', [
-            'user' => $user,
-            'course' => $course,
-            'group' => $group,
-            'videos_without_group' => $videos_without_group,
-            'group_videos' => $group_videos,
-        ]);
+        return response()
+            ->view('group_videos.index', [
+                'user' => $user,
+                'course' => $course,
+                'group' => $group,
+                'videos_without_group' => $videos_without_group,
+                'group_videos' => $group_videos,
+            ])
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     public function show(Request $request, int $id)
