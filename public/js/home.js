@@ -405,6 +405,7 @@ $(document).ready(
 		var item_start_time = null;					//start_time used in modal-form
 		var item_start_time_text = null;			//human readable start_time text used in modal-form
 		var item = null;				//annotation or comment item used in modal-form
+		modal.find('.anno-dynamic-content').addClass('hidden'); // control dynamic annotation content visibility
 
 		getAllAnnotations();
 		getComments();
@@ -455,6 +456,19 @@ $(document).ready(
 
 		}); */
 
+		const textInputMode = modal.find('#anno-text-mode-input');
+		const questionInputMode = modal.find('#anno-question-mode-input');
+		const toggleInputModeSwitch = modal.find('#toggle-anno-question-mode-switch');
+		toggleInputModeSwitch.on('change', function (e) {
+			if (e.target.checked) {
+				textInputMode.hide();
+				questionInputMode.show();
+			} else {
+				textInputMode.show();
+				questionInputMode.hide();
+			}
+		});
+
 		$(".add-annotation").on("click", function (e) {
 			e.preventDefault();
 			item = null;
@@ -487,6 +501,8 @@ $(document).ready(
 				}
 
 				modal.find("#nominated-selection").hide();
+				modal.find(".anno-dynamic-content").removeClass('hidden');
+				toggleInputModeSwitch.trigger('change');
 				modal.modal("show");
 			}
 		});
@@ -655,6 +671,9 @@ $(document).ready(
 			if (player.getPlayerState() === 2) {
 				playVideo();
 			}
+			modal.find('.anno-dynamic-content').addClass('hidden');
+			toggleInputModeSwitch.prop("checked", false);
+			toggleInputModeSwitch.trigger("change");
 		});
 
 
@@ -703,6 +722,34 @@ $(document).ready(
 			var privacy = $('input[name="privacy-radio"]:checked', '#annotation-form').val();
 			var title = $("#modalLabel").text();
 			var nominated = null;
+
+			const is_structured_annotation =
+				(!modal.find('.anno-dynamic-content').hasClass('hidden')) &&
+				title === window.Oval.currentGroupVideo.annotation_config.header_name
+			if (is_structured_annotation) {
+				if (privacy === "nominated") nominated = $("#nominated-students-list").val();
+				var tags = commaDelimitedToArray(tags_string);
+
+				if (window.quiz_obj?.items && window.quiz_obj.items.length) {
+					$.ajax({
+						type: "POST",
+						url: "/annotations",
+						data: { group_video_id: group_video_id, start_time: item_start_time, tags: tags, description: JSON.stringify(window.quiz_obj.items), privacy: privacy, nominated_students_ids: nominated },
+						success: function (data) {
+							modal.modal("hide");
+							getAllAnnotations();
+							window.quiz_obj.items = [];
+							$(".question_warp ul ul").empty();
+						},
+						error: function (request, status, error) {
+							console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
+						},
+						async: false
+					});
+				}
+
+				return;
+			}
 
 			modal.find("#annotation-form").validator('validate');
 			if (modal.find("#annotation-form").find('.has-error').length) {

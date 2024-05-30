@@ -10,6 +10,7 @@ use oval\Models\Course;
 use oval\Models\GroupVideo;
 use oval\Models\Tag;
 use oval\Models\User;
+use oval\Models\QuizCreation;
 
 class AnnotationController extends Controller
 {
@@ -67,7 +68,24 @@ class AnnotationController extends Controller
         $annotation->group_video_id = intval($request->group_video_id);
         $annotation->user_id = \Auth::user()->id;
         $annotation->start_time = $request->start_time;
-        $annotation->description = htmlspecialchars($request->description, ENT_QUOTES);
+
+        //structured annotation logic
+        json_decode($request->description);
+        if(json_last_error() === JSON_ERROR_NONE) {
+            $annotation->description = "";
+            $annotation->is_structured_annotation = true;
+
+            $quiz = new QuizCreation();
+            $quiz->creator_id = $annotation->user_id;
+            $quiz->group_video_id = $request->group_video_id;
+            $quiz->media_type = config('constants.ANNOTATION_QUIZ_MEDIA_TYPE');
+            $quiz->quiz_data = $request->description;
+            $quiz->visable = 1;
+            $quiz->save();
+        } else {
+            $annotation->description = htmlspecialchars($request->description, ENT_QUOTES);
+        }
+
         $annotation->privacy = $request->privacy;
         $annotation->visible_to = json_encode(convertStringArrayToIntArray($request->nominated_students_ids));
         $annotation->save();
