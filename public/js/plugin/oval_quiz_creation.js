@@ -152,7 +152,7 @@ $(document).ready(function () {
     })
 
     /*------ set swith ------*/
-    $("#quiz-switch").each(function () {
+    $(".quiz-switch").each(function () {
         $(this).children('input').on('change', function () {
 
             var group_video_id = $(this).data('group-video-id');

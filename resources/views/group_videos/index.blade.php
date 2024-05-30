@@ -358,7 +358,7 @@
                                         <i class="fa fa-comment-o"></i>
                                     </button>
                                     <br />
-                                    <label id="quiz-switch" class="switch">
+                                    <label class="switch quiz-switch">
                                         <input type="checkbox" @checked($gv->quiz && $gv->quiz->visable == 1)
                                             data-group-video-id="{{ $gv->id }}">
                                         <span class="slider round"></span>
