@@ -552,9 +552,22 @@ $(document).ready(
 			item_start_time = item.start_time;
 			item_start_time_text = secondsToMinutesAndSeconds(item.start_time);
 			modal.find("#time-label").html(item_start_time_text);
-			$("#annotation-description").val(unescapeHtml(item.description));
+
+			if (item.is_structured_annotation) {
+				try {
+					window.quiz_obj.items = JSON.parse(item.description);
+				} catch (error) { }
+				toggleInputModeSwitch.prop("checked", true);
+			} else {
+				$("#annotation-description").val(unescapeHtml(item.description));
+			}
+
 			modal.find(".username").text(item.name);
 			modal.find("#annotation-instruction").hide();
+			modal.find(".edit-instruction").hide();
+			modal.find(".anno-dynamic-content").removeClass('hidden');
+			toggleInputModeSwitch.trigger('change');
+
 			if (item.privacy == "private" || item.privacy == "nominated") {
 				modal.find(".privacy-icon").html("<i class=\"fa fa-eye\"></i>");
 			}
@@ -724,44 +737,10 @@ $(document).ready(
 			var privacy = $('input[name="privacy-radio"]:checked', '#annotation-form').val();
 			var title = $("#modalLabel").text();
 			var nominated = null;
-
-			const is_structured_annotation =
-				(modal.find('#toggle-anno-question-mode-switch').is(':checked')) &&
-				title === window.Oval.currentGroupVideo.annotation_config.header_name
-			if (is_structured_annotation) {
-				if (privacy === "nominated") nominated = $("#nominated-students-list").val();
-				var tags = commaDelimitedToArray(tags_string);
-
-				if (window.quiz_obj?.items && window.quiz_obj.items.length) {
-					$.ajax({
-						type: "POST",
-						url: "/annotations",
-						data: { group_video_id: group_video_id, start_time: item_start_time, tags: tags, description: JSON.stringify(window.quiz_obj.items), privacy: privacy, nominated_students_ids: nominated },
-						success: function (data) {
-							modal.modal("hide");
-							getAllAnnotations();
-							window.quiz_obj.items = [];
-							$(".question_warp ul ul").empty();
-						},
-						async: false
-					});
-				} else {
-					$("#alert_dialog_content").empty();
-
-					var content = "<h3>" + "There is no question in th question list" + "</h3>";
-					$("#alert_dialog_content").append(content);
-
-					$("#alert_dialog").modal({
-						backdrop: 'static',
-						keyboard: false
-					});
-				}
-
-				return;
-			}
+			const is_structured_annotation = modal.find('#toggle-anno-question-mode-switch').is(':checked');
 
 			modal.find("#annotation-form").validator('validate');
-			if (modal.find("#annotation-form").find('.has-error').length) {
+			if (!is_structured_annotation && modal.find("#annotation-form").find('.has-error').length) {
 				if ((modal.find("#annotation-description").data('bs.validator.errors').length > 0)
 					|| ((privacy === "nominated") && modal.find("#nominated-students-list").data('bs.validator.errors').length > 0)) {
 					return false;
@@ -775,10 +754,36 @@ $(document).ready(
 			var tags = commaDelimitedToArray(tags_string);
 
 			if (title === window.Oval.currentGroupVideo.annotation_config.header_name) {
+				if (is_structured_annotation) {
+					if (!window.quiz_obj?.items || window.quiz_obj.items.length === 0) {
+						$("#alert_dialog_content").empty();
+
+						var content = "<h3>" + "There is no question in th question list" + "</h3>";
+						$("#alert_dialog_content").append(content);
+
+						$("#alert_dialog").modal({
+							backdrop: 'static',
+							keyboard: false
+						});
+
+						return;
+					}
+				}
+
+				let data = {
+					group_video_id: group_video_id,
+					start_time: item_start_time,
+					tags: tags,
+					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
+					privacy: privacy,
+					nominated_students_ids: nominated
+				};
+				data['is_structured_annotation'] = is_structured_annotation;
+
 				$.ajax({
 					type: "POST",
 					url: "/annotations",
-					data: { group_video_id: group_video_id, start_time: item_start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+					data: data,
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
@@ -809,10 +814,35 @@ $(document).ready(
 				});
 			}
 			else if (title === "EDIT ANNOTATION") {
+				if (is_structured_annotation) {
+					if (!window.quiz_obj?.items || window.quiz_obj.items.length === 0) {
+						$("#alert_dialog_content").empty();
+
+						var content = "<h3>" + "There is no question in th question list" + "</h3>";
+						$("#alert_dialog_content").append(content);
+
+						$("#alert_dialog").modal({
+							backdrop: 'static',
+							keyboard: false
+						});
+
+						return;
+					}
+				}
+
+				let data = {
+					start_time: item.start_time,
+					tags: tags,
+					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
+					privacy: privacy,
+					nominated_students_ids: nominated
+				}
+				data['is_structured_annotation'] = is_structured_annotation;
+
 				$.ajax({
 					type: "PUT",
 					url: "/annotations/" + item.id,
-					data: { start_time: item.start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+					data: data,
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();

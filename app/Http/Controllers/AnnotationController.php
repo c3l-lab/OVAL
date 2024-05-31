@@ -57,7 +57,11 @@ class AnnotationController extends Controller
                     return $e->id == (int) $a->description;
                 });
 
-                $a->description = $structured_annotation->quiz_data;
+                if($structured_annotation !== null) {
+                    $a->description = $structured_annotation->quiz_data;
+                } else {
+                    $a->description = '';
+                }
             }
 
             $annotations[] = [
@@ -87,24 +91,11 @@ class AnnotationController extends Controller
         $annotation->user_id = \Auth::user()->id;
         $annotation->start_time = $request->start_time;
 
-        //structured annotation logic
-        json_decode($request->description);
-        if(json_last_error() === JSON_ERROR_NONE) {
-            $annotation->is_structured_annotation = true;
-
-            $quiz = new QuizCreation();
-            $quiz->creator_id = $annotation->user_id;
-            $quiz->group_video_id = $request->group_video_id;
-            $quiz->media_type = config('constants.ANNOTATION_QUIZ_MEDIA_TYPE');
-            $quiz->quiz_data = $request->description;
-            $quiz->visable = 1;
-            $quiz->save();
-
-            $annotation->description = $quiz->id;
-        } else {
-            $annotation->description = htmlspecialchars($request->description, ENT_QUOTES);
+        if($request->is_structured_annotation) {
+            $annotation->is_structured_annotation = $request->is_structured_annotation === 'true';
         }
-
+   
+        $annotation->description = $this->add_annotation_description($request);
         $annotation->privacy = $request->privacy;
         $annotation->visible_to = json_encode(convertStringArrayToIntArray($request->nominated_students_ids));
         $annotation->save();
@@ -137,12 +128,21 @@ class AnnotationController extends Controller
         if (!empty($old)) {
             $old->status = "archived";
             $old->save();
+
+            if($old->is_structured_annotation && is_numeric($old->description)) {
+                QuizCreation::destroy((int) $old->description);
+            }
         }
         $annotation = new Annotation();
         $annotation->group_video_id = $old->group_video_id;
         $annotation->user_id = \Auth::user()->id;
         $annotation->start_time = $request->start_time;
-        $annotation->description = htmlspecialchars($request->description, ENT_QUOTES);
+
+        if($request->is_structured_annotation) {
+            $annotation->is_structured_annotation = $request->is_structured_annotation === 'true';
+        }
+
+        $annotation->description = $this->add_annotation_description($request);
         $annotation->privacy = $request->privacy;
         $annotation->visible_to = json_encode(convertStringArrayToIntArray($request->nominated_students_ids));
         $annotation->save();
@@ -172,6 +172,11 @@ class AnnotationController extends Controller
     public function destroy(int $id)
     {
         $annotation = Annotation::findOrFail($id);
+
+        if($annotation->is_structured_annotation && is_numeric($annotation->description)) {
+            QuizCreation::destroy((int) $annotation->description);
+        }
+
         $annotation->status = "deleted";
         $annotation->save();
 
@@ -458,5 +463,26 @@ class AnnotationController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    // helpers
+    private function add_annotation_description($request){
+        $description = '';
+        json_decode($request->description);
+        if($request->is_structured_annotation && json_last_error() === JSON_ERROR_NONE) {
+            $quiz = new QuizCreation();
+            $quiz->creator_id = \Auth::user()->id;
+            $quiz->group_video_id = $request->group_video_id;
+            $quiz->media_type = config('constants.ANNOTATION_QUIZ_MEDIA_TYPE');
+            $quiz->quiz_data = $request->description;
+            $quiz->visable = 1;
+            $quiz->save();
+
+            $description = $quiz->id;
+        } else {
+            $description = htmlspecialchars($request->description, ENT_QUOTES);
+        }
+
+        return $description;
     }
 }

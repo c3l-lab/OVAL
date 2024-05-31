@@ -41,9 +41,11 @@ window.quiz_obj = quiz_obj; // used in home.js
 var is_instructor = false;
 var user_id = 0;
 
-////////////#quiz_submit_btn
-///////////update_quiz_list
 $(document).ready(function () {
+    $("#annotation-modal").find('#toggle-anno-question-mode-switch').on('change', function (e) {
+        update_question_list(quiz_obj);
+    });
+
     /*------ add question function ------*/
     $("#1a_btn").on("click", function () {
         var block_type = $(this).attr("blockType");
