@@ -21,6 +21,7 @@ class Controller extends BaseController
         $tracking->ref_id = $record['ref_id'];
         $tracking->ref_type = $record['ref_type'];
         $tracking->event_time = $record['event_time'];
+        $tracking->video_time = $record['video_time'];
         $tracking->save();
     }
 

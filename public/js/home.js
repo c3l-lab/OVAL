@@ -231,6 +231,7 @@ function trackingInitial(record, trackings) {
 				target: record.target,
 				event: record.event,
 				info: record.info(),
+				video_time: window.player.getCurrentTime().toFixed(1),
 				event_time: Date.now()
 			});
 		} else {
@@ -238,6 +239,7 @@ function trackingInitial(record, trackings) {
 				target: record.target,
 				event: record.event,
 				info: record.info,
+				video_time: window.player.getCurrentTime().toFixed(1),
 				event_time: Date.now()
 			});
 		}
@@ -776,7 +778,8 @@ $(document).ready(
 					tags: tags,
 					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
 					privacy: privacy,
-					nominated_students_ids: nominated
+					nominated_students_ids: nominated,
+					video_time: window.player.getCurrentTime().toFixed(1), // for tracking
 				};
 				data['is_structured_annotation'] = is_structured_annotation;
 
@@ -800,7 +803,14 @@ $(document).ready(
 					beforeSend: function (request) {
 						request.setRequestHeader("Authorization", "Bearer " + api_token);
 					},
-					data: { group_video_id: group_video_id, tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+					data: {
+						group_video_id: group_video_id,
+						tags: tags,
+						description: description,
+						privacy: privacy,
+						nominated_students_ids: nominated,
+						video_time: window.player.getCurrentTime().toFixed(1), // for tracking
+					},
 					success: function (data) {
 						if (points.length > 0) {
 							modal.modal('hide');
@@ -837,7 +847,8 @@ $(document).ready(
 					tags: tags,
 					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
 					privacy: privacy,
-					nominated_students_ids: nominated
+					nominated_students_ids: nominated,
+					video_time: window.player.getCurrentTime().toFixed(1), // for tracking
 				}
 				data['is_structured_annotation'] = is_structured_annotation;
 
@@ -861,7 +872,13 @@ $(document).ready(
 					beforeSend: function (request) {
 						request.setRequestHeader("Authorization", "Bearer " + api_token);
 					},
-					data: { tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+					data: {
+						tags: tags,
+						description: description,
+						privacy: privacy,
+						nominated_students_ids: nominated,
+						video_time: window.player.getCurrentTime().toFixed(1), // for tracking
+					},
 					success: function (data) {
 						if (points.length > 0) {
 							modal.modal('hide');
@@ -888,7 +905,7 @@ $(document).ready(
 					if (title === "EDIT ANNOTATION") {
 						$.ajax({
 							type: "DELETE",
-							url: "/annotations/" + item.id,
+							url: "/annotations/" + item.id + "?video_time=" + window.player.getCurrentTime().toFixed(1),
 							success: function (data) {
 								modal.modal("hide");
 								// getAnnotations(ALL);
@@ -900,7 +917,7 @@ $(document).ready(
 					else if (title === "EDIT COMMENT") {
 						$.ajax({
 							type: "DELETE",
-							url: "/comments/" + item.id,
+							url: "/comments/" + item.id + "?video_time=" + window.player.getCurrentTime().toFixed(1),
 							success: function (data) {
 								getComments();
 								modal.modal("hide");

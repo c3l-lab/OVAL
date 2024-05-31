@@ -90,7 +90,8 @@ class CommentController extends Controller
             'info' => 'Save comment',
             'event_time' => $comment->created_at,
             'ref_id' => $comment->id,
-            'ref_type' => 'comment'
+            'ref_type' => 'comment',
+            'video_time' => data_get($request, 'video_time', null),
         ];
         $this->track($comment->group_video_id, $record);
 
@@ -140,7 +141,8 @@ class CommentController extends Controller
             'info' => 'Edit comment:'.$old->id,
             'event_time' => $comment->created_at,
             'ref_id' => $comment->id,
-            'ref_type' => 'comment'
+            'ref_type' => 'comment',
+            'video_time' => data_get($request, 'video_time', null),
         ];
         $this->track($comment->group_video_id, $record);
 
@@ -150,19 +152,22 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy(Request $request, Comment $comment)
     {
         $comment->status = "deleted";
         $comment->save();
 
         //track
+        $video_time_str = $request->query('video_time', null);
+        $video_time = (!is_null($video_time_str) && is_numeric($video_time_str)) ? (double)$video_time_str : null;
         $record = [
             'event' => 'click',
             'target' => '#delete',
             'info' => 'Delete comment',
             'event_time' => $comment->updated_at,
             'ref_id' => $comment->id,
-            'ref_type' => 'comment'
+            'ref_type' => 'comment',
+            'video_time' => $video_time
         ];
         $this->track($comment->group_video_id, $record);
     }
