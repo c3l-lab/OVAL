@@ -81,9 +81,6 @@ function getAllAnnotations() {
 			annotations = data.slice();
 			layoutAnnotations();
 			trackingInitial({ event: 'click', target: '#annotations-list .annotation-button', info: 'View an annotation' }, trackings);
-		},
-		error: function (request, status, error) {
-			console.log("error get_annotations - " + error);	/////
 		}
 	});
 }
@@ -326,7 +323,15 @@ function layoutAnnotations(mode) {
 			else {
 				icon_tag = '<i class="fa fa-circle-o" aria-hidden="true"></i>';
 			}
-			anno_list.append('<div class="annotation-icon" style="' + style + '"><button type="button" class="btn btn-link annotation-button" data-id="' + a.id + '">' + icon_tag + '</button></div>');
+			const annotation_node = `
+				<div class="annotation-icon" style="${style}">
+					<button type="button" class="btn btn-link annotation-button" data-id="${a.id}">
+						${icon_tag}
+					</button>
+				</div>
+			`;
+
+			anno_list.append(annotation_node);
 		});
 		adjustAnnotationsListDiv();
 	}
@@ -389,9 +394,6 @@ function saveFeedbacksAndConfidenceLevel(comment) {
 		type: "POST",
 		url: "/save_feedback",
 		data: { comment_id: item.id, answers: answers, confidence_level: confidence_level },
-		error: function (request, status, error) {
-			console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-		},
 		async: false
 	});
 }
@@ -405,6 +407,7 @@ $(document).ready(
 		var item_start_time = null;					//start_time used in modal-form
 		var item_start_time_text = null;			//human readable start_time text used in modal-form
 		var item = null;				//annotation or comment item used in modal-form
+		modal.find('.anno-dynamic-content').addClass('hidden'); // control dynamic annotation content visibility
 
 		getAllAnnotations();
 		getComments();
@@ -455,6 +458,19 @@ $(document).ready(
 
 		}); */
 
+		const textInputMode = modal.find('#anno-text-mode-input');
+		const questionInputMode = modal.find('#anno-question-mode-input');
+		const toggleInputModeSwitch = modal.find('#toggle-anno-question-mode-switch');
+		toggleInputModeSwitch.on('change', function (e) {
+			if (e.target.checked) {
+				textInputMode.hide();
+				questionInputMode.show();
+			} else {
+				textInputMode.show();
+				questionInputMode.hide();
+			}
+		});
+
 		$(".add-annotation").on("click", function (e) {
 			e.preventDefault();
 			item = null;
@@ -487,6 +503,8 @@ $(document).ready(
 				}
 
 				modal.find("#nominated-selection").hide();
+				modal.find(".anno-dynamic-content").removeClass('hidden');
+				toggleInputModeSwitch.trigger('change');
 				modal.modal("show");
 			}
 		});
@@ -534,9 +552,22 @@ $(document).ready(
 			item_start_time = item.start_time;
 			item_start_time_text = secondsToMinutesAndSeconds(item.start_time);
 			modal.find("#time-label").html(item_start_time_text);
-			$("#annotation-description").val(unescapeHtml(item.description));
+
+			if (item.is_structured_annotation) {
+				try {
+					window.quiz_obj.items = JSON.parse(item.description);
+				} catch (error) { }
+				toggleInputModeSwitch.prop("checked", true);
+			} else {
+				$("#annotation-description").val(unescapeHtml(item.description));
+			}
+
 			modal.find(".username").text(item.name);
 			modal.find("#annotation-instruction").hide();
+			modal.find(".edit-instruction").hide();
+			modal.find(".anno-dynamic-content").removeClass('hidden');
+			toggleInputModeSwitch.trigger('change');
+
 			if (item.privacy == "private" || item.privacy == "nominated") {
 				modal.find(".privacy-icon").html("<i class=\"fa fa-eye\"></i>");
 			}
@@ -655,6 +686,9 @@ $(document).ready(
 			if (player.getPlayerState() === 2) {
 				playVideo();
 			}
+			modal.find('.anno-dynamic-content').addClass('hidden');
+			toggleInputModeSwitch.prop("checked", false);
+			toggleInputModeSwitch.trigger("change");
 		});
 
 
@@ -703,9 +737,10 @@ $(document).ready(
 			var privacy = $('input[name="privacy-radio"]:checked', '#annotation-form').val();
 			var title = $("#modalLabel").text();
 			var nominated = null;
+			const is_structured_annotation = modal.find('#toggle-anno-question-mode-switch').is(':checked');
 
 			modal.find("#annotation-form").validator('validate');
-			if (modal.find("#annotation-form").find('.has-error').length) {
+			if (!is_structured_annotation && modal.find("#annotation-form").find('.has-error').length) {
 				if ((modal.find("#annotation-description").data('bs.validator.errors').length > 0)
 					|| ((privacy === "nominated") && modal.find("#nominated-students-list").data('bs.validator.errors').length > 0)) {
 					return false;
@@ -719,16 +754,41 @@ $(document).ready(
 			var tags = commaDelimitedToArray(tags_string);
 
 			if (title === window.Oval.currentGroupVideo.annotation_config.header_name) {
+				if (is_structured_annotation) {
+					if (!window.quiz_obj?.items || window.quiz_obj.items.length === 0) {
+						$("#alert_dialog_content").empty();
+
+						var content = "<h3>" + "There is no question in th question list" + "</h3>";
+						$("#alert_dialog_content").append(content);
+
+						$("#alert_dialog").modal({
+							backdrop: 'static',
+							keyboard: false
+						});
+
+						return;
+					}
+				}
+
+				let data = {
+					group_video_id: group_video_id,
+					start_time: item_start_time,
+					tags: tags,
+					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
+					privacy: privacy,
+					nominated_students_ids: nominated
+				};
+				data['is_structured_annotation'] = is_structured_annotation;
+
 				$.ajax({
 					type: "POST",
 					url: "/annotations",
-					data: { group_video_id: group_video_id, start_time: item_start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+					data: data,
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
-					},
-					error: function (request, status, error) {
-						console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
+						window.quiz_obj.items = [];
+						$(".question_warp ul ul").empty();
 					},
 					async: false
 				});
@@ -752,23 +812,44 @@ $(document).ready(
 						}
 						getComments();
 					},
-					error: function (request, status, error) {
-						console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-					},
 					async: false
 				});
 			}
 			else if (title === "EDIT ANNOTATION") {
+				if (is_structured_annotation) {
+					if (!window.quiz_obj?.items || window.quiz_obj.items.length === 0) {
+						$("#alert_dialog_content").empty();
+
+						var content = "<h3>" + "There is no question in th question list" + "</h3>";
+						$("#alert_dialog_content").append(content);
+
+						$("#alert_dialog").modal({
+							backdrop: 'static',
+							keyboard: false
+						});
+
+						return;
+					}
+				}
+
+				let data = {
+					start_time: item.start_time,
+					tags: tags,
+					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
+					privacy: privacy,
+					nominated_students_ids: nominated
+				}
+				data['is_structured_annotation'] = is_structured_annotation;
+
 				$.ajax({
 					type: "PUT",
 					url: "/annotations/" + item.id,
-					data: { start_time: item.start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+					data: data,
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
-					},
-					error: function (request, status, error) {
-						console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
+						window.quiz_obj.items = [];
+						$(".question_warp ul ul").empty();
 					},
 					async: false
 				});
@@ -792,9 +873,6 @@ $(document).ready(
 						}
 						getComments();
 					},
-					error: function (request, status, error) {
-						console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-					},
 					async: false
 				});
 			}
@@ -816,9 +894,6 @@ $(document).ready(
 								// getAnnotations(ALL);
 								getAllAnnotations();
 							},
-							error: function (request, status, error) {
-								console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
-							},
 							async: false
 						});
 					}
@@ -829,9 +904,6 @@ $(document).ready(
 							success: function (data) {
 								getComments();
 								modal.modal("hide");
-							},
-							error: function (request, status, error) {
-								console.log("request.status: " + request.status + " error " + error + "<error>" + request.responseText + "</error>");	/////
 							},
 							async: false
 						});
@@ -998,7 +1070,29 @@ $(document).ready(
 			// 	tags += unescapeHtml(val)+",";
 			// });
 			// tags = tags.slice(0,-1);
-			var description = annotation.description;
+
+			let description = "";
+			if (annotation.is_structured_annotation === 1) {
+				try {
+					const structured_annotation = JSON.parse(annotation.description);
+
+					const $preview = preview.find(".preview-comment");
+					$preview.empty();
+
+					structured_annotation.forEach((e, index) => {
+						const content = `<div><b>type:</b> ${e.type} | <b>answer:</b> ${e.ans}</div>`;
+						$preview.append(content);
+						if (index !== structured_annotation.length - 1) {
+							$preview.append('<hr style="height: 1px; background-color: red;">');
+						}
+					});
+				} catch (e) {
+					preview.find(".preview-comment").text("");
+				}
+			} else {
+				preview.find(".preview-comment").text(unescapeHtml(annotation.description));
+			}
+
 			var creationDate = annotation.date;
 			var privacyIcon = annotation.privacy === "all" ? "<i class=\"fa fa-eye\"></i>" : "<i class=\"fa fa-eye-slash\"></i>";
 
@@ -1007,7 +1101,6 @@ $(document).ready(
 			preview.find(".privacy-icon").html(privacyIcon);
 			preview.find(".username").text(userName);
 			preview.find(".date").text(creationDate);
-			preview.find(".preview-comment").text(unescapeHtml(description));
 			// preview.find(".preview-tags").text(unescapeHtml(tags));
 			preview.find(".preview-tags").html("");
 			$.each(annotation.tags, function (i, val) {
@@ -1270,9 +1363,6 @@ $(document).ready(
 						}).appendTo(comment_div);
 					});
 					tag_modal.modal("show");
-				},
-				error: function (req, status, error) {
-					console.log("error /get_comments_for_tag - " + error);	/////
 				}
 			});
 		});
@@ -1324,9 +1414,6 @@ $(document).ready(
 					});
 					$("#preview").hide();
 					tag_modal.modal("show");
-				},
-				error: function (req, status, error) {
-					console.log("error /get_annotations_for_tag - " + error);	/////
 				}
 			});
 		});

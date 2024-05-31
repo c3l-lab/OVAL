@@ -124,7 +124,11 @@ class GroupVideo extends Model
 
     public function quiz()
     {
-        return $this->hasOne(QuizCreation::class);
+        return $this->hasOne(QuizCreation::class)
+            ->where(function ($query) {
+                $query->where('media_type', '!=', config('constants.ANNOTATION_QUIZ_MEDIA_TYPE'))
+                    ->orWhereNull('media_type');
+            });
     }
 
     public function group()

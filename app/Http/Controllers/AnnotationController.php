@@ -10,6 +10,7 @@ use oval\Models\Course;
 use oval\Models\GroupVideo;
 use oval\Models\Tag;
 use oval\Models\User;
+use oval\Models\QuizCreation;
 
 class AnnotationController extends Controller
 {
@@ -28,6 +29,15 @@ class AnnotationController extends Controller
         $all_annotations = Annotation::groupVideoAnnotations($group_video_id, $user->id);
         $annotations = [];
 
+        $structured_annotation_ids = $all_annotations
+            ->filter(function ($e) {
+                return $e->is_structured_annotation && is_numeric($e->description);
+            })
+            ->map(function ($e) {
+                return (int) $e->description;
+            });
+        $structured_annotations = QuizCreation::whereIn('id', $structured_annotation_ids)->get(['id', 'quiz_data']);
+
         foreach ($all_annotations as $a) {
             $author = User::find($a->user_id);
             if (empty($author)) {
@@ -42,6 +52,18 @@ class AnnotationController extends Controller
 
             $date = empty($a->updated_at) ? null : $a->updated_at->format('g:iA d M, Y');
 
+            if($a->is_structured_annotation && is_numeric($a->description)) {
+                $structured_annotation = $structured_annotations->first(function ($e) use ($a) {
+                    return $e->id == (int) $a->description;
+                });
+
+                if($structured_annotation !== null) {
+                    $a->description = $structured_annotation->quiz_data;
+                } else {
+                    $a->description = '';
+                }
+            }
+
             $annotations[] = [
                 "id" => $a->id,
                 "start_time" => $a->start_time,
@@ -51,7 +73,8 @@ class AnnotationController extends Controller
                 "tags" => $a->tags->pluck('tag'),
                 "mine" => $mine,
                 "privacy" => $a->privacy,
-                "by_instructor" => $instructor
+                "by_instructor" => $instructor,
+                "is_structured_annotation" => $a->is_structured_annotation,
             ];
         }
         return $annotations;
@@ -67,7 +90,12 @@ class AnnotationController extends Controller
         $annotation->group_video_id = intval($request->group_video_id);
         $annotation->user_id = \Auth::user()->id;
         $annotation->start_time = $request->start_time;
-        $annotation->description = htmlspecialchars($request->description, ENT_QUOTES);
+
+        if($request->is_structured_annotation) {
+            $annotation->is_structured_annotation = $request->is_structured_annotation === 'true';
+        }
+   
+        $annotation->description = $this->add_annotation_description($request);
         $annotation->privacy = $request->privacy;
         $annotation->visible_to = json_encode(convertStringArrayToIntArray($request->nominated_students_ids));
         $annotation->save();
@@ -100,12 +128,21 @@ class AnnotationController extends Controller
         if (!empty($old)) {
             $old->status = "archived";
             $old->save();
+
+            if($old->is_structured_annotation && is_numeric($old->description)) {
+                QuizCreation::destroy((int) $old->description);
+            }
         }
         $annotation = new Annotation();
         $annotation->group_video_id = $old->group_video_id;
         $annotation->user_id = \Auth::user()->id;
         $annotation->start_time = $request->start_time;
-        $annotation->description = htmlspecialchars($request->description, ENT_QUOTES);
+
+        if($request->is_structured_annotation) {
+            $annotation->is_structured_annotation = $request->is_structured_annotation === 'true';
+        }
+
+        $annotation->description = $this->add_annotation_description($request);
         $annotation->privacy = $request->privacy;
         $annotation->visible_to = json_encode(convertStringArrayToIntArray($request->nominated_students_ids));
         $annotation->save();
@@ -135,6 +172,11 @@ class AnnotationController extends Controller
     public function destroy(int $id)
     {
         $annotation = Annotation::findOrFail($id);
+
+        if($annotation->is_structured_annotation && is_numeric($annotation->description)) {
+            QuizCreation::destroy((int) $annotation->description);
+        }
+
         $annotation->status = "deleted";
         $annotation->save();
 
@@ -158,8 +200,17 @@ class AnnotationController extends Controller
         $comments = Comment::groupVideoComments($group_video_id, $user->id);
         $annotations = Annotation::groupVideoAnnotations($group_video_id, $user->id);
 
+        $structured_annotation_ids = $annotations
+        ->filter(function ($e) {
+            return $e->is_structured_annotation && is_numeric($e->description);
+        })
+        ->map(function ($e) {
+            return (int) $e->description;
+        });
+        $structured_annotations = QuizCreation::whereIn('id', $structured_annotation_ids)->get(['id', 'quiz_data']);
+
         $response = new StreamedResponse();
-        $response->setCallback(function () use ($annotations, $comments) {
+        $response->setCallback(function () use ($annotations, $comments, $structured_annotations) {
             $file_handle = fopen('php://output', 'w');
 
             $headings = array('type', 'name', 'start time', 'description', 'tags', 'visibility');
@@ -171,7 +222,20 @@ class AnnotationController extends Controller
                 foreach ($annotations as $a) {
                     $name = $a['name'];
                     $start = formatTime($a['start_time']);
-                    $desc = htmlspecialchars_decode($a['description'], ENT_QUOTES);
+
+                    if($a->is_structured_annotation && is_numeric($a->description)) {
+                        $structured_annotation = $structured_annotations->first(function ($e) use ($a) {
+                            return $e->id == (int) $a->description;
+                        });
+        
+                        if($structured_annotation !== null) {
+                            $a['description'] = $structured_annotation->quiz_data;
+                        } else {
+                            $a['description'] = htmlspecialchars_decode($a['description'], ENT_QUOTES);
+                        }
+                    }
+
+                    $desc = $a['description'];
                     $tags = $a['tags'];
                     $tag = "";
                     foreach ($tags as $t) {
@@ -421,5 +485,26 @@ class AnnotationController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    // helpers
+    private function add_annotation_description($request){
+        $description = '';
+        json_decode($request->description);
+        if($request->is_structured_annotation && json_last_error() === JSON_ERROR_NONE) {
+            $quiz = new QuizCreation();
+            $quiz->creator_id = \Auth::user()->id;
+            $quiz->group_video_id = $request->group_video_id;
+            $quiz->media_type = config('constants.ANNOTATION_QUIZ_MEDIA_TYPE');
+            $quiz->quiz_data = $request->description;
+            $quiz->visable = 1;
+            $quiz->save();
+
+            $description = $quiz->id;
+        } else {
+            $description = htmlspecialchars($request->description, ENT_QUOTES);
+        }
+
+        return $description;
     }
 }
