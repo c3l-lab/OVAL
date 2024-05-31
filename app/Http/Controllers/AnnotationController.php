@@ -200,8 +200,17 @@ class AnnotationController extends Controller
         $comments = Comment::groupVideoComments($group_video_id, $user->id);
         $annotations = Annotation::groupVideoAnnotations($group_video_id, $user->id);
 
+        $structured_annotation_ids = $annotations
+        ->filter(function ($e) {
+            return $e->is_structured_annotation && is_numeric($e->description);
+        })
+        ->map(function ($e) {
+            return (int) $e->description;
+        });
+        $structured_annotations = QuizCreation::whereIn('id', $structured_annotation_ids)->get(['id', 'quiz_data']);
+
         $response = new StreamedResponse();
-        $response->setCallback(function () use ($annotations, $comments) {
+        $response->setCallback(function () use ($annotations, $comments, $structured_annotations) {
             $file_handle = fopen('php://output', 'w');
 
             $headings = array('type', 'name', 'start time', 'description', 'tags', 'visibility');
@@ -213,7 +222,20 @@ class AnnotationController extends Controller
                 foreach ($annotations as $a) {
                     $name = $a['name'];
                     $start = formatTime($a['start_time']);
-                    $desc = htmlspecialchars_decode($a['description'], ENT_QUOTES);
+
+                    if($a->is_structured_annotation && is_numeric($a->description)) {
+                        $structured_annotation = $structured_annotations->first(function ($e) use ($a) {
+                            return $e->id == (int) $a->description;
+                        });
+        
+                        if($structured_annotation !== null) {
+                            $a['description'] = $structured_annotation->quiz_data;
+                        } else {
+                            $a['description'] = htmlspecialchars_decode($a['description'], ENT_QUOTES);
+                        }
+                    }
+
+                    $desc = $a['description'];
                     $tags = $a['tags'];
                     $tag = "";
                     foreach ($tags as $t) {
