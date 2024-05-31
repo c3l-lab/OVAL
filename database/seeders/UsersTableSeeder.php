@@ -38,5 +38,19 @@ class UsersTableSeeder extends Seeder
                 'password' => bcrypt('password'),
             ]
         );
+
+        User::firstOrCreate(
+            [
+                'first_name' => 'Student',
+                'last_name' => 'Name'
+            ],
+            [
+                'first_name' => 'Student',
+                'last_name' => 'Name',
+                'email' => 'stu@example.com',
+                'role' => 'O',
+                'password' => bcrypt('password'),
+            ]
+        );
     }
 }
