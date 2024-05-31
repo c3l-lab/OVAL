@@ -787,6 +787,8 @@ $(document).ready(
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
+						window.quiz_obj.items = [];
+						$(".question_warp ul ul").empty();
 					},
 					async: false
 				});
@@ -846,6 +848,8 @@ $(document).ready(
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
+						window.quiz_obj.items = [];
+						$(".question_warp ul ul").empty();
 					},
 					async: false
 				});
