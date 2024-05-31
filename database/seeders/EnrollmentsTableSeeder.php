@@ -36,9 +36,13 @@ class EnrollmentsTableSeeder extends Seeder
         $johndoe = \oval\Models\User::where([
             ['first_name', 'John'], ['last_name', 'Doe']
         ])->first();
+        $student = \oval\Models\User::where([
+            ['first_name', 'Student'], ['last_name', 'Name']
+        ])->first();
 
         \DB::table('enrollments')->insert([
             ['course_id'=>$c->id, 'user_id'=>$johndoe->id, 'is_instructor'=>true],
+            ['course_id'=>$c->id, 'user_id'=>$student->id, 'is_instructor'=>false],
             // ['course_id'=>$c1->id, 'user_id'=>$janesmith->id, 'is_instructor'=>false],
             // ['course_id'=>$c2->id, 'user_id'=>$janesmith->id, 'is_instructor'=>false],
             // ['course_id'=>$c1->id, 'user_id'=>$minniemouse->id, 'is_instructor'=>true],

@@ -144,7 +144,7 @@ function onPlayerStateChange(event) {
 	} else if (code == YT.PlayerState.CUED) {
 		action = "Cued";
 	}
-	saveTracking({ event: action, target: null, info: videoTime, event_time: event_time });
+	saveTracking({ event: action, target: null, info: null, video_time: videoTime, event_time: event_time });
 }
 
 let quiz_meta = [];
