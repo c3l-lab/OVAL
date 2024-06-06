@@ -231,7 +231,7 @@ function trackingInitial(record, trackings) {
 				target: record.target,
 				event: record.event,
 				info: record.info(),
-				video_time: window.player.getCurrentTime().toFixed(1),
+				video_time: window.exactCurrentVideoTime(),
 				event_time: Date.now()
 			});
 		} else {
@@ -239,7 +239,7 @@ function trackingInitial(record, trackings) {
 				target: record.target,
 				event: record.event,
 				info: record.info,
-				video_time: window.player.getCurrentTime().toFixed(1),
+				video_time: window.exactCurrentVideoTime(),
 				event_time: Date.now()
 			});
 		}
@@ -779,7 +779,7 @@ $(document).ready(
 					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
 					privacy: privacy,
 					nominated_students_ids: nominated,
-					video_time: window.player.getCurrentTime().toFixed(1), // for tracking
+					video_time: window.exactCurrentVideoTime(), // for tracking
 				};
 				data['is_structured_annotation'] = is_structured_annotation;
 
@@ -809,7 +809,7 @@ $(document).ready(
 						description: description,
 						privacy: privacy,
 						nominated_students_ids: nominated,
-						video_time: window.player.getCurrentTime().toFixed(1), // for tracking
+						video_time: window.exactCurrentVideoTime(), // for tracking
 					},
 					success: function (data) {
 						if (points.length > 0) {
@@ -848,7 +848,7 @@ $(document).ready(
 					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
 					privacy: privacy,
 					nominated_students_ids: nominated,
-					video_time: window.player.getCurrentTime().toFixed(1), // for tracking
+					video_time: window.exactCurrentVideoTime(), // for tracking
 				}
 				data['is_structured_annotation'] = is_structured_annotation;
 
@@ -877,7 +877,7 @@ $(document).ready(
 						description: description,
 						privacy: privacy,
 						nominated_students_ids: nominated,
-						video_time: window.player.getCurrentTime().toFixed(1), // for tracking
+						video_time: window.exactCurrentVideoTime(), // for tracking
 					},
 					success: function (data) {
 						if (points.length > 0) {
@@ -905,7 +905,7 @@ $(document).ready(
 					if (title === "EDIT ANNOTATION") {
 						$.ajax({
 							type: "DELETE",
-							url: "/annotations/" + item.id + "?video_time=" + window.player.getCurrentTime().toFixed(1),
+							url: "/annotations/" + item.id + "?video_time=" + window.exactCurrentVideoTime(),
 							success: function (data) {
 								modal.modal("hide");
 								// getAnnotations(ALL);
@@ -917,7 +917,7 @@ $(document).ready(
 					else if (title === "EDIT COMMENT") {
 						$.ajax({
 							type: "DELETE",
-							url: "/comments/" + item.id + "?video_time=" + window.player.getCurrentTime().toFixed(1),
+							url: "/comments/" + item.id + "?video_time=" + window.exactCurrentVideoTime(),
 							success: function (data) {
 								getComments();
 								modal.modal("hide");

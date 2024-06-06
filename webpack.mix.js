@@ -5,6 +5,7 @@ const tailwindcss = require('tailwindcss');
 mix.js('resources/assets/js/app.js', 'public/js')
   .js('resources/assets/js/theme.js', 'public/js')
   .js('resources/assets/js/player.js', 'public/js')
+  .js('resources/assets/js/vidstack.js', 'public/js/vidstack.js')
   .sass('resources/assets/sass/app.scss', 'public/css')
   .options({
     processCssUrls: false,
