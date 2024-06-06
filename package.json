@@ -24,7 +24,7 @@
   "dependencies": {
     "htmx.org": "^1.9.4",
     "js-cookie": "^3.0.5",
-    "plyr": "^3.7.8"
+    "vidstack": "^1.11.21"
   },
   "lint-staged": {
     "*.php": "scripts/fix-phpcs.sh"

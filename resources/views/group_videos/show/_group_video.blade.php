@@ -24,9 +24,13 @@
 @endif
 
 <div id="left-side" class="{{ $group_video->show_comments ? 'col-md-8' : 'col-md-12' }}">
-    <div id="video" class="video-width">
+    {{-- <div id="video" class="video-width">
         <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="{{ $video->identifier }}"></div>
-    </div><!-- .video -->
+    </div><!-- .video --> --}}
+
+    <div class="video-width">
+        <div id='target'></div>
+    </div>
 
     <div class="video-width">
         @if ($group_video->show_annotations)
