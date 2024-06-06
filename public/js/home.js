@@ -685,7 +685,7 @@ $(document).ready(
 		});
 
 		$("#annotation-modal").on("hidden.bs.modal", function () {
-			if (player.getPlayerState() === 2) {
+			if (window.getVideoState('paused')) {
 				playVideo();
 			}
 			modal.find('.anno-dynamic-content').addClass('hidden');
