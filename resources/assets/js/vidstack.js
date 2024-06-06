@@ -433,7 +433,6 @@ function showFeedbackHint(quiz_data) {
 }
 
 function showFeedbackModal(feedback_array) {
-
     $("#feedback_dialog_content_table_head").nextAll('tr').remove();
 
     for (var i = 0; i < feedback_array.length; i++) {
@@ -476,7 +475,7 @@ function showFeedbackModal(feedback_array) {
     $("#feedback_dialog").modal('show');
 
     $("#feedback_dialog").on("hidden.bs.modal", function () {
-        if (player.getPlayerState() === 2) {
+        if (window.getVideoState('paused')) {
             window.playVideo();
         }
     });

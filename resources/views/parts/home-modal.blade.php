@@ -428,36 +428,37 @@
              </div>
          </div>
      </div>
+ </div>
 
-     <!-- feedback modal -->
-     <div id="feedback_dialog" class="modal fade" tabindex="-1" style="display: none;">
-         <div class="modal-dialog" role="document">
-             <div class="modal-content">
-                 <div class="modal-header">
-                     <button type="button" class="close" aria-hidden="true"
-                         onclick="$('#feedback_dialog').modal('hide'); $('#quiz_modal').modal('hide');">×</button>
-                     <h4 class="modal-title">Oval Notification</h4>
-                 </div>
-                 <div class="modal-body" id="feedback_dialog_content">
-                     <table class="analytics_wrap">
-                         <tbody>
-                             <tr id="feedback_dialog_content_table_head">
-                                 <th>Question Type</th>
-                                 <th>Question Title</th>
-                                 <th>Your Answer</th>
-                                 <th>Correctness Checking</th>
-                                 <th>Instructor Feedback</th>
-                             </tr>
-                         </tbody>
-                     </table>
-                 </div>
-                 <div>
-                     <button type="button" class="btn btn-link center-block quiz_submit_btn"
-                         onclick="$('#feedback_dialog').modal('hide'); $('#quiz_modal').modal('hide');">
-                         OK, I got it. &nbsp;&nbsp;&nbsp;<i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                     </button>
-                 </div>
+ <!-- feedback modal -->
+ <div id="feedback_dialog" class="modal fade" tabindex="-1" style="display: none;">
+     <div class="modal-dialog" role="document">
+         <div class="modal-content">
+             <div class="modal-header">
+                 <button type="button" class="close" aria-hidden="true"
+                     onclick="$('#feedback_dialog').modal('hide'); $('#quiz_modal').modal('hide');">×</button>
+                 <h4 class="modal-title">Oval Notification</h4>
+             </div>
+             <div class="modal-body" id="feedback_dialog_content">
+                 <table class="analytics_wrap">
+                     <tbody>
+                         <tr id="feedback_dialog_content_table_head">
+                             <th>Question Type</th>
+                             <th>Question Title</th>
+                             <th>Your Answer</th>
+                             <th>Correctness Checking</th>
+                             <th>Instructor Feedback</th>
+                         </tr>
+                     </tbody>
+                 </table>
+             </div>
+             <div>
+                 <button type="button" class="btn btn-link center-block quiz_submit_btn"
+                     onclick="$('#feedback_dialog').modal('hide'); $('#quiz_modal').modal('hide');">
+                     OK, I got it. &nbsp;&nbsp;&nbsp;<i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                 </button>
              </div>
          </div>
      </div>
-     <!-- end feedback modal -->
+ </div>
+ <!-- end feedback modal -->
