@@ -413,6 +413,16 @@ $(document).ready(
 
 		getAllAnnotations();
 		getComments();
+		window.addEventListener('beforeunload', function () {
+			if (window.getVideoState('started')) {
+				saveTracking({
+					event: "Quit",
+					target: null, info: null,
+					video_time: window.exactCurrentVideoTime(),
+					event_time: Date.now()
+				})
+			}
+		});
 
 		$("#course-name").text(course_name);
 		$("#group-name").text(group_name);
