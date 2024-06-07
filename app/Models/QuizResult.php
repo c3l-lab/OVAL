@@ -19,7 +19,7 @@ class QuizResult extends Model
      */
     protected $table = 'quiz_result';
 
-    protected $fillable = ['user_id', 'identifier', 'media_type', 'quiz_data'];
+    protected $fillable = ['user_id', 'identifier', 'media_type', 'quiz_data', 'group_video_id'];
 
     public function author(): BelongsTo
     {

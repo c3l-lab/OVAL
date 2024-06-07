@@ -93,12 +93,10 @@ class GroupVideoController extends Controller
 
         // Log every user views
         if (!empty($user) && !empty($video)) {
-            $tracking = new \oval\Models\Tracking();
-            $tracking->group_video_id = $group_video->id;
-            $tracking->user_id = $user->id;
-            $tracking->event = "View";
-            $tracking->event_time = date("Y-m-d H:i:s");
-            $tracking->save();
+            $this->track($group_video->id, [
+                "event" => "View",
+                "event_time" => date("Y-m-d H:i:s")
+            ]);
         }
 
         $keywords = $video->keywords->unique('keyword')->sortBy('keyword', SORT_NATURAL | SORT_FLAG_CASE);

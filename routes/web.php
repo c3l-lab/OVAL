@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/annotations/tag', [AnnotationController::class, 'tag'])->name('annotations.tag');
     Route::get('/annotations/report', [AnnotationController::class, 'report'])->name('annotations.report');
     Route::get('/annotations/detail', [AnnotationController::class, 'detail'])->name('annotations.detail');
+    Route::post('/annotations/submit_structured_annotation', [AnnotationController::class, 'submit_structured_annotation_answer'])->name('annotations.submit_structured_annotation');
     Route::resource('annotations', AnnotationController::class);
 
     Route::resource('courses.videos', Course\VideoController::class);
