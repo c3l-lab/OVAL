@@ -263,6 +263,7 @@
                                         data-show-annotations="{{ $gv->show_annotations }}"
                                         data-downloadable="{{ data_get($gv->annotation_config, 'downloadable', true) }}"
                                         data-is-show-annotation-button="{{ data_get($gv->annotation_config, 'is_show_annotation_button', true) }}"
+                                        data-enable-structured-annotation-quiz="{{ data_get($gv->annotation_config, 'enable_structured_annotation_quiz', true) }}"
                                         data-label="{{ data_get($gv->annotation_config, 'label', 'New Annotation') }}"
                                         data-header-name="{{ data_get($gv->annotation_config, 'header_name', 'ADD ANNOTATION') }}">
                                         <i class="fa fa-pencil-square-o group-icon"></i>

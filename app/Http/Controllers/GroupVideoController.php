@@ -73,7 +73,7 @@ class GroupVideoController extends Controller
 
         $group = $group_video->group;
         $course = $group->course;
-
+        
         if (
             !$user->isInstructorOf($course) &&
             (!$user->checkIfEnrolledIn($course) || !$user->checkIfInGroup($group) || $group_video->hide)
@@ -93,12 +93,10 @@ class GroupVideoController extends Controller
 
         // Log every user views
         if (!empty($user) && !empty($video)) {
-            $tracking = new \oval\Models\Tracking();
-            $tracking->group_video_id = $group_video->id;
-            $tracking->user_id = $user->id;
-            $tracking->event = "View";
-            $tracking->event_time = date("Y-m-d H:i:s");
-            $tracking->save();
+            $this->track($group_video->id, [
+                "event" => "View",
+                "event_time" => date("Y-m-d H:i:s")
+            ]);
         }
 
         $keywords = $video->keywords->unique('keyword')->sortBy('keyword', SORT_NATURAL | SORT_FLAG_CASE);
@@ -122,6 +120,7 @@ class GroupVideoController extends Controller
         }
 
         $has_quiz = !empty($group_video->quiz);
+        $is_instructor =  $user->isInstructorOf($course);
 
         \JavaScript::put([
             'MINE' => 1,
@@ -129,7 +128,7 @@ class GroupVideoController extends Controller
             'STUDENTS' => 3,
             'ALL' => 4,
             'user_id' => $user->id,
-            'is_instructor' => $user->isInstructorOf($course),
+            'is_instructor' => $is_instructor,
             'comment_instruction' => $group_video->comment_instruction ? $group_video->comment_instruction->description : null,
             'user_fullname' => $user->fullName(),
             'course_id' => $course->id,
@@ -159,6 +158,7 @@ class GroupVideoController extends Controller
 
         return [
             'user' => $user,
+            'is_instructor' => $is_instructor,
             'course' => $course,
             'group' => $group,
             'video' => $video,

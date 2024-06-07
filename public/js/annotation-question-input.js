@@ -38,9 +38,6 @@ var quiz_obj = {
 };
 window.quiz_obj = quiz_obj; // used in home.js
 
-var is_instructor = false;
-var user_id = 0;
-
 $(document).ready(function () {
     $("#annotation-modal").find('#toggle-anno-question-mode-switch').on('change', function (e) {
         update_question_list(quiz_obj);

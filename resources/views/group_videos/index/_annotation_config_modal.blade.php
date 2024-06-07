@@ -42,6 +42,17 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-sm-4">Enable structured annotation quiz</label>
+                        <div class="col-sm-8">
+                            <label class="switch">
+                                <input type="checkbox" name="enable_structured_annotation_quiz"
+                                    class="toggle-annotation-button">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-sm-4">Label</label>
                         <div class="col-sm-8">
                             <input class="p-2 border-2 border-solid border-gray-600 form-label" type="text"

@@ -15,13 +15,13 @@ class Controller extends BaseController
         $tracking = new Tracking();
         $tracking->group_video_id = intval($group_video_id);
         $tracking->user_id = \Auth::user()->id;
-        $tracking->event = $record['event'];
-        $tracking->target = $record['target'];
-        $tracking->info = $record['info'];
-        $tracking->ref_id = $record['ref_id'];
-        $tracking->ref_type = $record['ref_type'];
-        $tracking->event_time = $record['event_time'];
-        $tracking->video_time = $record['video_time'];
+        $tracking->event = data_get($record, 'event', null);
+        $tracking->target = data_get($record, 'target', null);
+        $tracking->info = data_get($record, 'info', null);
+        $tracking->ref_id = data_get($record, 'ref_id', null);
+        $tracking->ref_type = data_get($record, 'ref_type', null);
+        $tracking->event_time = data_get($record, 'event_time', null);
+        $tracking->video_time = data_get($record, 'video_time', null);
         $tracking->save();
     }
 

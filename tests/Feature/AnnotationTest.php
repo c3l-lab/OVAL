@@ -28,7 +28,7 @@ class AnnotationTest extends TestCase
         $response = $this->actingAs($user)->get('/annotations?course_id=' . $course->id . '&group_id=' . $groupVideo->group_id . '&video_id=' . $groupVideo->video_id);
 
         $response->assertStatus(200);
-        $response->assertJsonPath('0.id', $annotation->id);
+        $response->assertJsonPath('annotations.0.id', $annotation->id);
     }
 
     public function test_tag(): void

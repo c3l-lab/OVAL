@@ -11,6 +11,7 @@ use oval\Models\GroupVideo;
 use oval\Models\Tag;
 use oval\Models\User;
 use oval\Models\QuizCreation;
+use oval\Models\QuizResult;
 
 class AnnotationController extends Controller
 {
@@ -37,6 +38,10 @@ class AnnotationController extends Controller
                 return (int) $e->description;
             });
         $structured_annotations = QuizCreation::whereIn('id', $structured_annotation_ids)->get(['id', 'quiz_data']);
+        $structured_annotation_answers = QuizResult::where('user_id', $user->id)
+            ->where('media_type', config('constants.ANNOTATION_QUIZ_MEDIA_TYPE'))
+            ->where('group_video_id', $group_video_id)
+            ->first();
 
         foreach ($all_annotations as $a) {
             $author = User::find($a->user_id);
@@ -74,10 +79,14 @@ class AnnotationController extends Controller
                 "mine" => $mine,
                 "privacy" => $a->privacy,
                 "by_instructor" => $instructor,
-                "is_structured_annotation" => $a->is_structured_annotation,
+                "is_structured_annotation" => $a->is_structured_annotation
             ];
         }
-        return $annotations;
+
+        return [
+            "annotations" => $annotations, 
+            "structured_annotation_answers" => data_get($structured_annotation_answers, "quiz_data", null)
+        ];
     }
 
     public function store(Request $request)
@@ -195,6 +204,17 @@ class AnnotationController extends Controller
             'video_time' => $video_time
         ];
         $this->track($annotation->group_video_id, $record);
+    }
+
+    public function submit_structured_annotation_answer(Request $request) {
+        $quiz_ans = new QuizResult();
+        $quiz_ans->user_id = $request->user()->id;
+        $quiz_ans->group_video_id = $request->group_video_id;
+        $quiz_ans->media_type = config('constants.ANNOTATION_QUIZ_MEDIA_TYPE');
+        $quiz_ans->quiz_data = json_encode($request->result);
+        $quiz_ans->save();
+
+        return ['result' => 'success'];
     }
 
     public function download(Request $request)

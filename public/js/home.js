@@ -1,6 +1,7 @@
 var viewAllAnnotations = true;		//should default to true because students should see instructor's and TA's comment and vice versa.
 
 var annotations = [];
+var structured_annotation_answers = [];
 var comments = [];
 var item;	//used to hold annotation/comment item being edited
 
@@ -78,10 +79,89 @@ function getAllAnnotations() {
 		url: "/annotations",
 		data: { course_id: course_id, group_id: group_id, video_id: video_id },
 		success: function (data) {
-			annotations = data.slice();
+			annotations = data.annotations.slice();
+			if (data.structured_annotation_answers && data.structured_annotation_answers.length != 0) {
+				structured_annotation_answers = JSON.parse(data.structured_annotation_answers);
+			}
 			layoutAnnotations();
+			createStructuredAnnotationQuestionSheet()
 			trackingInitial({ event: 'click', target: '#annotations-list .annotation-button', info: 'View an annotation' }, trackings);
 		}
+	});
+}
+
+function createStructuredAnnotationQuestionSheet() {
+	if (structured_annotation_answers && structured_annotation_answers.length != 0) {
+		const result_report = $('#structure-annotation-question-result');
+		const tbody = result_report.find('tbody');
+
+		structured_annotation_answers.forEach((e) => {
+			const tr = $('<tr></tr>');
+			tr.append(`<td>${e.type === 'text' ? "Short Answer" : "Multiple Choice"}</td>`);
+			tr.append(`<td>${e.title}</td>`);
+			tr.append(`<td>${e.user_ans}</td>`);
+			if (e.user_ans === e.ans || e.user_ans === e.ans[0]) {
+				tr.append(`<td style='text-align:center;'><img src='../../img/tick.png' alt='' style='width:32px; height:auto;'></td>`);
+			} else {
+				tr.append(`<td style='text-align:center;'><img src='../../img/cancel.png' alt='' style='width:32px; height:auto;'></td>`);
+			}
+			tr.append(`${e.type === "text" ? e.ans : e.feedback[e.list.indexOf(e.ans[0])]}`);
+			tbody.append(tr);
+		})
+
+		result_report.show();
+		return;
+	}
+
+	$('#structure-annotation-question-sheet').show();
+	const $form = $('#structure-annotation-question-sheet form');
+	const structured_annotations = annotations
+		.filter((e) => e.is_structured_annotation === 1)
+		.flatMap((e) => JSON.parse(e.description))
+
+	structured_annotations.forEach((item, index) => {
+		const $div = $('<div class="question"></div>');
+		$div.append(`<h3>${index}. ${item.title}</h3>`);
+
+		if (item.type === 'multiple_choice') {
+			item.list.forEach((option, idx) => {
+				const optionPart = option.split(':');
+				const $label = $(`<label><input type="radio" name="${index}" value="${option}">${optionPart[0]}. ${optionPart[1]}</label>`);
+				$div.append($label);
+			});
+		} else if (item.type === 'text') {
+			const $input = $(`<textarea rows="1" name="answer${index}" class="text-input">`);
+			$div.append($input);
+		}
+
+		$form.append($div);
+
+	});
+
+	$('#structure-annotation-answer-submit').click(function () {
+		const answer = $form.serializeArray();
+		if (answer?.length !== structured_annotations.length) {
+			showAlertDialog("You must answer all questions");
+		}
+		$('#structure-annotation-question-modal .modal-dialog').addClass('modal-loading');
+		structured_annotations.forEach((e, idx) => {
+			e['user_ans'] = answer[idx].value;
+		})
+		$.ajax({
+			url: '/annotations/submit_structured_annotation',
+			method: 'POST',
+			data: { result: structured_annotations, group_video_id: window.group_video_id },
+			success: function (response) {
+				if (response.result === "success") {
+					window.structured_annotation_answers = structured_annotations;
+					$('#structure-annotation-question-sheet').hide();
+					createStructuredAnnotationQuestionSheet();
+				}
+			},
+			complete: function () {
+				$('#structure-annotation-question-modal .modal-dialog').removeClass('modal-loading');
+			}
+		});
 	});
 }
 
@@ -423,6 +503,13 @@ $(document).ready(
 				})
 			}
 		});
+		$('#structured-annotation-quiz-btn').on("click", () => {
+			if (!annotations.some(e => e.is_structured_annotation === 1)) {
+				showAlertDialog("No annotation quizzes available");
+				return;
+			}
+			$('#structure-annotation-question-modal').modal('show');
+		})
 
 		$("#course-name").text(course_name);
 		$("#group-name").text(group_name);
@@ -1467,6 +1554,17 @@ $(document).ready(
 
 		for (var i = 0; i < trackingsArr.length; i++) {
 			trackingInitial(trackingsArr[i], trackings);
+		}
+
+		function showAlertDialog(msg) {
+			$("#alert_dialog_content").empty();
+			var content = "<h3>" + msg + "</h3>";
+			$("#alert_dialog_content").append(content);
+			$("#alert_dialog").modal({
+				backdrop: 'static',
+				keyboard: false
+			});
+			return;
 		}
 	}//function()
 ); //document ready

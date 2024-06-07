@@ -22,11 +22,13 @@ async function setupPlayer(groupVideo) {
         viewType: 'video',
         layout: new PlyrLayout({
             controls: buildPlayerControl(groupVideo),
+            speed: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
         }),
     });
     bindUtilityToWindowObject(player);
 
     player.addEventListener('started', () => onVideoStart(player));
+    player.addEventListener('rate-change', (e) => track('Speed', `Change to ${e.detail}`));
     player.addEventListener('play', () => track('Play'));
     player.addEventListener('pause', () => {
         if (player.pauseFromJs !== true && !groupVideo.controls.play) {
@@ -38,6 +40,7 @@ async function setupPlayer(groupVideo) {
     player.addEventListener('ended', () => {
         track('Ended')
     });
+
     $('.plyr__progress').on('click', () => track('Buffering'))
     document.addEventListener("cuechange", (e) => track('Cued'));
     document.addEventListener('fullscreenchange', (e) => {
@@ -45,9 +48,22 @@ async function setupPlayer(groupVideo) {
             document.exitFullscreen();
         }
     });
+
+    $(document).ready(() => {
+        // fix: video cannot play programmatically
+        // as mentioned on ./player.js
+        // so we let user to 'interact' with the youtube frame
+        $('.vds-blocker').hide();
+        $('media-play-button.plyr__control--overlaid').css('pointer-events', 'none');
+    })
 }
 
 function onVideoStart(player) {
+    // fix: video cannot play programmatically
+    // then add the overlay control again
+    $('.vds-blocker').show();
+    $('media-play-button.plyr__control--overlaid').css('pointer-events', 'all');
+
     $('.vds-blocker').on('click', function (e) {
         if (player.state.paused) {
             player.play();
@@ -55,20 +71,23 @@ function onVideoStart(player) {
             player.pause();
         }
     });
-
-    $('.plyr__control[data-plyr="speed"]').on('click', (e) => {
+    $('.plyr__control[data-plyr="speed"][value="1"]').css({ 'background-color': '#00b2ff', 'color': 'white' });
+    $('.plyr__control[data-plyr="speed"]').on('click', function (e) {
         const speed = e.currentTarget.attributes['value'].value;
-        player.playbackRate = parseInt(speed);
+        player.playbackRate = Number(speed);
+        $('.plyr__control[data-plyr="speed"]').css({ 'background-color': '', 'color': '#495463' });
+        $(this).css({ 'background-color': '#00b2ff', 'color': 'white' });
     });
     // player.loadModule("captions");
     showKeywordsOnTimeChange();
     checkQuiz();
 }
 
-function track(action) {
+function track(action, info = null) {
     window.saveTracking({
         event: action,
-        target: null, info: null,
+        target: null,
+        info: info,
         video_time: window.exactCurrentVideoTime(),
         event_time: Date.now()
     });
