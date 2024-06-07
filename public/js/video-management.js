@@ -974,6 +974,7 @@ $('document').ready(function () {
 			show_annotations: $("input[name='show_annotations']").is(":checked"),
 			downloadable: $("input[name='downloadable']").is(":checked"),
 			is_show_annotation_button: $("input[name='is_show_annotation_button']").is(":checked"),
+			enable_structured_annotation_quiz: $("input[name='enable_structured_annotation_quiz']").is(":checked"),
 			label: $("input[name='label']").val(),
 			header_name: $("input[name='header_name']").val()
 		};
@@ -993,6 +994,7 @@ $('document').ready(function () {
 					configButton.data("show-annotations", settings.show_annotations ? 1 : 0);
 					configButton.data("downloadable", settings.downloadable ? 1 : 0);
 					configButton.data("is-show-annotation-button", settings.is_show_annotation_button ? 1 : 0);
+					configButton.data("enable-structured-annotation-quiz", settings.enable_structured_annotation_quiz ? 1 : 0);
 					configButton.data("label", settings.label);
 					configButton.data("header-name", settings.header_name);
 					form.find("input[name='label']").val(settings.label);
@@ -1014,6 +1016,7 @@ $('document').ready(function () {
 			showAnnotations: $(this).data("show-annotations") === 1,
 			downloadable: $(this).data("downloadable") === 1,
 			isShowAnnotationButton: $(this).data("is-show-annotation-button") === 1,
+			enableStructuredAnnotationQuiz: $(this).data("enable-structured-annotation-quiz") === 1,
 			label: $(this).data("label"),
 			headerName: $(this).data("header-name")
 		}
@@ -1024,6 +1027,7 @@ $('document').ready(function () {
 		annotationConfigModal.find("input[name='show_annotations']").prop("checked", groupVideo.showAnnotations);
 		annotationConfigModal.find("input[name='downloadable']").prop("checked", groupVideo.downloadable);
 		annotationConfigModal.find("input[name='is_show_annotation_button']").prop("checked", groupVideo.isShowAnnotationButton);
+		annotationConfigModal.find("input[name='enable_structured_annotation_quiz']").prop("checked", groupVideo.enableStructuredAnnotationQuiz);
 		annotationConfigModal.find("input[name='label']").val(groupVideo.label);
 		annotationConfigModal.find("input[name='header_name']").val(groupVideo.headerName);
 		annotationConfigModal.modal('show');

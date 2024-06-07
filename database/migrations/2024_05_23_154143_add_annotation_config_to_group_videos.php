@@ -15,7 +15,7 @@ return new class extends Migration
             $table->json('annotation_config');
         });
 
-        \DB::statement('UPDATE group_videos SET annotation_config = \'{"label":"New Annotation","header_name":"ADD ANNOTATION","downloadable":true,"is_show_annotation_button":true}\'');
+        \DB::statement('UPDATE group_videos SET annotation_config = \'{"label":"New Annotation","header_name":"ADD ANNOTATION","downloadable":true,"is_show_annotation_button":true,"enable_structured_annotation_quiz" => true,}\'');
     }
 
     /**

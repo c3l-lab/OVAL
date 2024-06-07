@@ -52,7 +52,8 @@ class GroupVideo extends Model
                 'label' => 'New Annotation',
                 'header_name' => "ADD ANNOTATION",
                 'downloadable' => true,
-                'is_show_annotation_button' => true
+                'is_show_annotation_button' => true,
+                'enable_structured_annotation_quiz' => true,
             ])
         ];
     }

@@ -141,17 +141,7 @@ function createStructuredAnnotationQuestionSheet() {
 	$('#structure-annotation-answer-submit').click(function () {
 		const answer = $form.serializeArray();
 		if (answer?.length !== structured_annotations.length) {
-			$("#alert_dialog_content").empty();
-
-			var content = "<h3>" + "You must answer all questions" + "</h3>";
-			$("#alert_dialog_content").append(content);
-
-			$("#alert_dialog").modal({
-				backdrop: 'static',
-				keyboard: false
-			});
-
-			return;
+			showAlertDialog("You must answer all questions");
 		}
 		$('#structure-annotation-question-modal .modal-dialog').addClass('modal-loading');
 		structured_annotations.forEach((e, idx) => {
@@ -513,6 +503,13 @@ $(document).ready(
 				})
 			}
 		});
+		$('#structured-annotation-quiz-btn').on("click", () => {
+			if (!annotations.some(e => e.is_structured_annotation === 1)) {
+				showAlertDialog("No annotation quizzes available");
+				return;
+			}
+			$('#structure-annotation-question-modal').modal('show');
+		})
 
 		$("#course-name").text(course_name);
 		$("#group-name").text(group_name);
@@ -575,10 +572,6 @@ $(document).ready(
 
 		$(".add-annotation").on("click", function (e) {
 			e.preventDefault();
-			if (!window.is_instructor) {
-				$('#structure-annotation-question-modal').modal('show');
-				return;
-			}
 			item = null;
 			item_start_time = currentVideoTime();	//~~
 
@@ -1561,6 +1554,17 @@ $(document).ready(
 
 		for (var i = 0; i < trackingsArr.length; i++) {
 			trackingInitial(trackingsArr[i], trackings);
+		}
+
+		function showAlertDialog(msg) {
+			$("#alert_dialog_content").empty();
+			var content = "<h3>" + msg + "</h3>";
+			$("#alert_dialog_content").append(content);
+			$("#alert_dialog").modal({
+				backdrop: 'static',
+				keyboard: false
+			});
+			return;
 		}
 	}//function()
 ); //document ready
