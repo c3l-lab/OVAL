@@ -28,6 +28,7 @@ async function setupPlayer(groupVideo) {
     bindUtilityToWindowObject(player);
 
     player.addEventListener('started', () => onVideoStart(player));
+    player.addEventListener('rate-change', (e) => track('Speed', `Change to ${e.detail}`));
     player.addEventListener('play', () => track('Play'));
     player.addEventListener('pause', () => {
         if (player.pauseFromJs !== true && !groupVideo.controls.play) {
@@ -82,10 +83,11 @@ function onVideoStart(player) {
     checkQuiz();
 }
 
-function track(action) {
+function track(action, info = null) {
     window.saveTracking({
         event: action,
-        target: null, info: null,
+        target: null,
+        info: info,
         video_time: window.exactCurrentVideoTime(),
         event_time: Date.now()
     });
