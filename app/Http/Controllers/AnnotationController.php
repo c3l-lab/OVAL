@@ -38,6 +38,10 @@ class AnnotationController extends Controller
                 return (int) $e->description;
             });
         $structured_annotations = QuizCreation::whereIn('id', $structured_annotation_ids)->get(['id', 'quiz_data']);
+        $structured_annotation_answers = QuizResult::where('user_id', $user->id)
+            ->where('media_type', config('constants.ANNOTATION_QUIZ_MEDIA_TYPE'))
+            ->where('group_video_id', $group_video_id)
+            ->first();
 
         foreach ($all_annotations as $a) {
             $author = User::find($a->user_id);
@@ -64,11 +68,6 @@ class AnnotationController extends Controller
                     $a->description = '';
                 }
             }
-
-            $structured_annotation_answers = QuizResult::where('user_id', $user->id)
-                ->where('media_type', config('constants.ANNOTATION_QUIZ_MEDIA_TYPE'))
-                ->where('group_video_id', $group_video_id)
-                ->first();
 
             $annotations[] = [
                 "id" => $a->id,
