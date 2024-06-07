@@ -22,6 +22,7 @@ async function setupPlayer(groupVideo) {
         viewType: 'video',
         layout: new PlyrLayout({
             controls: buildPlayerControl(groupVideo),
+            speed: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
         }),
     });
     bindUtilityToWindowObject(player);
@@ -47,10 +48,10 @@ async function setupPlayer(groupVideo) {
         }
     });
 
-    // fix: video cannot play programmatically
-    // as mentioned on ./player.js
-    // we let user to 'interact' with the youtube frame
     $(document).ready(() => {
+        // fix: video cannot play programmatically
+        // as mentioned on ./player.js
+        // so we let user to 'interact' with the youtube frame
         $('.vds-blocker').hide();
         $('media-play-button.plyr__control--overlaid').css('pointer-events', 'none');
     })
@@ -69,10 +70,12 @@ function onVideoStart(player) {
             player.pause();
         }
     });
-
-    $('.plyr__control[data-plyr="speed"]').on('click', (e) => {
+    $('.plyr__control[data-plyr="speed"][value="1"]').css({ 'background-color': '#00b2ff', 'color': 'white' });
+    $('.plyr__control[data-plyr="speed"]').on('click', function (e) {
         const speed = e.currentTarget.attributes['value'].value;
-        player.playbackRate = parseInt(speed);
+        player.playbackRate = Number(speed);
+        $('.plyr__control[data-plyr="speed"]').css({ 'background-color': '', 'color': '#495463' });
+        $(this).css({ 'background-color': '#00b2ff', 'color': 'white' });
     });
     // player.loadModule("captions");
     showKeywordsOnTimeChange();
