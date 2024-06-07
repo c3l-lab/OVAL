@@ -38,6 +38,7 @@ async function setupPlayer(groupVideo) {
     player.addEventListener('ended', () => {
         track('Ended')
     });
+
     $('.plyr__progress').on('click', () => track('Buffering'))
     document.addEventListener("cuechange", (e) => track('Cued'));
     document.addEventListener('fullscreenchange', (e) => {
@@ -45,9 +46,22 @@ async function setupPlayer(groupVideo) {
             document.exitFullscreen();
         }
     });
+
+    // fix: video cannot play programmatically
+    // as mentioned on ./player.js
+    // we let user to 'interact' with the youtube frame
+    $(document).ready(() => {
+        $('.vds-blocker').hide();
+        $('media-play-button.plyr__control--overlaid').css('pointer-events', 'none');
+    })
 }
 
 function onVideoStart(player) {
+    // fix: video cannot play programmatically
+    // then add the overlay control again
+    $('.vds-blocker').show();
+    $('media-play-button.plyr__control--overlaid').css('pointer-events', 'all');
+
     $('.vds-blocker').on('click', function (e) {
         if (player.state.paused) {
             player.play();
