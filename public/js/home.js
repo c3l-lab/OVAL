@@ -121,7 +121,7 @@ function createStructuredAnnotationQuestionSheet() {
 
 	structured_annotations.forEach((item, index) => {
 		const $div = $('<div class="question"></div>');
-		$div.append(`<h3>${index}. ${item.title}</h3>`);
+		$div.append(`<h3>${index + 1}. ${item.title}</h3>`);
 
 		if (item.type === 'multiple_choice') {
 			item.list.forEach((option, idx) => {
