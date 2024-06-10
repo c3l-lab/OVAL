@@ -31,7 +31,6 @@
 @endsection
 
 @section('javascript')
-    <script type="text/javascript" src="{{ asset('js/annotation-question-input.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/home.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/jquery.multi-select.js') }}"></script>
     <script type="text/javascript"

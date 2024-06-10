@@ -11,7 +11,7 @@ class Annotation extends Model
 {
     use HasFactory;
     protected $tablename = 'annotations';
-    protected $fillable = ['group_video_id', 'user_id', 'start_time', 'is_structured_annotation'];
+    protected $fillable = ['group_video_id', 'user_id', 'start_time'];
 
     /**
      *	One-to-many(inverse) relationship
