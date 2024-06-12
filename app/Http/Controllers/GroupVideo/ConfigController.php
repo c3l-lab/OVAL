@@ -23,7 +23,7 @@ class ConfigController extends Controller
                              ->where('id', $groupVideoId)
                              ->value('annotation_config');
 
-        $mergedAnnotationConfig = array_merge($currentConfig, $annotationConfig);
+        $mergedAnnotationConfig = array_merge(json_decode($currentConfig, true), $annotationConfig);
         
         if (isset($mergedAnnotationConfig['structured_annotations'])) {
             unset($annotationConfig['structured_annotations']);
