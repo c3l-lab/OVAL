@@ -61,7 +61,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/annotations/tag', [AnnotationController::class, 'tag'])->name('annotations.tag');
     Route::get('/annotations/report', [AnnotationController::class, 'report'])->name('annotations.report');
     Route::get('/annotations/detail', [AnnotationController::class, 'detail'])->name('annotations.detail');
-    Route::post('/annotations/submit_structured_annotation', [AnnotationController::class, 'submit_structured_annotation_answer'])->name('annotations.submit_structured_annotation');
     Route::resource('annotations', AnnotationController::class);
 
     Route::resource('courses.videos', Course\VideoController::class);
@@ -96,6 +95,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/group_videos/by_course', [GroupVideoController::class, 'byCourse'])->name('group_videos.by_course');
         Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])->name('group_videos.by_group');
         Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
+        Route::post('/group_videos/{id}/config_structured_annotation', [GroupVideoController::class, "config_structured_annotation"]);
         Route::resource('group_videos', GroupVideoController::class);
 
         Route::singleton('group_videos.controls', GroupVideo\ControlsController::class);

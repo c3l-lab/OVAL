@@ -76,31 +76,18 @@
  <div id="structure-annotation-question-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
      aria-hidden="true">
      <div class="modal-dialog">
-         <div class="modal-content">
-             <div class="modal-header">
-                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                     <i class="fa fa-close" aria-hidden="true"></i>
-                 </button>
-                 <h4 class="modal-title" id="modalLabel">Question Sheet</h4>
-             </div><!-- .modal-header -->
-             <div class="modal-body" id="structure-annotation-question-sheet">
-                 <form class="modal-body">
+         <div class="modal-content relative" style="height: 70vh">
+             <div class="modal-body w-full" id="structure-annotation-question-sheet">
+                 <div class="modal-header pb-0">
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <i class="fa fa-close" aria-hidden="true"></i>
+                     </button>
+                     <h4 class="modal-title" id="modalLabel">Question Sheet</h4>
+                 </div><!-- .modal-header -->
+                 <form class="modal-body pb-14">
                  </form>
-                 <button id="structure-annotation-answer-submit">Submit</button>
              </div>
-             <div class="modal-body" id="structure-annotation-question-result">
-                 <table class="analytics_wrap">
-                     <tbody>
-                         <tr>
-                             <th>Question Type</th>
-                             <th>Question Title</th>
-                             <th>Your Answer</th>
-                             <th>Correctness Checking</th>
-                             <th>Instructor Feedback</th>
-                         </tr>
-                     </tbody>
-                 </table>
-             </div>
+             <button class="absolute bottom-0 left-0" id="structure-annotation-answer-submit">Submit</button>
          </div>
      </div>
  </div>

@@ -30,11 +30,6 @@ class AnnotationController extends Controller
         $all_annotations = Annotation::groupVideoAnnotations($group_video_id, $user->id);
         $annotations = [];
 
-        $structured_annotation_answers = QuizResult::where('user_id', $user->id)
-            ->where('media_type', config('constants.ANNOTATION_QUIZ_MEDIA_TYPE'))
-            ->where('group_video_id', $group_video_id)
-            ->first();
-
         foreach ($all_annotations as $a) {
             $author = User::find($a->user_id);
             if (empty($author)) {
@@ -62,10 +57,7 @@ class AnnotationController extends Controller
             ];
         }
 
-        return [
-            "annotations" => $annotations, 
-            "structured_annotation_answers" => data_get($structured_annotation_answers, "quiz_data", null)
-        ];
+        return $annotations;
     }
 
     public function store(Request $request)
@@ -164,17 +156,6 @@ class AnnotationController extends Controller
             'video_time' => $video_time
         ];
         $this->track($annotation->group_video_id, $record);
-    }
-
-    public function submit_structured_annotation_answer(Request $request) {
-        $quiz_ans = new QuizResult();
-        $quiz_ans->user_id = $request->user()->id;
-        $quiz_ans->group_video_id = $request->group_video_id;
-        $quiz_ans->media_type = config('constants.ANNOTATION_QUIZ_MEDIA_TYPE');
-        $quiz_ans->quiz_data = json_encode($request->result);
-        $quiz_ans->save();
-
-        return ['result' => 'success'];
     }
 
     public function download(Request $request)
