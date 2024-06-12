@@ -5,6 +5,8 @@ namespace oval\Http\Controllers;
 use Illuminate\Http\Request;
 use oval\Models\GroupVideo;
 
+use function Laravel\Prompts\select;
+
 class GroupVideoController extends Controller
 {
     public function index(Request $request)
@@ -33,6 +35,7 @@ class GroupVideoController extends Controller
             'group_id' => $group->id,
             'group_name' => $group->name,
             'api_token' => $api_token,
+            'group_videos' => $group_videos,
         ]);
 
         // save current course id
@@ -58,6 +61,24 @@ class GroupVideoController extends Controller
     public function embed(Request $request, int $id)
     {
         return view('group_videos.embed', $this->view($id));
+    }
+
+    public function config_structured_annotation(int $id, Request $request) {
+        $gv = GroupVideo::find($id);
+
+        if (!$gv) {
+            return ['result' => 'failed', 'message' => 'GroupVideo not found'];
+        }
+    
+        $annotationConfig = $gv->annotation_config;
+    
+        $annotationConfig['structured_annotations'] = $request->input('structured_annotations', []);
+
+        $gv->annotation_config = $annotationConfig;
+    
+        $gv->save();
+    
+        return ['result' => 'success'];
     }
 
     private function view($id)

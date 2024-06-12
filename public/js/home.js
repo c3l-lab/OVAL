@@ -1,7 +1,6 @@
 var viewAllAnnotations = true;		//should default to true because students should see instructor's and TA's comment and vice versa.
 
 var annotations = [];
-var structured_annotation_answers = [];
 var comments = [];
 var item;	//used to hold annotation/comment item being edited
 
@@ -26,6 +25,15 @@ if (previous_user_id != user_id) {
 //-----------------------------------------
 //-- Utility --
 //-----------------------------------------
+function tryParseJSON(text) {
+	try {
+		const data = JSON.parse(text);
+		return data;
+	} catch (error) {
+		return undefined;
+	}
+}
+
 function dateStringFromSqlTimestamp(timestamp) {
 	var formattedDate = "";
 	if (timestamp != undefined) {
@@ -79,89 +87,34 @@ function getAllAnnotations() {
 		url: "/annotations",
 		data: { course_id: course_id, group_id: group_id, video_id: video_id },
 		success: function (data) {
-			annotations = data.annotations.slice();
-			if (data.structured_annotation_answers && data.structured_annotation_answers.length != 0) {
-				structured_annotation_answers = JSON.parse(data.structured_annotation_answers);
-			}
+			annotations = data.slice();
 			layoutAnnotations();
-			createStructuredAnnotationQuestionSheet()
 			trackingInitial({ event: 'click', target: '#annotations-list .annotation-button', info: 'View an annotation' }, trackings);
 		}
 	});
 }
 
 function createStructuredAnnotationQuestionSheet() {
-	if (structured_annotation_answers && structured_annotation_answers.length != 0) {
-		const result_report = $('#structure-annotation-question-result');
-		const tbody = result_report.find('tbody');
-
-		structured_annotation_answers.forEach((e) => {
-			const tr = $('<tr></tr>');
-			tr.append(`<td>${e.type === 'text' ? "Short Answer" : "Multiple Choice"}</td>`);
-			tr.append(`<td>${e.title}</td>`);
-			tr.append(`<td>${e.user_ans}</td>`);
-			if (e.user_ans === e.ans || e.user_ans === e.ans[0]) {
-				tr.append(`<td style='text-align:center;'><img src='../../img/tick.png' alt='' style='width:32px; height:auto;'></td>`);
-			} else {
-				tr.append(`<td style='text-align:center;'><img src='../../img/cancel.png' alt='' style='width:32px; height:auto;'></td>`);
-			}
-			tr.append(`${e.type === "text" ? e.ans : e.feedback[e.list.indexOf(e.ans[0])]}`);
-			tbody.append(tr);
-		})
-
-		result_report.show();
-		return;
-	}
-
-	$('#structure-annotation-question-sheet').show();
 	const $form = $('#structure-annotation-question-sheet form');
-	const structured_annotations = annotations
-		.filter((e) => e.is_structured_annotation === 1)
-		.flatMap((e) => JSON.parse(e.description))
+	const config = window.Oval.currentGroupVideo.annotation_config;
 
-	structured_annotations.forEach((item, index) => {
+	if (!config?.structured_annotations?.length) return;
+
+	config.structured_annotations.forEach((item, index) => {
 		const $div = $('<div class="question"></div>');
-		$div.append(`<h3>${index}. ${item.title}</h3>`);
+		$div.append(`<h3>${index + 1}. ${item.title}</h3>`);
 
 		if (item.type === 'multiple_choice') {
-			item.list.forEach((option, idx) => {
-				const optionPart = option.split(':');
-				const $label = $(`<label><input type="radio" name="${index}" value="${option}">${optionPart[0]}. ${optionPart[1]}</label>`);
+			item.options.forEach((e, idx) => {
+				const $label = $(`<label><input type="radio" name="question-${index}" value="${e.value}"}>${e.description}</label>`);
 				$div.append($label);
 			});
-		} else if (item.type === 'text') {
-			const $input = $(`<textarea rows="1" name="answer${index}" class="text-input">`);
+		} else if (item.type === 'short_question') {
+			const $input = $(`<textarea rows="1" name="question-${index}" class="text-input"></textarea>`);
 			$div.append($input);
 		}
 
 		$form.append($div);
-
-	});
-
-	$('#structure-annotation-answer-submit').click(function () {
-		const answer = $form.serializeArray();
-		if (answer?.length !== structured_annotations.length) {
-			showAlertDialog("You must answer all questions");
-		}
-		$('#structure-annotation-question-modal .modal-dialog').addClass('modal-loading');
-		structured_annotations.forEach((e, idx) => {
-			e['user_ans'] = answer[idx].value;
-		})
-		$.ajax({
-			url: '/annotations/submit_structured_annotation',
-			method: 'POST',
-			data: { result: structured_annotations, group_video_id: window.group_video_id },
-			success: function (response) {
-				if (response.result === "success") {
-					window.structured_annotation_answers = structured_annotations;
-					$('#structure-annotation-question-sheet').hide();
-					createStructuredAnnotationQuestionSheet();
-				}
-			},
-			complete: function () {
-				$('#structure-annotation-question-modal .modal-dialog').removeClass('modal-loading');
-			}
-		});
 	});
 }
 
@@ -405,15 +358,7 @@ function layoutAnnotations(mode) {
 			else {
 				icon_tag = '<i class="fa fa-circle-o" aria-hidden="true"></i>';
 			}
-			const annotation_node = `
-				<div class="annotation-icon" style="${style}">
-					<button type="button" class="btn btn-link annotation-button" data-id="${a.id}">
-						${icon_tag}
-					</button>
-				</div>
-			`;
-
-			anno_list.append(annotation_node);
+			anno_list.append('<div class="annotation-icon" style="' + style + '"><button type="button" class="btn btn-link annotation-button" data-id="' + a.id + '">' + icon_tag + '</button></div>');
 		});
 		adjustAnnotationsListDiv();
 	}
@@ -489,9 +434,9 @@ $(document).ready(
 		var item_start_time = null;					//start_time used in modal-form
 		var item_start_time_text = null;			//human readable start_time text used in modal-form
 		var item = null;				//annotation or comment item used in modal-form
-		modal.find('.anno-dynamic-content').addClass('hidden'); // control dynamic annotation content visibility
 
 		getAllAnnotations();
+		createStructuredAnnotationQuestionSheet();
 		getComments();
 		window.addEventListener('beforeunload', function () {
 			if (window.getVideoState('started')) {
@@ -503,12 +448,59 @@ $(document).ready(
 				})
 			}
 		});
+
 		$('#structured-annotation-quiz-btn').on("click", () => {
-			if (!annotations.some(e => e.is_structured_annotation === 1)) {
+			if (!window.Oval.currentGroupVideo.annotation_config.structured_annotations?.length) {
 				showAlertDialog("No annotation quizzes available");
 				return;
 			}
 			$('#structure-annotation-question-modal').modal('show');
+		});
+		$('#structure-annotation-answer-submit').on('click', function () {
+			let tags_string = $('#tags').val();
+			let description = "";
+			let privacy = $('input[name="privacy-radio"]:checked', '#annotation-form').val();
+			let nominated = null;
+
+			if (privacy === "nominated") {
+				nominated = $("#nominated-students-list").val();
+			}
+
+			var tags = commaDelimitedToArray(tags_string);
+
+			const $form = $('#structure-annotation-question-sheet form');
+			if (window.Oval.currentGroupVideo.annotation_config.structured_annotations?.length) {
+				const formAns = $form.serializeArray();
+
+				const structured_annotation_answers = window.Oval.currentGroupVideo.annotation_config.structured_annotations.map((e, idx) => {
+					const answer = { ...e };
+					if (answer.type === "multiple_choice") {
+						const tmp = formAns.find((el) => el.name === answer.name);
+						answer.options.forEach(function (op) {
+							if (op.value === tmp?.value) answer.ans = op.value;
+						});
+					} else if (answer.type === "short_question") {
+						answer.ans = formAns.find((el) => el.name === answer.name)?.value ?? "";
+					}
+
+					return answer;
+				})
+
+				description = JSON.stringify(structured_annotation_answers);
+			}
+
+			$.ajax({
+				type: "POST",
+				url: "/annotations",
+				data: { group_video_id: group_video_id, start_time: currentVideoTime(), tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+				success: function (data) {
+					getAllAnnotations();
+					$('#structure-annotation-question-modal').hide();
+					$form[0].reset();
+				},
+				async: false
+			});
+
 		})
 
 		$("#course-name").text(course_name);
@@ -557,19 +549,6 @@ $(document).ready(
 
 		}); */
 
-		const textInputMode = modal.find('#anno-text-mode-input');
-		const questionInputMode = modal.find('#anno-question-mode-input');
-		const toggleInputModeSwitch = modal.find('#toggle-anno-question-mode-switch');
-		toggleInputModeSwitch.on('change', function (e) {
-			if (e.target.checked) {
-				textInputMode.hide();
-				questionInputMode.show();
-			} else {
-				textInputMode.show();
-				questionInputMode.hide();
-			}
-		});
-
 		$(".add-annotation").on("click", function (e) {
 			e.preventDefault();
 			item = null;
@@ -602,8 +581,6 @@ $(document).ready(
 				}
 
 				modal.find("#nominated-selection").hide();
-				modal.find(".anno-dynamic-content").removeClass('hidden');
-				toggleInputModeSwitch.trigger('change');
 				modal.modal("show");
 			}
 		});
@@ -652,20 +629,37 @@ $(document).ready(
 			item_start_time_text = secondsToMinutesAndSeconds(item.start_time);
 			modal.find("#time-label").html(item_start_time_text);
 
-			if (item.is_structured_annotation) {
-				try {
-					window.quiz_obj.items = JSON.parse(item.description);
-				} catch (error) { }
-				toggleInputModeSwitch.prop("checked", true);
+			const structured_answer = tryParseJSON(unescapeHtml(item.description));
+			if (structured_answer && Array.isArray(structured_answer)) {
+				$("#annotation-description").hide();
+				const $form = $("#annotation-description").parent();
+				$form.find(".question").remove();
+				structured_answer.forEach((item, index) => {
+					const $div = $('<div class="question"></div>');
+					$div.append(`<h3>${index + 1}. ${item.title}</h3>`);
+
+					if (item.type === 'multiple_choice') {
+						item.options.forEach((e, idx) => {
+							const $label = $(`<label><input type="radio" name="question-${index}" value="${e.value}"}>${e.description}</label>`);
+							if (item.ans === e.value) {
+								$label.find("input[type=radio]").prop("checked", true);
+							}
+							$div.append($label);
+						});
+					} else if (item.type === 'short_question') {
+						const $input = $(`<textarea rows="1" name="question-${index}" class="text-input">${item.ans}</textarea>`);
+						$div.append($input);
+					}
+
+					$form.append($div);
+				});
 			} else {
+				$("#annotation-description").show();
 				$("#annotation-description").val(unescapeHtml(item.description));
 			}
 
 			modal.find(".username").text(item.name);
 			modal.find("#annotation-instruction").hide();
-			modal.find(".edit-instruction").hide();
-			modal.find(".anno-dynamic-content").removeClass('hidden');
-			toggleInputModeSwitch.trigger('change');
 
 			if (item.privacy == "private" || item.privacy == "nominated") {
 				modal.find(".privacy-icon").html("<i class=\"fa fa-eye\"></i>");
@@ -785,9 +779,6 @@ $(document).ready(
 			if (window.getVideoState('paused')) {
 				playVideo();
 			}
-			modal.find('.anno-dynamic-content').addClass('hidden');
-			toggleInputModeSwitch.prop("checked", false);
-			toggleInputModeSwitch.trigger("change");
 		});
 
 
@@ -833,13 +824,15 @@ $(document).ready(
 		modal.on("click", "#save", function () {
 			var tags_string = $('#tags').val();
 			var description = $('#annotation-description').val();
+			const is_structured_answer = $('#annotation-description').parent().find(".question").length > 0;
 			var privacy = $('input[name="privacy-radio"]:checked', '#annotation-form').val();
 			var title = $("#modalLabel").text();
 			var nominated = null;
-			const is_structured_annotation = modal.find('#toggle-anno-question-mode-switch').is(':checked');
 
-			modal.find("#annotation-form").validator('validate');
-			if (!is_structured_annotation && modal.find("#annotation-form").find('.has-error').length) {
+			if (!is_structured_answer) {
+				modal.find("#annotation-form").validator('validate');
+			}
+			if (modal.find("#annotation-form").find('.has-error').length) {
 				if ((modal.find("#annotation-description").data('bs.validator.errors').length > 0)
 					|| ((privacy === "nominated") && modal.find("#nominated-students-list").data('bs.validator.errors').length > 0)) {
 					return false;
@@ -853,42 +846,14 @@ $(document).ready(
 			var tags = commaDelimitedToArray(tags_string);
 
 			if (title === window.Oval.currentGroupVideo.annotation_config.header_name) {
-				if (is_structured_annotation) {
-					if (!window.quiz_obj?.items || window.quiz_obj.items.length === 0) {
-						$("#alert_dialog_content").empty();
-
-						var content = "<h3>" + "There is no question in th question list" + "</h3>";
-						$("#alert_dialog_content").append(content);
-
-						$("#alert_dialog").modal({
-							backdrop: 'static',
-							keyboard: false
-						});
-
-						return;
-					}
-				}
-
-				let data = {
-					group_video_id: group_video_id,
-					start_time: item_start_time,
-					tags: tags,
-					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
-					privacy: privacy,
-					nominated_students_ids: nominated,
-					video_time: window.exactCurrentVideoTime(), // for tracking
-				};
-				data['is_structured_annotation'] = is_structured_annotation;
 
 				$.ajax({
 					type: "POST",
 					url: "/annotations",
-					data: data,
+					data: { group_video_id: group_video_id, start_time: item_start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
-						window.quiz_obj.items = [];
-						$(".question_warp ul ul").empty();
 					},
 					async: false
 				});
@@ -923,41 +888,35 @@ $(document).ready(
 				});
 			}
 			else if (title === "EDIT ANNOTATION") {
-				if (is_structured_annotation) {
-					if (!window.quiz_obj?.items || window.quiz_obj.items.length === 0) {
-						$("#alert_dialog_content").empty();
+				if (is_structured_answer) {
+					const formAns = $("#annotation-description").parent().parent().serializeArray().filter(e =>
+						e.name.split("-")[0] === "question"
+					);
 
-						var content = "<h3>" + "There is no question in th question list" + "</h3>";
-						$("#alert_dialog_content").append(content);
+					const structured_annotation_answers = window.Oval.currentGroupVideo.annotation_config.structured_annotations.map((e, idx) => {
+						const answer = { ...e };
+						if (answer.type === "multiple_choice") {
+							const tmp = formAns.find((el) => el.name === answer.name);
+							answer.options.forEach(function (op) {
+								if (op.value === tmp?.value) answer.ans = op.value;
+							});
+						} else if (answer.type === "short_question") {
+							answer.ans = formAns.find((el) => el.name === answer.name)?.value ?? "";
+						}
 
-						$("#alert_dialog").modal({
-							backdrop: 'static',
-							keyboard: false
-						});
+						return answer;
+					})
 
-						return;
-					}
+					description = JSON.stringify(structured_annotation_answers);
 				}
-
-				let data = {
-					start_time: item.start_time,
-					tags: tags,
-					description: is_structured_annotation ? JSON.stringify(window.quiz_obj.items) : description,
-					privacy: privacy,
-					nominated_students_ids: nominated,
-					video_time: window.exactCurrentVideoTime(), // for tracking
-				}
-				data['is_structured_annotation'] = is_structured_annotation;
 
 				$.ajax({
 					type: "PUT",
 					url: "/annotations/" + item.id,
-					data: data,
+					data: { start_time: item.start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
-						window.quiz_obj.items = [];
-						$(".question_warp ul ul").empty();
 					},
 					async: false
 				});
@@ -1185,28 +1144,7 @@ $(document).ready(
 			// });
 			// tags = tags.slice(0,-1);
 
-			let description = "";
-			if (annotation.is_structured_annotation === 1) {
-				try {
-					const structured_annotation = JSON.parse(annotation.description);
-
-					const $preview = preview.find(".preview-comment");
-					$preview.empty();
-
-					structured_annotation.forEach((e, index) => {
-						const content = `<div><b>type:</b> ${e.type} | <b>answer:</b> ${e.ans}</div>`;
-						$preview.append(content);
-						if (index !== structured_annotation.length - 1) {
-							$preview.append('<hr style="height: 1px; background-color: red;">');
-						}
-					});
-				} catch (e) {
-					preview.find(".preview-comment").text("");
-				}
-			} else {
-				preview.find(".preview-comment").text(unescapeHtml(annotation.description));
-			}
-
+			var description = annotation.description;
 			var creationDate = annotation.date;
 			var privacyIcon = annotation.privacy === "all" ? "<i class=\"fa fa-eye\"></i>" : "<i class=\"fa fa-eye-slash\"></i>";
 
@@ -1215,6 +1153,28 @@ $(document).ready(
 			preview.find(".privacy-icon").html(privacyIcon);
 			preview.find(".username").text(userName);
 			preview.find(".date").text(creationDate);
+
+			const structured_annotation = tryParseJSON(unescapeHtml(description));
+			if (structured_annotation && Array.isArray(structured_annotation)) {
+				const $previewComment = preview.find(".preview-comment");
+				$previewComment.text("");
+				structured_annotation.forEach(function (element) {
+					if (element.type === 'multiple_choice') {
+						element.options?.forEach(op => {
+							if (op.value === element.ans) {
+								$previewComment.append($("<p>").text(element.title + " - " + op.description));
+							}
+						})
+					} else if (element.type === 'short_question') {
+						$previewComment.append($("<p>").text(element.title + " - " + element.ans));
+					}
+
+				});
+			}
+			else {
+				preview.find(".preview-comment").text(unescapeHtml(description));
+			}
+
 			// preview.find(".preview-tags").text(unescapeHtml(tags));
 			preview.find(".preview-tags").html("");
 			$.each(annotation.tags, function (i, val) {

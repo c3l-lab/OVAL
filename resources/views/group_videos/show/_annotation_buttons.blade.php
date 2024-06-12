@@ -14,8 +14,7 @@
                 Answer annotation questions
                 <i class="fa fa-plus-circle"></i>
             </button>
-        @endif
-        @if ($is_instructor)
+        @else
             <button type="button" class="btn btn-link add-annotation" title="Add an annotation">
                 {{ data_get($group_video->annotation_config, 'label', 'New Annotation') }}
                 <i class="fa fa-plus-circle"></i>
