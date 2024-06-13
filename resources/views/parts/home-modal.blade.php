@@ -82,7 +82,9 @@
                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                          <i class="fa fa-close" aria-hidden="true"></i>
                      </button>
-                     <h4 class="modal-title pb-0" id="modalLabel">Question Sheet</h4>
+                     <h4 class="modal-title pb-0" id="modalLabel">{{ $group_video->annotation_config['header_name'] }}
+                         at <span></span>
+                     </h4>
                  </div><!-- .modal-header -->
                  <form class="modal-body pb-14">
                  </form>

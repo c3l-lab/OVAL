@@ -454,7 +454,21 @@ $(document).ready(
 				showAlertDialog("No annotation quizzes available");
 				return;
 			}
+			item_start_time = currentVideoTime();
+			for (i = 0; i < annotations.length; i++) {
+				var mine = annotations[i].mine;
+				var start = annotations[i].start_time;
+				if (mine && (start == item_start_time)) {
+					alert("You already have annotation at " + start + " seconds. Please edit it instead.");
+					return;
+				}
+			}
+			$("#structure-annotation-question-sheet #modalLabel span").text(secondsToMinutesAndSeconds(item_start_time));
+			window.pauseVideo();
 			$('#structure-annotation-question-modal').modal('show');
+		});
+		$("#structure-annotation-question-modal").on('hidden.bs.modal', function () {
+			window.playVideo();
 		});
 		$('#structure-annotation-answer-submit').on('click', function () {
 			let tags_string = $('#tags').val();
@@ -495,7 +509,7 @@ $(document).ready(
 				data: { group_video_id: group_video_id, start_time: currentVideoTime(), tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
 				success: function (data) {
 					getAllAnnotations();
-					$('#structure-annotation-question-modal').hide();
+					$('#structure-annotation-question-modal').modal("hide");
 					$form[0].reset();
 				},
 				async: false
@@ -1517,6 +1531,7 @@ $(document).ready(
 		}
 
 		function showAlertDialog(msg) {
+			window.pauseVideo();
 			$("#alert_dialog_content").empty();
 			var content = "<h3>" + msg + "</h3>";
 			$("#alert_dialog_content").append(content);
@@ -1524,7 +1539,12 @@ $(document).ready(
 				backdrop: 'static',
 				keyboard: false
 			});
+
 			return;
 		}
+
+		$("#alert_dialog").on('hidden.bs.modal', function () {
+			window.playVideo();
+		});
 	}//function()
 ); //document ready
