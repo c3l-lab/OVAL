@@ -18,6 +18,8 @@ class TrackingController extends Controller
             $tracking->target = $record['target'];
             $tracking->info = $record['info'];
             $tracking->video_time = data_get($record, 'video_time', null);
+            $tracking->ref_id = data_get($record, 'ref_id', null);
+            $tracking->ref_type = data_get($record, 'ref_type', null);
             $tracking->event_time = date("Y-m-d H:i:s", (int)($record['event_time'] / 1000));
             $result = $tracking->save();
         }

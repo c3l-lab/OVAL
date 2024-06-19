@@ -20,6 +20,7 @@ async function setupPlayer(groupVideo) {
         src: `youtube/${window.video_identifier}`,
         poster: `https://img.youtube.com/vi/${window.video_identifier}/maxresdefault.jpg`,
         viewType: 'video',
+        fullscreenOrientation: "none",
         layout: new PlyrLayout({
             controls: buildPlayerControl(groupVideo),
             speed: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
@@ -41,11 +42,22 @@ async function setupPlayer(groupVideo) {
         track('Ended')
     });
 
+    player.addEventListener('can-play', () => {
+        window.playVideo = () => {
+            player.play();
+        }
+    });
+
     $('.plyr__progress').on('click', () => track('Buffering'))
-    document.addEventListener("cuechange", (e) => track('Cued'));
-    document.addEventListener('fullscreenchange', (e) => {
+    document.addEventListener("cuechange", () => track('Cued'));
+    document.addEventListener("fullscreenchange", () => {
         if (document.fullscreenElement != null && !groupVideo.controls.fullscreen) {
             document.exitFullscreen();
+        }
+        if (document.fullscreenElement != null) {
+            track('Fullscreen', 'Enter fullscreen');
+        } else {
+            track('Fullscreen', 'Exit fullscreen');
         }
     });
 
@@ -84,13 +96,30 @@ function onVideoStart(player) {
 }
 
 function track(action, info = null) {
-    window.saveTracking({
+    window.trackings.push({
         event: action,
         target: null,
         info: info,
         video_time: window.exactCurrentVideoTime(),
         event_time: Date.now()
     });
+
+    if (window.trackings.length >= 3) {
+        const tmp = window.trackings;
+        window.trackings = [];
+
+        $.ajax({
+            type: "POST",
+            url: "/trackings",
+            data: { data: tmp, group_video_id: group_video_id },
+            success: function (data) {
+            },
+            error: function (request, status, error) {
+                console.log("Error on tracking: " + record.target)
+                window.trackings.push(...tmp)
+            },
+        });
+    }
 }
 
 function bindUtilityToWindowObject(player) {
@@ -108,7 +137,7 @@ function bindUtilityToWindowObject(player) {
         player.pause();
     }
     window.playVideo = () => {
-        player.play();
+        return; // avoid playing when video is not ready to play
     }
     window.goTo = (time) => {
         player.currentTime = time;
