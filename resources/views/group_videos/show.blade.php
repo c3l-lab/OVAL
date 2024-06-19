@@ -4,9 +4,7 @@
 
 @section('additional-css')
     <link rel="stylesheet" type="text/css" href="{{ asset('css/multi-select.css') }}">
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('css/player.css') }}"> --}}
-    <link rel="stylesheet" href="https://cdn.vidstack.io/player.css" />
-    <link rel="stylesheet" href="https://cdn.vidstack.io/plyr.css" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/player.css') }}">
 
     @if (count($video->keywords) > 0)
         <link rel="stylesheet" type="text/css"
