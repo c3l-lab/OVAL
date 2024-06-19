@@ -695,6 +695,8 @@ h4 {
 }
 
 .edit-comment-button {
+  position: relative;
+  z-index: 2;
   font-size: 21px;
   color: #9b9b9b;
   float: right;
@@ -1096,6 +1098,8 @@ h4.inline-with-img {
 }
 
 #preview .edit-annotation-button {
+  position: relative;
+  z-index: 2;
   font-size: 22px;
   color: #9b9b9b;
   float: right;

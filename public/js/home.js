@@ -11,16 +11,7 @@ var previewOffsetY = 3;		//val from common.inc
 
 var domain = "https://oval.dev";
 
-var previous_user_id = window.localStorage.getItem('user_id') || 0;
 var trackings = [];
-if (previous_user_id != user_id) {
-	window.localStorage.setItem('trackings', JSON.stringify(trackings));
-} else {
-	trackings = JSON.parse(window.localStorage.getItem('trackings'));
-}
-
-
-
 
 //-----------------------------------------
 //-- Utility --
@@ -89,7 +80,23 @@ function getAllAnnotations() {
 		success: function (data) {
 			annotations = data.slice();
 			layoutAnnotations();
-			trackingInitial({ event: 'click', target: '#annotations-list .annotation-button', info: 'View an annotation' }, trackings);
+
+			const anno_btn = $("#annotations-list .annotation-button");
+			anno_btn.on('click', function () {
+				window.trackings.push({
+					target: "#annotations-list .annotation-button",
+					event: "click",
+					info: "View an annotation",
+					ref_id: $(this).data("id"),
+					ref_type: "annotation",
+					video_time: window.exactCurrentVideoTime(),
+					event_time: Date.now()
+				});
+
+				if (window.trackings.length >= 3) {
+					saveTracking();
+				}
+			});
 		}
 	});
 }
@@ -127,7 +134,23 @@ function getComments() {
 			if (data) {
 				comments = data.slice();
 				$(".comments-box").html(formatComments());
-				trackingInitial({ event: 'click', target: '.edit-comment-button', info: 'Edit comment' }, trackings);
+
+				const edit_comment_btn = $(".edit-comment-button");
+				edit_comment_btn.on('click', function () {
+					window.trackings.push({
+						target: ".edit-comment-button",
+						event: "click",
+						info: "View edit comment",
+						ref_id: $(this).attr("id"),
+						ref_type: "comment",
+						video_time: window.exactCurrentVideoTime(),
+						event_time: Date.now()
+					});
+
+					if (window.trackings.length >= 3) {
+						saveTracking();
+					}
+				});
 			}
 		},
 		error: function (request, status, error) {
@@ -242,25 +265,29 @@ function unescapeHtml(safe) {
 		"";
 }
 
-function saveTracking(record) {
-	var data = [record];
+function saveTracking() {
+	const tmp = window.trackings;
+	window.trackings = [];
+
 	$.ajax({
 		type: "POST",
 		url: "/trackings",
-		data: { data: data, group_video_id: group_video_id },
+		data: { data: tmp, group_video_id: group_video_id },
 		success: function (data) {
 		},
 		error: function (request, status, error) {
-			console.log("saveTracking error: " + error);	/////
-		}
+			console.log("Error on tracking: ");
+			console.log(tmp);
+			window.trackings.push(...tmp)
+		},
 	});
 }
 // tracking events initial function
 
-function trackingInitial(record, trackings) {
+function trackingInitial(record) {
 	$(record.target).on(record.event, function () {
 		if (typeof record.info == 'function') {
-			trackings.push({
+			window.trackings.push({
 				target: record.target,
 				event: record.event,
 				info: record.info(),
@@ -268,7 +295,7 @@ function trackingInitial(record, trackings) {
 				event_time: Date.now()
 			});
 		} else {
-			trackings.push({
+			window.trackings.push({
 				target: record.target,
 				event: record.event,
 				info: record.info,
@@ -277,24 +304,8 @@ function trackingInitial(record, trackings) {
 			});
 		}
 
-		if (trackings.length < 3) {
-			window.localStorage.setItem('trackings', JSON.stringify(trackings));
-		} else {
-			var temp = trackings;
-			trackings = [];
-			$.ajax({
-				type: "POST",
-				url: "/trackings",
-				data: { data: temp, group_video_id: group_video_id },
-				success: function (data) {
-					window.localStorage.setItem('trackings', JSON.stringify(trackings));
-				},
-				error: function (request, status, error) {
-					trackings = trackings.concat(temp);
-					window.localStorage.setItem('trackings', JSON.stringify(trackings));
-				},
-				async: false
-			});
+		if (window.trackings.length >= 3) {
+			saveTracking();
 		}
 	});
 }
@@ -439,14 +450,14 @@ $(document).ready(
 		createStructuredAnnotationQuestionSheet();
 		getComments();
 		window.addEventListener('beforeunload', function () {
-			if (window.getVideoState('started')) {
-				saveTracking({
-					event: "Quit",
-					target: null, info: null,
-					video_time: window.exactCurrentVideoTime(),
-					event_time: Date.now()
-				})
-			}
+			trackings.push({
+				event: "Quit",
+				target: null, info: null,
+				video_time: window.exactCurrentVideoTime ? window.exactCurrentVideoTime() : 0,
+				event_time: Date.now()
+			});
+
+			saveTracking();
 		});
 
 		$('#structured-annotation-quiz-btn').on("click", () => {
@@ -469,6 +480,17 @@ $(document).ready(
 		});
 		$("#structure-annotation-question-modal").on('hidden.bs.modal', function () {
 			window.playVideo();
+
+			window.trackings.push({
+				target: "#structure-annotation-question-modal",
+				event: "Close",
+				info: "Close modal",
+				video_time: window.exactCurrentVideoTime(),
+				event_time: Date.now()
+			})
+			if (window.trackings.length >= 3) {
+				saveTracking();
+			}
 		});
 		$('#structure-annotation-answer-submit').on('click', function () {
 			let tags_string = $('#tags').val();
@@ -506,7 +528,7 @@ $(document).ready(
 			$.ajax({
 				type: "POST",
 				url: "/annotations",
-				data: { group_video_id: group_video_id, start_time: currentVideoTime(), tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+				data: { group_video_id: group_video_id, start_time: window.currentVideoTime(), video_time: window.exactCurrentVideoTime(), tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
 				success: function (data) {
 					getAllAnnotations();
 					$('#structure-annotation-question-modal').modal("hide");
@@ -789,13 +811,6 @@ $(document).ready(
 
 		});
 
-		$("#annotation-modal").on("hidden.bs.modal", function () {
-			if (window.getVideoState('paused')) {
-				playVideo();
-			}
-		});
-
-
 		modal.on("change", "input[name=privacy-radio]", function () {
 			type = "";
 			if ($("#modalLabel:contains('ANNOTATION')").length > 0) {
@@ -864,7 +879,7 @@ $(document).ready(
 				$.ajax({
 					type: "POST",
 					url: "/annotations",
-					data: { group_video_id: group_video_id, start_time: item_start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+					data: { group_video_id: group_video_id, start_time: window.currentVideoTime(), video_time: window.exactCurrentVideoTime(), tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
@@ -927,7 +942,7 @@ $(document).ready(
 				$.ajax({
 					type: "PUT",
 					url: "/annotations/" + item.id,
-					data: { start_time: item.start_time, tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
+					data: { start_time: item.start_time, video_time: window.exactCurrentVideoTime(), tags: tags, description: description, privacy: privacy, nominated_students_ids: nominated },
 					success: function (data) {
 						modal.modal("hide");
 						getAllAnnotations();
@@ -1020,6 +1035,23 @@ $(document).ready(
 			modal.find("#annotation-description").val("");
 			modal.find(".privacy-icon").html("");
 			modal.find("#annotation-form").validator("destroy");
+
+			if (window.getVideoState('paused')) {
+				playVideo();
+			}
+			$('#annotation-modal form').find(".question").remove();
+			$("#annotation-description").show();
+
+			window.trackings.push({
+				target: "#annotation-modal",
+				event: "Close",
+				info: "Close modal",
+				video_time: window.exactCurrentVideoTime(),
+				event_time: Date.now()
+			})
+			if (window.trackings.length >= 3) {
+				saveTracking();
+			}
 		});
 		$("#comment-instruction-modal").on("show.bs.modal", function () {
 			if (comment_instruction) {
@@ -1036,7 +1068,7 @@ $(document).ready(
 					comment_instruction = data;
 					$("#comment-instruction-modal").modal('hide');
 				},
-				erorr: function (request, status, error) {
+				error: function (request, status, error) {
 					console.log("error edit_comment_instruction : " + error);	//////
 				}
 			});
@@ -1139,10 +1171,20 @@ $(document).ready(
 		$("#annotation-filter input").on("change", function (e) {
 			var mode = $('input[name=filter]:checked').val();
 			layoutAnnotations(parseInt(mode));
+
+			window.trackings.push({
+				target: "#annotation-filter input",
+				event: "change",
+				info: `Change filter to ${$(this).parent().text().trim()}`,
+				video_time: window.exactCurrentVideoTime(),
+				event_time: Date.now()
+			});
+
+			if (window.trackings.length >= 3) {
+				saveTracking();
+			}
 		});
 		$('#annotations-list').on('click', '.annotation-button', function (e) {
-			// 			saveTracking({event: "click", target: '.annotation-button', info: 'View an annotation', event_time: Date.now()});
-
 			var preview = $("#preview");
 			if (preview.is(':visible')) {
 				preview.hide();
@@ -1514,20 +1556,15 @@ $(document).ready(
 			{ event: 'click', target: '#forward-button', info: 'Edit annotation time (forward)' },
 			{ event: 'click', target: '#private', info: function () { return 'Set ' + $("#modalLabel").text().split(' ')[1].toLowerCase() + ' to private' } },
 			{ event: 'click', target: '#public', info: function () { return 'Set ' + $("#modalLabel").text().split(' ')[1].toLowerCase() + ' to public' } },
-			// { event: 'click', target: '#save', info: function () { return 'Save ' + $("#modalLabel").text().split(' ')[1].toLowerCase() } },
-			// { event: 'click', target: '#delete', info: function () { return 'Delete ' + $("#modalLabel").text().split(' ')[1].toLowerCase() } },
-			{ event: 'click', target: '#annotation-modal .close', info: 'Close modal' },
-			{ event: 'click', target: '#annotations-list .annotation-button', info: 'View an annotation' },
 			{ event: 'click', target: '.play-annotation-button', info: 'Play from annotation point' },
-			{ event: 'click', target: '.edit-annotation-button', info: 'Edit annotation' },
+			{ event: 'click', target: '.edit-annotation-button', info: 'View edit annotation' },
 			{ event: 'click', target: '#close-preview-button', info: 'Close annotation preview' },
-			{ event: 'change', target: '#annotation-filter input', info: 'Change annotation filter' },
 			{ event: 'click', target: '.add-comment', info: 'Add Comment' },
-			// {event: 'click', target: '.edit-comment-button', info: 'Edit comment'}
+			{ event: 'click', target: '#structured-annotation-quiz-btn', info: 'Add structured annotation' },
 		];
 
 		for (var i = 0; i < trackingsArr.length; i++) {
-			trackingInitial(trackingsArr[i], trackings);
+			trackingInitial(trackingsArr[i]);
 		}
 
 		function showAlertDialog(msg) {
