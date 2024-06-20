@@ -16,6 +16,18 @@ class QuizResultController extends Controller
         $quiz_ans->quiz_data = json_encode($request->quiz_data);
         $quiz_ans->save();
 
+        //track
+        $record = [
+            'event' => 'click',
+            'target' => '#save',
+            'info' => 'Save quiz result',
+            'event_time' => $quiz_ans->created_at,
+            'ref_id' => $quiz_ans->id,
+            'ref_type' => 'quiz_result',
+            'video_time' => data_get($request, 'video_time', null),
+        ];
+        $this->track($quiz_ans->group_video_id, $record);
+        
         return ['result' => 'success'];
     }
 
