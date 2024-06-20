@@ -462,7 +462,7 @@ $(document).ready(
 
 		$('#structured-annotation-quiz-btn').on("click", () => {
 			if (!window.Oval.currentGroupVideo.annotation_config.structured_annotations?.length) {
-				showAlertDialog("No annotation quizzes available");
+				showAlertDialog("No structured annotation available");
 				return;
 			}
 			item_start_time = currentVideoTime();

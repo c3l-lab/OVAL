@@ -95,13 +95,14 @@ function onVideoStart(player) {
     checkQuiz();
 }
 
-function track(action, info = null) {
+function track(action, info = null, ...arg) {
     window.trackings.push({
         event: action,
         target: null,
         info: info,
         video_time: window.exactCurrentVideoTime(),
-        event_time: Date.now()
+        event_time: Date.now(),
+        ...arg
     });
 
     if (window.trackings.length >= 3) {
@@ -234,6 +235,7 @@ function checkQuiz() {
 
                 if (current_video_time === quiz_stop) {
                     setTimeout(function () {
+                        track("Quiz", "Open quiz modal");
                         showQuiz(quiz_meta[meta_position]);
                     }, 1000);
                 }
@@ -307,6 +309,7 @@ function showQuizModal(data, cb) {
 
         $("#quiz_modal").on("hidden.bs.modal", function () {
             flag = false;
+            track("Quiz", "Close quiz modal");
         });
 
         flag = true;
@@ -350,9 +353,10 @@ function showQuizModal(data, cb) {
                 type: "POST",
                 url: "/quiz_results",
                 data: {
-                    group_video_id: group_video_id,  		//stirng
-                    media_type: 'youtube',		    	//string
-                    quiz_data: data            			//obj
+                    group_video_id: group_video_id,
+                    media_type: 'youtube',
+                    quiz_data: data,
+                    video_time: window.exactCurrentVideoTime()
                 },
                 success: function (res) {
                     if (res.result === "success") {
