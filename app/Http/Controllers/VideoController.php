@@ -18,16 +18,8 @@ class VideoController extends Controller
      */
     public function store(Request $request)
     {
-        $v = Video::where(['identifier' => $request->video_id])->first();
 
-        if (empty($v)) {
-            try {
-                $v = Video::createFromYoutube($request->video_id, \Auth::user());
-            } catch (\Exception $e) {
-                return ['error' => $e->getMessage()];
-            }
-        }
-
+        $v = Video::createFromYoutube($request->video_id, \Auth::user());
         $course_id = intval($request->course_id);
         if (!empty($course_id)) {
             $group = \oval\Models\Course::find($course_id)

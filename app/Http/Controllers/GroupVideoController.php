@@ -5,6 +5,8 @@ namespace oval\Http\Controllers;
 use Illuminate\Http\Request;
 use oval\Models\GroupVideo;
 
+use function Laravel\Prompts\select;
+
 class GroupVideoController extends Controller
 {
     public function index(Request $request)
@@ -33,18 +35,23 @@ class GroupVideoController extends Controller
             'group_id' => $group->id,
             'group_name' => $group->name,
             'api_token' => $api_token,
+            'group_videos' => $group_videos,
         ]);
 
         // save current course id
         session(['current-course' => $course->id]);
 
-        return view('group_videos.index', [
-            'user' => $user,
-            'course' => $course,
-            'group' => $group,
-            'videos_without_group' => $videos_without_group,
-            'group_videos' => $group_videos,
-        ]);
+        return response()
+            ->view('group_videos.index', [
+                'user' => $user,
+                'course' => $course,
+                'group' => $group,
+                'videos_without_group' => $videos_without_group,
+                'group_videos' => $group_videos,
+            ])
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     public function show(Request $request, int $id)
@@ -54,6 +61,24 @@ class GroupVideoController extends Controller
     public function embed(Request $request, int $id)
     {
         return view('group_videos.embed', $this->view($id));
+    }
+
+    public function config_structured_annotation(int $id, Request $request) {
+        $gv = GroupVideo::find($id);
+
+        if (!$gv) {
+            return ['result' => 'failed', 'message' => 'GroupVideo not found'];
+        }
+    
+        $annotationConfig = $gv->annotation_config;
+    
+        $annotationConfig['structured_annotations'] = $request->input('structured_annotations', []);
+
+        $gv->annotation_config = $annotationConfig;
+    
+        $gv->save();
+    
+        return ['result' => 'success'];
     }
 
     private function view($id)
@@ -69,7 +94,7 @@ class GroupVideoController extends Controller
 
         $group = $group_video->group;
         $course = $group->course;
-
+        
         if (
             !$user->isInstructorOf($course) &&
             (!$user->checkIfEnrolledIn($course) || !$user->checkIfInGroup($group) || $group_video->hide)
@@ -89,12 +114,10 @@ class GroupVideoController extends Controller
 
         // Log every user views
         if (!empty($user) && !empty($video)) {
-            $tracking = new \oval\Models\Tracking();
-            $tracking->group_video_id = $group_video->id;
-            $tracking->user_id = $user->id;
-            $tracking->event = "View";
-            $tracking->event_time = date("Y-m-d H:i:s");
-            $tracking->save();
+            $this->track($group_video->id, [
+                "event" => "View",
+                "event_time" => date("Y-m-d H:i:s")
+            ]);
         }
 
         $keywords = $video->keywords->unique('keyword')->sortBy('keyword', SORT_NATURAL | SORT_FLAG_CASE);
@@ -118,6 +141,7 @@ class GroupVideoController extends Controller
         }
 
         $has_quiz = !empty($group_video->quiz);
+        $is_instructor =  $user->isInstructorOf($course);
 
         \JavaScript::put([
             'MINE' => 1,
@@ -125,7 +149,7 @@ class GroupVideoController extends Controller
             'STUDENTS' => 3,
             'ALL' => 4,
             'user_id' => $user->id,
-            'is_instructor' => $user->isInstructorOf($course),
+            'is_instructor' => $is_instructor,
             'comment_instruction' => $group_video->comment_instruction ? $group_video->comment_instruction->description : null,
             'user_fullname' => $user->fullName(),
             'course_id' => $course->id,
@@ -155,6 +179,7 @@ class GroupVideoController extends Controller
 
         return [
             'user' => $user,
+            'is_instructor' => $is_instructor,
             'course' => $course,
             'group' => $group,
             'video' => $video,
