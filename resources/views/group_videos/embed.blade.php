@@ -33,7 +33,7 @@
         ])
     </div><!-- .container (main content area) -->
 @endsection
-
+@include('group_videos.show._request_gaze')
 
 @section('javascript')
     <script type="text/javascript" src="{{ asset('js/home.js') }}"></script>
@@ -42,6 +42,8 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
     {{-- <script type="text/javascript" src="{{ asset('js/player.js') }}"></script> --}}
     <script type="text/javascript" src="{{ asset('js/vidstack.js') }}"></script>
+    <script src="{{ asset('js/webgazer.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/eye-tracking.js') }}"></script>
     @if (count($video->keywords) > 0)
         <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js"></script>

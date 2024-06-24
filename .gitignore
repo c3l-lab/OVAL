@@ -40,6 +40,8 @@ public/js/app.js
 public/js/theme.js
 public/js/player.js
 public/js/vidstack.js
+public/js/eye-tracking.js
+public/js/calibration.webgazer.js
 public/js/node_modules_*.js
 
 .php-cs-fixer.cache
