@@ -271,4 +271,8 @@ class GroupVideoController extends Controller
             $i++;
         }
     }
+
+    public function calibrate(Request $request){
+        return view('group_videos.calibration');
+    }
 }

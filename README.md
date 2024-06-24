@@ -50,6 +50,20 @@ Feel free to submit pull requests for new features or bug fixes, or create an is
 - [Setting up LTI in Canvas](docs/setting-up-lti-in-canvas.md)
 - [Setting up LTI in Open edX](docs/setting-up-lti-in-openedx.md)
 
+## Acknowledgments
+
+This project uses WebGazer.js for webcam eye tracking:
+```
+@inproceedings{papoutsaki2016webgazer,
+  author = {Alexandra Papoutsaki and Patsorn Sangkloy and James Laskey and Nediyana Daskalova and Jeff Huang and James Hays},
+  title = {WebGazer: Scalable Webcam Eye Tracking Using User Interactions},
+  booktitle = {Proceedings of the 25th International Joint Conference on Artificial Intelligence (IJCAI)},
+  pages = {3839--3845},
+  year = {2016},
+  organization={AAAI}
+}
+```
+
 ## License
 
 [BSD 2-Clause](LICENSE)
