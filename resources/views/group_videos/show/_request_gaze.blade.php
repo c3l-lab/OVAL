@@ -21,7 +21,7 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var gazeConsent = document.cookie.match(new RegExp('(^| )allow_gaze_tracking=([^;]+)'));
+        const gazeConsent = document.cookie.match(new RegExp('(^| )allow_gaze_tracking=([^;]+)'));
         if (!gazeConsent) {
             document.getElementById('gaze-request').style.setProperty('display', 'block', 'important');
         }
