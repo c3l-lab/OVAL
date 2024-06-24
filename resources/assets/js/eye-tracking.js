@@ -1,6 +1,4 @@
-
-
-var gazeConsent = document.cookie.match(new RegExp('(^| )allow_gaze_tracking=([^;]+)'));
+const gazeConsent = document.cookie.match(new RegExp('(^| )allow_gaze_tracking=([^;]+)'));
 
 if (gazeConsent && gazeConsent[2] === "true") {
     window.onload = async function () {
@@ -11,14 +9,15 @@ if (gazeConsent && gazeConsent[2] === "true") {
             .showPredictionPoints(false);
 
         const frequency = 500;
-        const sum = { x: 0, y: 0 };
+        let sumX = 0;
+        let sumY = 0;
         let count = 0;
         let cameraAllowed = true;
 
         await webgazer.setGazeListener(function (data, elapsedTime) {
             if (data) {
-                sum.x += data.x + window.scrollX;
-                sum.y += data.y + window.scrollY;
+                sumX += data.x + window.scrollX;
+                sumY += data.y + window.scrollY;
                 count++;
             }
         })
@@ -33,8 +32,8 @@ if (gazeConsent && gazeConsent[2] === "true") {
             setInterval(() => {
                 if (count == 0) return;
 
-                const middleX = sum.x / count;
-                const middleY = sum.y / count;
+                const middleX = sumX / count;
+                const middleY = sumY / count;
 
                 // Create a dot at the median gaze point
                 let dot = document.createElement('div');
@@ -54,8 +53,8 @@ if (gazeConsent && gazeConsent[2] === "true") {
                 }, 500);
 
                 // Reset for the next interval
-                sum.x = 0;
-                sum.y = 0;
+                sumX = 0;
+                sumY = 0;
                 count = 0;
             }, frequency);
 
@@ -64,7 +63,6 @@ if (gazeConsent && gazeConsent[2] === "true") {
                 webgazer.saveDataAcrossSessions(false);
             }, 5000);
         }
-
     }
 }
 
