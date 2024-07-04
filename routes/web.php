@@ -95,9 +95,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/group_videos/by_course', [GroupVideoController::class, 'byCourse'])->name('group_videos.by_course');
         Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])->name('group_videos.by_group');
         Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
+        Route::post('/group_videos/{id}/config_structured_annotation', [GroupVideoController::class, "config_structured_annotation"]);
         Route::resource('group_videos', GroupVideoController::class);
 
         Route::singleton('group_videos.controls', GroupVideo\ControlsController::class);
+        Route::put('/group_videos/{groupVideoId}/config/annotation', 'GroupVideo\ConfigController@configAnnotation');
 
         Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('group_videos.quiz.result');
         Route::post('/group_videos/{groupVideo}/quiz/toggle_visible', [GroupVideo\QuizController::class, 'toggleVisible'])->name('group_videos.quiz.toggle_visible');

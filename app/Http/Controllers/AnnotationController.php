@@ -10,6 +10,8 @@ use oval\Models\Course;
 use oval\Models\GroupVideo;
 use oval\Models\Tag;
 use oval\Models\User;
+use oval\Models\QuizCreation;
+use oval\Models\QuizResult;
 
 class AnnotationController extends Controller
 {
@@ -54,6 +56,7 @@ class AnnotationController extends Controller
                 "by_instructor" => $instructor
             ];
         }
+
         return $annotations;
     }
 
@@ -79,6 +82,18 @@ class AnnotationController extends Controller
             $annotation->tags()->attach($tag);
         }
         $result = $annotation->save();
+
+        //track
+        $record = [
+            'event' => 'click',
+            'target' => '#save',
+            'info' => 'Save annotation',
+            'event_time' => $annotation->created_at,
+            'ref_id' => $annotation->id,
+            'ref_type' => 'annotation',
+            'video_time' => data_get($request, 'video_time', null),
+        ];
+        $this->track($annotation->group_video_id, $record);
 
         return ['result' => $result];
     }
@@ -106,14 +121,41 @@ class AnnotationController extends Controller
             $annotation->tags()->attach($tag);
         }
         $result = $annotation->save();
+
+        //track
+        $record = [
+            'event' => 'click',
+            'target' => '.edit-annotation-button',
+            'info' => 'Edit annotation:'.$old->id,
+            'event_time' => $annotation->created_at,
+            'ref_id' => $annotation->id,
+            'ref_type' => 'annotation',
+            'video_time' => data_get($request, 'video_time', null),
+        ];
+        $this->track($annotation->group_video_id, $record);
+                
         return compact('result');
     }
 
-    public function destroy(int $id)
+    public function destroy(Request $request, int $id)
     {
         $annotation = Annotation::findOrFail($id);
         $annotation->status = "deleted";
         $annotation->save();
+
+        //track
+        $video_time_str = $request->query('video_time', null);
+        $video_time = (!is_null($video_time_str) && is_numeric($video_time_str)) ? (double)$video_time_str : null;
+        $record = [
+            'event' => 'click',
+            'target' => '#delete',
+            'info' => 'Delete annotation',
+            'event_time' => $annotation->created_at,
+            'ref_id' => $annotation->id,
+            'ref_type' => 'annotation',
+            'video_time' => $video_time
+        ];
+        $this->track($annotation->group_video_id, $record);
     }
 
     public function download(Request $request)

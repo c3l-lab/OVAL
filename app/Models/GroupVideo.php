@@ -13,11 +13,12 @@ class GroupVideo extends Model
 {
     use HasFactory;
     protected $table = 'group_videos';
-    protected $fillable = ['group_id', 'video_id', 'hide', 'show_analysis'];
+    protected $fillable = ['group_id', 'video_id', 'hide', 'show_analysis', 'show_annotations'];
     protected $casts = [
         'hide' => 'boolean',
         'show_analysis' => 'boolean',
         'controls' => 'array',
+        'annotation_config' => 'array',
     ];
 
 
@@ -46,6 +47,13 @@ class GroupVideo extends Model
                 'play' => true,
                 'progress' => true,
                 'volume' => true,
+            ]),
+            'annotation_config' => json_encode([
+                'label' => 'New Annotation',
+                'header_name' => "ADD ANNOTATION",
+                'downloadable' => true,
+                'is_show_annotation_button' => true,
+                'enable_structured_annotation_quiz' => true,
             ])
         ];
     }
