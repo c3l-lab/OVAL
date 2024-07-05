@@ -4,9 +4,17 @@ namespace oval\Http\Controllers;
 
 use Illuminate\Http\Request;
 use oval\Models\Tracking;
+use oval\Services\InfluxDBService;
 
 class TrackingController extends Controller
 {
+    protected $influxDBService;
+
+    public function __construct(InfluxDBService $influxDBService)
+    {
+        $this->influxDBService = $influxDBService;
+    }
+
     public function store(Request $req)
     {
         $records = $req->data;
@@ -25,6 +33,23 @@ class TrackingController extends Controller
         }
     }
 
+    public function eyeTrackingStore(Request $req) 
+    {
+        $records = $req->data;
+        if (!is_array($records) || empty($records)) {
+            return;
+        }
+        $points = [];
+        foreach ($records as $record) {
+            $timestamp = $record['timestamp'];
+            unset($record['timestamp']);
+
+            $point = $this->influxDBService->createRecordWithTimestamp($timestamp, $record);   
+            array_push($points, $point);
+        }
+
+        $this->influxDBService->insertRecords($points);
+    }
 
     public function export(Request $request)
     {

@@ -70,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
     Route::singleton('group_videos.quiz', GroupVideo\QuizController::class);
 
     Route::get('trackings/export', [TrackingController::class, 'export'])->name('trackings.export');
+    Route::post('trackings/eye_tracking_store', [TrackingController::class, 'eyeTrackingStore']) ->name('tracking.eye_tracking_store');
     Route::resource('trackings', TrackingController::class);
 
     Route::middleware([RequireAdmin::class])->group(function () {
