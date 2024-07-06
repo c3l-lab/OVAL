@@ -39,11 +39,11 @@
 
     document.getElementById('gaze-no').addEventListener('click', function() {
         const today = new Date();
-        const nextYear = new Date(today);
-        nextYear.setDate(today.getDate() + 365);
+        const nextWeek = new Date(today)
+        nextWeek.setDate(today.getDate() + 7);
 
         document.cookie =
-            `allow_gaze_tracking=false; expires=${nextYear.toUTCString()}; path=/group_videos`;
+            `allow_gaze_tracking=false; expires=${nextWeek.toUTCString()}; path=/group_videos`;
 
         document.getElementById('gaze-request').style.display = 'none';
     });

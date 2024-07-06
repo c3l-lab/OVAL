@@ -30,6 +30,13 @@ window.onload = async function () {
     setup();
 };
 
+document.addEventListener('DOMContentLoaded', async function () {
+    if (!(await isCalibrated())) {
+        document.getElementById("previous_ca").remove();
+    }
+});
+
+
 // Set to true if you want to save the data even if you reload the page.
 window.saveDataAcrossSessions = true;
 
@@ -41,7 +48,6 @@ window.onbeforeunload = function () {
  * Restart the calibration process by clearing the local storage and reseting the calibration point
  */
 window.Restart = function Restart() {
-    document.getElementById("Accuracy").innerHTML = "<a>Not yet Calibrated</a>";
     webgazer.clearData();
     ClearCalibration();
     PopUpInstruction();
@@ -71,7 +77,7 @@ function PopUpInstruction() {
     ClearCanvas();
     swal({
         title: "Calibration",
-        text: "Please click on each of the 9 points on the screen. You must click on each point 5 times till it goes yellow. This will calibrate your eye movements.",
+        text: "Please click on each of the 13 points on the screen. You must click on each point 5 times till it goes yellow. This will calibrate your eye movements. (There are 1 points on the face cam)",
         buttons: {
             cancel: false,
             confirm: true
@@ -92,47 +98,16 @@ function helpModalShow() {
 }
 
 function calcAccuracy() {
-    // show modal
-    // notification for the measurement process
     swal({
-        title: "Calculating measurement",
-        text: "Please don't move your mouse & stare at the middle dot for the next 5 seconds. This will allow us to calculate the accuracy of our predictions.",
-        closeOnEsc: false,
+        title: "Calibration Successfully",
         allowOutsideClick: false,
-        closeModal: true
-    }).then(() => {
-        // makes the variables true for 5 seconds & plots the points
-
-        store_points_variable(); // start storing the prediction points
-
-        sleep(5000).then(() => {
-            stop_storing_points_variable(); // stop storing the prediction points
-            var past50 = webgazer.getStoredPoints(); // retrieve the stored points
-            var precision_measurement = calculatePrecision(past50);
-            var accuracyLabel = "<a>Accuracy | " + precision_measurement + "%</a>";
-            document.getElementById("Accuracy").innerHTML = accuracyLabel; // Show the accuracy in the nav bar.
-            swal({
-                title: "Your accuracy measure is " + precision_measurement + "%",
-                allowOutsideClick: false,
-                buttons: {
-                    cancel: "Recalibrate",
-                    confirm: true,
-                }
-            }).then(isConfirm => {
-                if (isConfirm) {
-                    //clear the calibration & hide the last middle button
-                    ClearCanvas();
-                    window.history.back();
-                } else {
-                    //use restart function to restart the calibration
-                    document.getElementById("Accuracy").innerHTML = "<a>Not yet Calibrated</a>";
-                    webgazer.clearData();
-                    ClearCalibration();
-                    ClearCanvas();
-                    ShowCalibrationPoint();
-                }
-            });
-        });
+        buttons: {
+            confirm: true,
+        }
+    }).then(isConfirm => {
+        if (isConfirm) {
+            window.history.back();
+        }
     });
 }
 
@@ -154,23 +129,14 @@ function calPointClick(node) {
         node.style.setProperty('opacity', opacity);
     }
 
-    //Show the middle calibration point after all other points have been clicked.
-    if (PointCalibrate == 8) {
-        document.getElementById('Pt5').style.removeProperty('display');
-    }
-
-    if (PointCalibrate >= 9) { // last point is calibrated
-        // grab every element in Calibration class and hide them except the middle point.
+    if (PointCalibrate >= 13) {
         document.querySelectorAll('.Calibration').forEach((i) => {
             i.style.setProperty('display', 'none');
         });
-        document.getElementById('Pt5').style.removeProperty('display');
 
-        // clears the canvas
         var canvas = document.getElementById("plotting_canvas");
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 
-        // Calculate the accuracy
         calcAccuracy();
     }
 }
@@ -201,8 +167,6 @@ function ShowCalibrationPoint() {
     document.querySelectorAll('.Calibration').forEach((i) => {
         i.style.removeProperty('display');
     });
-    // initially hides the middle button
-    document.getElementById('Pt5').style.setProperty('display', 'none');
 }
 
 /**
@@ -323,9 +287,43 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.height = window.innerHeight;
     };
     window.addEventListener('resize', resize, false);
-
 });
 
+function isCalibrated() {
+    return new Promise((resolve, reject) => {
+        // Open a connection to the IndexedDB database named "localforage"
+        const request = indexedDB.open("localforage", 2);
 
+        request.onerror = (event) => {
+            reject("Failed to open DB: " + event.target.errorCode);
+        };
 
+        request.onupgradeneeded = (event) => {
+            // Create the object store if this is the first time
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("keyvaluepair")) {
+                db.createObjectStore("keyvaluepair", { keyPath: "id" });
+            }
+        };
+
+        request.onsuccess = (event) => {
+            const db = event.target.result;
+            const transaction = db.transaction("keyvaluepairs", "readonly");
+            const store = transaction.objectStore("keyvaluepairs");
+            const getAllRequest = store.get('webgazerGlobalData');
+
+            getAllRequest.onerror = (event) => {
+                reject("Failed to fetch data: " + event.target.errorCode);
+            };
+
+            getAllRequest.onsuccess = (event) => {
+                if (Array.isArray(event.target.result) && event.target.result.length > 45) {
+                    return resolve(true);
+                }
+
+                return resolve(false);
+            };
+        };
+    });
+}
 

@@ -22,36 +22,10 @@ Instructions on use can be found in the README repository.
 
 <body LANG="en-US" LINK="#0000ff" DIR="LTR">
     <canvas id="plotting_canvas" width="500" height="500" style="cursor:crosshair;"></canvas>
-    <script src="https://webgazer.cs.brown.edu/webgazer.js" defer></script>
+    <script src="{{ asset('js/plugin/webgazer.js') }}"></script>
     <script src="{{ asset('js/plugin/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/plugin/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/calibration.webgazer.js') }}"></script>
-
-    <nav id="webgazerNavbar" class="navbar navbar-expand-lg navbar-default navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <!-- The hamburger menu button -->
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#myNavbar">
-                    <span class="navbar-toggler-icon">Menu</span>
-                </button>
-            </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
-                <ul class="nav navbar-nav">
-                    <!-- Accuracy -->
-                    <li id="Accuracy"><a>Not yet Calibrated</a></li>
-                    <li><a onclick="Restart()" href="#">Recalibrate</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a class="helpBtn" onclick="helpModalShow()" href="#"><span
-                                class="glyphicon glyphicon-cog"></span> Help</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a class="helpBtn" onclick="window.history.back()"><span class="glyphicon glyphicon-cog"></span>
-                            Return</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
     <!-- Calibration points -->
     <div class="calibrationDiv">
         <input type="button" class="Calibration" id="Pt1"></input>
@@ -63,6 +37,10 @@ Instructions on use can be found in the README repository.
         <input type="button" class="Calibration" id="Pt7"></input>
         <input type="button" class="Calibration" id="Pt8"></input>
         <input type="button" class="Calibration" id="Pt9"></input>
+        <input type="button" class="Calibration" id="Pt10"></input>
+        <input type="button" class="Calibration" id="Pt11"></input>
+        <input type="button" class="Calibration" id="Pt12"></input>
+        <input type="button" class="Calibration" id="Pt13"></input>
     </div>
 
     <!-- Modal -->
@@ -76,8 +54,10 @@ Instructions on use can be found in the README repository.
                         alt="webgazer demo instructions"></img>
                 </div>
                 <div class="modal-footer">
-                    <button id="closeBtn" type="button" class="btn btn-default" data-bs-dismiss="modal">Close & load
-                        saved model </button>
+                    <button id="previous_ca" type="button" class="btn btn-default"
+                        style="background-color: blanchedalmond" data-bs-dismiss="modal"
+                        onclick="window.history.back()">Use Previous
+                        Calibration</button>
                     <button type="button" id='start_calibration' class="btn btn-primary" data-bs-dismiss="modal"
                         onclick="Restart()">Calibrate</button>
                 </div>

@@ -88,18 +88,18 @@ li {
 
 /* Calibration point position */
 #Pt1 {
-    top: 70px;
-    left: 340px;
+    top: 2vh;
+    left: 2vh;
 }
 
 #Pt2 {
-    top: 70px;
+    top: 2vh;
     left: 50vw;
     margin-left: 340;
 }
 
 #Pt3 {
-    top: 70px;
+    top: 2vh;
     right: 2vw;
 }
 
@@ -131,6 +131,30 @@ li {
 #Pt9 {
     bottom: 2vw;
     right: 2vw;
+}
+
+#Pt10 {
+    top: 15vw;
+    right: 25vw;
+}
+
+#Pt11 {
+    bottom: 15vw;
+    right: 25vw;
+}
+
+#Pt12 {
+    top: 15vw;
+    left: 25vw;
+}
+
+#Pt13 {
+    bottom: 15vw;
+    left: 25vw;
+}
+
+.calibrationDiv .Calibration {
+    z-index: 99999;
 }
 
 
