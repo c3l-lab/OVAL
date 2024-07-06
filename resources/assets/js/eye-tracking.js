@@ -8,7 +8,6 @@ const gazeConsent = document.cookie.match(new RegExp('(^| )allow_gaze_tracking=(
 if (gazeConsent && gazeConsent[2] === "true") {
     window.onload = async function () {
         webgazer.showVideoPreview(false)
-            .showPredictionPoints(true)
             .applyKalmanFilter(true)
             .saveDataAcrossSessions(true)
             .showPredictionPoints(false);
@@ -70,6 +69,8 @@ if (gazeConsent && gazeConsent[2] === "true") {
                 alert("Please allow us to use your camera and reload this page.");
                 cameraAllowed = false;
             });
+
+        document.getElementById('webgazerGazeDot').remove();
 
         if (cameraAllowed) {
             setInterval(() => {
