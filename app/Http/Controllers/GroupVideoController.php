@@ -112,14 +112,6 @@ class GroupVideoController extends Controller
             ];
         }
 
-        // Log every user views
-        if (!empty($user) && !empty($video)) {
-            $this->track($group_video->id, [
-                "event" => "View",
-                "event_time" => date("Y-m-d H:i:s")
-            ]);
-        }
-
         $keywords = $video->keywords->unique('keyword')->sortBy('keyword', SORT_NATURAL | SORT_FLAG_CASE);
         $analysis = null;
         if (!empty($keywords)) {

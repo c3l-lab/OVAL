@@ -4,10 +4,53 @@ import { PlyrLayout, VidstackPlayer } from 'vidstack/global/player';
 
 let quiz_meta = [];
 let is_visible = true;
-let flag = false; //true for modal fired, false for not fired
+let flag = false;
 
 
 async function main() {
+    // every video bound with a unique session id
+    if (!sessionStorage.getItem('v_session_id') || window.location.pathname !== sessionStorage.getItem('bounded_video')) {
+        const uniqueVideoId = Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9 * Math.pow(10, 12)).toString(36);
+        sessionStorage.setItem('v_session_id', uniqueVideoId);
+        sessionStorage.setItem('bounded_video', window.location.pathname)
+    }
+    const uniqueVideoId = sessionStorage.getItem('v_session_id');
+    if (uniqueVideoId) {
+        const previousBeforeSend = $.ajaxSettings.beforeSend;
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (previousBeforeSend) {
+                    previousBeforeSend(xhr, settings);
+                }
+                xhr.setRequestHeader('v_session_id', uniqueVideoId);
+            }
+        });
+
+        let layout = 'V';
+        if (window.Oval.currentGroupVideo.show_annotations === 1) {
+            layout += 'A'
+        }
+        if (window.Oval.currentGroupVideo.show_comments === 1) {
+            layout += 'C'
+        }
+
+        const sessionData = {
+            id: uniqueVideoId,
+            os: (navigator?.userAgentData?.platform || navigator?.platform) ?? 'undetected',
+            doc_width: document.documentElement.scrollWidth,
+            doc_height: document.documentElement.scrollWidth,
+            init_screen_width: window.screen.width,
+            init_screen_height: window.screen.height,
+            layout,
+            group_video_id: window.group_video_id
+        };
+        $.ajax({
+            type: "POST",
+            url: "/session-information",
+            data: sessionData
+        })
+    }
+
     const groupVideo = window.Oval.currentGroupVideo;
     await setupPlayer(groupVideo);
     loadQuiz(groupVideo.id);

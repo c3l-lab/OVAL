@@ -22,6 +22,7 @@ class Controller extends BaseController
         $tracking->ref_type = data_get($record, 'ref_type', null);
         $tracking->event_time = data_get($record, 'event_time', null);
         $tracking->video_time = data_get($record, 'video_time', null);
+        $tracking->session_id = \Session::get('v_session_id');    
         $tracking->save();
     }
 
