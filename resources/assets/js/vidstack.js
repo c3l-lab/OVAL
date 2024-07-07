@@ -39,8 +39,8 @@ async function main() {
             os: (navigator?.userAgentData?.platform || navigator?.platform) ?? 'undetected',
             doc_width: document.documentElement.scrollWidth,
             doc_height: document.documentElement.scrollWidth,
-            init_screen_width: window.screen.width,
-            init_screen_height: window.screen.height,
+            init_screen_width: window.innerWidth,
+            init_screen_height: window.innerHeight,
             layout,
             group_video_id: window.group_video_id
         };

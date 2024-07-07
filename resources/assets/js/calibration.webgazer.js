@@ -32,6 +32,7 @@ window.onload = async function () {
 
 document.addEventListener('DOMContentLoaded', async function () {
     if (!(await isCalibrated())) {
+        document.getElementById("recalibrate").remove();
         document.getElementById("previous_ca").remove();
     }
 });

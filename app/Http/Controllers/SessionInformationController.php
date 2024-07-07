@@ -22,19 +22,19 @@ class SessionInformationController extends Controller
             'init_screen_height' => 'nullable|integer',
             'group_video_id' => 'required|integer',
         ]);
-
+    
         $existingRecord = SessionInformation::find($validatedData['id']);
-
+    
         if (!$existingRecord) {
             SessionInformation::create($validatedData);
         }
-
+    
         $this->track($validatedData['group_video_id'], [
             "event" => "View",
             "event_time" => date("Y-m-d H:i:s"),
             "session_id" => $validatedData['id']
         ]);
-
+    
         return response()->json(['message' => 'OK'], 200);
     }
 }
