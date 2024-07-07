@@ -1567,6 +1567,24 @@ $(document).ready(
 			trackingInitial(trackingsArr[i]);
 		}
 
+		let debounce = null;
+		$(window).resize(function () {
+			if (debounce) clearTimeout(debounce);
+
+			debounce = setTimeout(() => {
+				window.trackings.push({
+					target: "window",
+					event: "resize",
+					info: `Resize(width/height):${window.innerWidth}/${window.innerHeight}`,
+					video_time: window.exactCurrentVideoTime(),
+					event_time: Date.now()
+				})
+				if (window.trackings.length >= 3) {
+					saveTracking();
+				}
+			}, 1000)
+		});
+
 		function showAlertDialog(msg) {
 			window.pauseVideo();
 			$("#alert_dialog_content").empty();

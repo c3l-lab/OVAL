@@ -53,6 +53,11 @@ Instructions on use can be found in the README repository.
                     <img src="{{ asset('img/calibration.png') }}" width="100%" height="100%"
                         alt="webgazer demo instructions"></img>
                 </div>
+                <p style="margin-bottom: 0;padding-left: 12px;padding-right: 12px" id="recalibrate">Note that
+                    re-calibrate will provide
+                    more accuracy on
+                    detecting you gazing pattern
+                <p>
                 <div class="modal-footer">
                     <button id="previous_ca" type="button" class="btn btn-default"
                         style="background-color: blanchedalmond" data-bs-dismiss="modal"
