@@ -1575,10 +1575,18 @@ $(document).ready(
 				window.trackings.push({
 					target: "window",
 					event: "resize",
-					info: `Resize(width/height):${window.innerWidth}/${window.innerHeight}`,
+					info: `Resize to ${window.innerWidth}/${window.innerHeight}`,
 					video_time: window.exactCurrentVideoTime(),
 					event_time: Date.now()
-				})
+				});
+				// for guessElement()
+				if (window.getElPosition) {
+					window.cRect = window.getElPosition($("#right-side")[0]); // comment sizes
+					const $leftSize = $("#left-side .video-width");
+					window.vRect = window.getElPosition($leftSize[0]); // annotation sizes
+					window.aRect = window.getElPosition($leftSize[1]); // video sizes
+				}
+
 				if (window.trackings.length >= 3) {
 					saveTracking();
 				}
