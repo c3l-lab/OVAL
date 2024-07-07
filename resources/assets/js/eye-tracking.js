@@ -1,10 +1,5 @@
 const gazeConsent = document.cookie.match(new RegExp('(^| )allow_gaze_tracking=([^;]+)'));
-// const sessionData = {
-//     os: (navigator?.userAgentData?.platform || navigator?.platform) ?? 'undetected',
-//     docWidth: document.documentElement.scrollWidth,
-//     docHeight: document.documentElement.scrollWidth,
-//     sectionId: 1
-// };
+
 if (gazeConsent && gazeConsent[2] === "true") {
     window.onload = async function () {
         webgazer.showVideoPreview(false)

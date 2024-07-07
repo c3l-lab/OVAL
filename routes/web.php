@@ -9,6 +9,7 @@ use oval\Http\Controllers\CommentController;
 use oval\Http\Controllers\CommentInstructionController;
 use oval\Http\Controllers\GroupController;
 use oval\Http\Controllers\GroupVideoController;
+use oval\Http\Controllers\SessionInformationController;
 use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\QuizResultController;
 use oval\Http\Controllers\TrackingController;
@@ -44,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('videos', VideoController::class);
 
     Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])->name('group_videos.show.embed');
+    Route::post('/session-information', [SessionInformationController::class, 'store']);
 
     Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
     Route::get('/comments/report', [CommentController::class, 'report'])->name('comments.report');

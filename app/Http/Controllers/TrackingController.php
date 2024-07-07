@@ -29,7 +29,8 @@ class TrackingController extends Controller
             $tracking->ref_id = data_get($record, 'ref_id', null);
             $tracking->ref_type = data_get($record, 'ref_type', null);
             $tracking->event_time = date("Y-m-d H:i:s", (int)($record['event_time'] / 1000));
-            $result = $tracking->save();
+            $tracking->session_id = \Session::get('v_session_id'); 
+            $tracking->save();
         }
     }
 
@@ -41,10 +42,11 @@ class TrackingController extends Controller
         }
         $points = [];
         foreach ($records as $record) {
+            $id = \Session::get('v_session_id');  
             $timestamp = $record['timestamp'];
             unset($record['timestamp']);
 
-            $point = $this->influxDBService->createRecordWithTimestamp($timestamp, $record);   
+            $point = $this->influxDBService->createRecordWithTimestamp($timestamp, $record, $id ? ['id' => $id]: null);   
             array_push($points, $point);
         }
 
