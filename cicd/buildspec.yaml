@@ -17,6 +17,9 @@ phases:
       - composer install
       - npm install
       - chmod +x .platform/hooks/postdeploy/*.sh
+      - php artisan config:clear
+      - php artisan cache:clear
+      - php artisan config:cache
   build:
     commands:
       - npm run $ENVIRONMENT_TYPE
