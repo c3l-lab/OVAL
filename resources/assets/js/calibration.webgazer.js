@@ -3,6 +3,7 @@
 
 
 window.onload = async function () {
+    let cameraAllowed = true;
 
     //start the webgazer tracker
     await webgazer.setRegression('ridge') /* currently must set regression and tracker */
@@ -12,7 +13,21 @@ window.onload = async function () {
             //   console.log(clock); /* elapsed time in milliseconds since webgazer.begin() was called */
         })
         .saveDataAcrossSessions(true)
-        .begin();
+        .begin()
+        .catch((e) => {
+            alert("Please allow us to use your camera and reload this page.");
+            cameraAllowed = false;
+        });
+
+    if (!cameraAllowed) {
+        document.body.addEventListener('click', function (event) {
+            alert("Camera is not allow, please allow us to use your camera and reload this page");
+            event.preventDefault();  // Prevents default behavior of the click
+            event.stopPropagation(); // Stops the click from propagating to other elements
+        }, true);
+
+        return;
+    }
 
     webgazer.showVideoPreview(true) /* shows all video previews */
         .showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
