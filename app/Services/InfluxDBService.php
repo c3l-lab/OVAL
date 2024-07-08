@@ -13,15 +13,15 @@ class InfluxDBService
 
     public function __construct()
     {
-        $host = env('INFLUXDB_HOST', 'localhost');
-        $port = env('INFLUXDB_PORT', '8086');
-        $protocol = env('INFLUXDB_PROTOCOL', 'http');
+        $host = config('database.connections.influxdb.host');
+        $port = config(('database.connections.influxdb.port'));
+        $protocol = config('database.connections.influxdb.protocol');
         
         $this->client = new Client([
             "url" => "$protocol://$host:$port",
-            "token" => env('INFLUXDB_TOKEN', 'my_token'),
-            "org" => env('INFLUXDB_ORG', 'oval'),
-            "bucket" => env('INFLUXDB_BUCKET', 'oval_ts'),
+            "token" => config('database.connections.influxdb.token'),
+            "org" => config('database.connections.influxdb.org'),
+            "bucket" => config('database.connections.influxdb.bucket'),
             "precision" => WritePrecision::MS
         ]);
     }
@@ -60,11 +60,5 @@ class InfluxDBService
         }
 
         return $point;
-    }
-
-    public function queryDatabase($fluxQuery)
-    {
-        $queryApi = $this->client->createQueryApi();
-        return $queryApi->query($fluxQuery, config('database.influxdb.org'));
     }
 }
