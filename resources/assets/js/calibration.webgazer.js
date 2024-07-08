@@ -4,6 +4,7 @@
 
 window.onload = async function () {
     let cameraAllowed = true;
+
     //start the webgazer tracker
     await webgazer.setRegression('ridge') /* currently must set regression and tracker */
         //.setTracker('clmtrackr')
@@ -27,6 +28,7 @@ window.onload = async function () {
 
         return;
     }
+
     webgazer.showVideoPreview(true) /* shows all video previews */
         .showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
         .applyKalmanFilter(true); /* Kalman Filter defaults to on. Can be toggled by user. */
