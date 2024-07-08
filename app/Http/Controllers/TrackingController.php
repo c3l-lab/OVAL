@@ -29,7 +29,7 @@ class TrackingController extends Controller
             $tracking->ref_id = data_get($record, 'ref_id', null);
             $tracking->ref_type = data_get($record, 'ref_type', null);
             $tracking->event_time = date("Y-m-d H:i:s", (int)($record['event_time'] / 1000));
-            $tracking->session_id = \Session::get('v_session_id'); 
+            $tracking->session_id = \Session::get('v-session-id'); 
             $tracking->save();
         }
     }
@@ -42,7 +42,7 @@ class TrackingController extends Controller
         }
         $points = [];
         foreach ($records as $record) {
-            $id = \Session::get('v_session_id'); 
+            $id = \Session::get('v-session-id'); 
             $el = $record['el'];
             unset($record['el']); 
             $timestamp = $record['timestamp'];

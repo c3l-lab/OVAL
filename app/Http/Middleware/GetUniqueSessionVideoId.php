@@ -15,9 +15,9 @@ class GetUniqueSessionVideoId
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $videoId = $request->header('v_session_id');
+        $videoId = $request->header('v-session-id');
         if ($videoId) {
-            session(['v_session_id' => $videoId]);
+            session(['v-session-id' => $videoId]);
         }
 
         return $next($request);

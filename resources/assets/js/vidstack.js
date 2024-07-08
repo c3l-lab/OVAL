@@ -9,12 +9,12 @@ let flag = false;
 
 async function main() {
     // every video bound with a unique session id
-    if (!sessionStorage.getItem('v_session_id') || window.location.pathname !== sessionStorage.getItem('bounded_video')) {
+    if (!sessionStorage.getItem('v-session-id') || window.location.pathname !== sessionStorage.getItem('bounded-video')) {
         const uniqueVideoId = Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9 * Math.pow(10, 12)).toString(36);
-        sessionStorage.setItem('v_session_id', uniqueVideoId);
-        sessionStorage.setItem('bounded_video', window.location.pathname)
+        sessionStorage.setItem('v-session-id', uniqueVideoId);
+        sessionStorage.setItem('bounded-video', window.location.pathname)
     }
-    const uniqueVideoId = sessionStorage.getItem('v_session_id');
+    const uniqueVideoId = sessionStorage.getItem('v-session-id');
     if (uniqueVideoId) {
         const previousBeforeSend = $.ajaxSettings.beforeSend;
         $.ajaxSetup({
@@ -22,7 +22,7 @@ async function main() {
                 if (previousBeforeSend) {
                     previousBeforeSend(xhr, settings);
                 }
-                xhr.setRequestHeader('v_session_id', uniqueVideoId);
+                xhr.setRequestHeader('v-session-id', uniqueVideoId);
             }
         });
 
