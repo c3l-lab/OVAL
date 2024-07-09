@@ -74,7 +74,7 @@ if (gazeConsent && gazeConsent[2] === "true") {
             dot.style.zIndex = 99999;
 
             const flag = document.createElement('span');
-            flag.flagContent = 'C';
+            flag.textContent = 'C';
             flag.style.position = 'absolute';
             flag.style.color = 'black';
             flag.style.zIndex = 99999;
