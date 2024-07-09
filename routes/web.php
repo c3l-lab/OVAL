@@ -70,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/quiz_results/detail', [QuizResultController::class, 'detail'])->name('quiz_results.detail');
     Route::resource('quiz_results', QuizResultController::class);
     Route::singleton('group_videos.quiz', GroupVideo\QuizController::class);
+    Route::get('/group_videos/calibrate', [GroupVideoController::class, 'calibrate'])->name('group_videos.calibrate');
 
     Route::get('trackings/export', [TrackingController::class, 'export'])->name('trackings.export');
     Route::post('trackings/eye_tracking_store', [TrackingController::class, 'eyeTrackingStore']) ->name('tracking.eye_tracking_store');
@@ -97,7 +98,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/group_videos/{groupVideo}/archive', [GroupVideoController::class, 'archive'])->name('group_videos.archive');
         Route::get('/group_videos/by_course', [GroupVideoController::class, 'byCourse'])->name('group_videos.by_course');
         Route::get('/group_videos/by_group', [GroupVideoController::class, 'byGroup'])->name('group_videos.by_group');
-        Route::get('/group_videos/calibrate', [GroupVideoController::class, 'calibrate'])->name('group_videos.calibrate');
         Route::post('/group_videos/sort', [GroupVideoController::class, 'sort'])->name('group_videos.sort');
         Route::post('/group_videos/{id}/config_structured_annotation', [GroupVideoController::class, "config_structured_annotation"]);
         Route::resource('group_videos', GroupVideoController::class);
