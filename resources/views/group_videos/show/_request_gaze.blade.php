@@ -22,7 +22,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const gazeConsent = document.cookie.match(new RegExp('(^| )allow_gaze_tracking=([^;]+)'));
-        if (!gazeConsent) {
+        const enableEyeTracking = !!window.Oval.currentGroupVideo.enable_eye_tracking;
+        if (!gazeConsent && enableEyeTracking) {
             document.getElementById('gaze-request').style.setProperty('display', 'block', 'important');
         }
     });

@@ -37,4 +37,16 @@ class ConfigController extends Controller
     
         return response()->json(['success' => true]);
     }
+
+    public function toggleEyeTracking(Request $request, int $groupVideoId) {
+        $currentConfig = \DB::table('group_videos')
+                             ->where('id', $groupVideoId)
+                             ->value('enable_eye_tracking');    
+
+        \DB::table('group_videos')
+            ->where('id', $groupVideoId)
+            ->update(['enable_eye_tracking' => $currentConfig == 1 ? 0 : 1]);
+    
+        return response()->json(['success' => true]);
+    }
 }

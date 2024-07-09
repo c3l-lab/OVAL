@@ -1,6 +1,7 @@
 const gazeConsent = document.cookie.match(new RegExp('(^| )allow_gaze_tracking=([^;]+)'));
+const enableEyeTracking = !!window.Oval.currentGroupVideo.enable_eye_tracking
 
-if (gazeConsent && gazeConsent[2] === "true") {
+if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
     const guessElement = (x, y) => {
         if (!window.cRect || !window.vRect || !window.aRect) {
             return "O";

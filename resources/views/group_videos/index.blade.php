@@ -239,6 +239,7 @@
                             <th>DURATION</th>
                             <th>GROUP ACCESS</th>
                             <th>KEY POINTS</th>
+                            <th>EYE TRACKING</th>
                             <th>SET QUIZ</th>
                             <th>COMMENTS</th>
                             <th>DATE UPLOADED</th>
@@ -352,6 +353,18 @@
                                     <button type="button" class="btn btn-link edit-points-button" data-toggle="modal"
                                         data-target="#modal-points-form" data-id="{{ $gv->video()->id }}"
                                         title="Manage points"><i class="fa fa-pencil-square-o group-icon"></i></button>
+                                </td>
+                                <td>
+                                    <button onclick="alert('to be implemented')" type="button"
+                                        data-group-video-id={{ $gv->id }} class="btn btn-link">
+                                        <i class="fa fa-download"></i>
+                                    </button>
+                                    <br />
+                                    <label class="switch">
+                                        <input type="checkbox" @checked($gv->enable_eye_tracking == 1)
+                                            data-group-video-id="{{ $gv->id }}">
+                                        <span onclick="window.toggleEyeTracking(this)" class="slider round"></span>
+                                    </label>
                                 </td>
                                 <td>
                                     <button type="button" data-group-video-id={{ $gv->id }}

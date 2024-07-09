@@ -115,15 +115,13 @@ function helpModalShow() {
 
 function calcAccuracy() {
     swal({
-        title: "Calibration Successfully",
-        allowOutsideClick: false,
+        title: "Calibration Successful",
+        allowOutsideClick: true,
         buttons: {
-            confirm: true,
+            confirm: true
         }
-    }).then(isConfirm => {
-        if (isConfirm) {
-            window.history.back();
-        }
+    }).then((result) => {
+        window.history.back();
     });
 }
 
@@ -145,7 +143,7 @@ function calPointClick(node) {
         node.style.setProperty('opacity', opacity);
     }
 
-    if (PointCalibrate >= 13) {
+    if (PointCalibrate >= 1) {
         document.querySelectorAll('.Calibration').forEach((i) => {
             i.style.setProperty('display', 'none');
         });
