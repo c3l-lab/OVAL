@@ -66,23 +66,41 @@ class TrackingController extends Controller
     }
 
     public function eyeTrackingDownload(Request $req) {
+        $duration = $req->query('duration', null);
+        $gv_id = $req->query('gv_id', null);
+        $exportFileName = '';
+        if($duration) {
+            $to = new \DateTime();
+            $from = new \DateTime();
+            $from->modify("-{$this->mapDuration($duration)}");
+            $exportFileName .= "({$from->format('Y.m.d-H\hi\'s\'\'')} to {$to->format('Y.m.d-H\hi\'s\'\'')})";
+        } else {
+            $exportFileName .= '(ALL)';
+        }
+
+        if($gv_id) {
+            $exportFileName .= "(gv_id={$gv_id})";
+        } else {
+            $exportFileName .= "(gv_id=ALL)";
+        }
+
         $headers = [
             "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=eye-tracking.csv",
+            "Content-Disposition" => "attachment; filename={$exportFileName}eye-tracking.csv",
             "Pragma" => "no-cache",
             "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
             "Expires" => "0"
         ];
 
-        $callback = function() use ($req) {
+        $callback = function() use ($duration, $gv_id) {
             $handle = fopen('php://output', 'w');
     
             $headers = ['id', 'gv_id', 'target', 'timestamp', 'x', 'y'];
             fputcsv($handle, $headers);
 
             $parser = $this->influxDBService->queryStream(
-                duration: $req->query('duration', null),
-                gv_id: $req->query('gv_id', null)
+                duration: $duration,
+                gv_id: $gv_id
             );
 
             foreach ($parser->each() as $record)
@@ -152,5 +170,24 @@ class TrackingController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    private function mapDuration(string $duration): string {
+        $mapping = [
+            'h' => 'hour',
+            'd' => 'day',
+            'w' => 'week',
+            'm' => 'minute',
+            'y' => 'year'
+        ];
+    
+        $unit = substr($duration, -1);
+        $amount = substr($duration, 0, -1);
+    
+        if (isset($mapping[$unit])) {
+            return $amount . ' ' . $mapping[$unit];
+        } else {
+            throw new \InvalidArgumentException("Invalid time unit in modifier: $unit");
+        }
     }
 }
