@@ -16,6 +16,9 @@
          @if (isset($user) && $user->role == 'A')
              <li><a href="/analysis_requests">Manage Content Analysis Requests</a></li>
              <li><a href="/register">Add an admin user</a></li>
+             <li><a style="cursor: pointer" type="button" data-toggle="modal"
+                     data-target="#export-eye-tracking-data">Export eye
+                     tracking data</a></li>
          @endif
          @if (isset($user) && $user->isAnInstructor())
              <li><a href="/analytics">Analytics</a></li>

@@ -1031,8 +1031,8 @@ $('document').ready(function () {
 		annotationConfigModal.modal('show');
 	});
 
-	window.toggleEyeTracking = (element) => {
-		const groupVideoId = $(element).parent().find("input").data('group-video-id');
+	$(".toggle-eye-track-switch").on("click", function () {
+		const groupVideoId = $(this).data('group-video-id');
 		$('body').addClass("block-disable");
 
 		$.ajax({
@@ -1045,5 +1045,5 @@ $('document').ready(function () {
 				$('body').removeClass("block-disable");
 			}
 		});
-	};
+	});
 });//doc ready

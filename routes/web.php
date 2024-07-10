@@ -74,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('trackings/export', [TrackingController::class, 'export'])->name('trackings.export');
     Route::post('trackings/eye_tracking_store', [TrackingController::class, 'eyeTrackingStore']) ->name('tracking.eye_tracking_store');
+    Route::get('trackings/eye_tracking_query', [TrackingController::class, 'eyeTrackingDownload']) ->name('tracking.eye_tracking_query')->middleware([RequireAdmin::class]);
     Route::resource('trackings', TrackingController::class);
 
     Route::middleware([RequireAdmin::class])->group(function () {

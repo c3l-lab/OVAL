@@ -80,8 +80,14 @@ if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
             flag.style.zIndex = 99999;
 
             let records = [];
-            const trackGaze = (x, y, el) => {
-                records.push({ x, y, timestamp: Date.now(), el });
+            const trackGaze = (x, y, target) => {
+                records.push({
+                    x,
+                    y,
+                    timestamp: Date.now(),
+                    target,
+                    gv_id: window.group_video_id
+                });
 
                 if (records.length < 10) return;
 
@@ -130,7 +136,7 @@ if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
                 flag.remove();
                 const middleX = sumX / count;
                 const middleY = sumY / count;
-                const el = guessElement(middleX, middleY);
+                const target = guessElement(middleX, middleY);
 
                 dot.style.left = `${middleX}px`;
                 dot.style.top = `${middleY}px`;
@@ -138,10 +144,10 @@ if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
 
                 flag.style.left = `${middleX}px`;
                 flag.style.top = `${middleY + 10}px`;
-                flag.textContent = el;
+                flag.textContent = target;
                 document.body.appendChild(flag);
 
-                trackGaze(middleX, middleY, el);
+                trackGaze(middleX, middleY, target);
 
                 // Reset for the next interval
                 sumX = 0;
