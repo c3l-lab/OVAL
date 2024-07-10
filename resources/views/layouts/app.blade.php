@@ -154,7 +154,9 @@
             };
 
             const filter = $('#filter-by-group-video').val();
-            data.gv_id = (filter === null | filter === undefined || filter === '') ? undefined : filter;
+            if (filter !== null && filter !== undefined && filter !== '' && !isNaN(filter)) {
+                data.gv_id = filter;
+            }
 
             window.location.href = `/trackings/eye_tracking_query?${$.param(data)}`;
         });
