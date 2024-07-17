@@ -142,7 +142,7 @@ class TrackingController extends Controller
             "Expires"             => "0"
         );
 
-        $columns = array('Video ID', 'User Email', 'Event', 'Target', 'Info', 'Event Time');
+        $columns = array("Video ID", "User Email", "Event", "Target", "Video Time", "Info", "Event Time", "Ref ID", "Ref Type", "Session ID");
 
         $callback = function () use ($trackings, $columns) {
             $file = fopen('php://output', 'w');
@@ -153,16 +153,24 @@ class TrackingController extends Controller
                 $row['User Email'] = isset($tracking->user) ? $tracking->user->email : '';
                 $row['Event']    = $tracking->event;
                 $row['Target']  = $tracking->target;
+                $row['Video Time'] = $tracking->video_time;
                 $row['Info']  = $tracking->info;
                 $row['Event Time']  = $tracking->event_time;
+                $row['Ref ID']  = $tracking->ref_id;
+                $row['Ref Type']  = $tracking->ref_type;
+                $row['Session ID']  = $tracking->session_id;
 
                 fputcsv($file, array(
                     $row['Video ID'],
                     $row['User Email'],
                     $row['Event'],
                     $row['Target'],
+                    $row['Video Time'],
                     $row['Info'],
-                    $row['Event Time']
+                    $row['Event Time'],
+                    $row['Ref ID'],
+                    $row['Ref Type'],
+                    $row['Session ID'],
                 ));
             }
 
