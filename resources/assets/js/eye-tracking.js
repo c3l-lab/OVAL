@@ -3,6 +3,10 @@ const enableEyeTracking = !!window.Oval.currentGroupVideo.enable_eye_tracking
 
 if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
     const guessElement = (x, y) => {
+        if (x < 0 || x > window.innerWidth || y < 0 || y > window.innerHeight) {
+            return 'N';
+        }
+
         if (!window.cRect || !window.vRect || !window.aRect) {
             return "O";
         }
@@ -66,18 +70,18 @@ if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
         document.getElementById('webgazerGazeDot').remove();
 
         if (cameraAllowed) {
-            const dot = document.createElement('div');
-            dot.style.position = 'absolute';
-            dot.style.width = '10px';
-            dot.style.height = '10px';
-            dot.style.borderRadius = '50%';
-            dot.style.backgroundColor = 'red';
-            dot.style.zIndex = 99999;
+            // const dot = document.createElement('div');
+            // dot.style.position = 'absolute';
+            // dot.style.width = '10px';
+            // dot.style.height = '10px';
+            // dot.style.borderRadius = '50%';
+            // dot.style.backgroundColor = 'red';
+            // dot.style.zIndex = 99999;
 
-            const flag = document.createElement('span');
-            flag.style.position = 'absolute';
-            flag.style.color = 'black';
-            flag.style.zIndex = 99999;
+            // const flag = document.createElement('span');
+            // flag.style.position = 'absolute';
+            // flag.style.color = 'black';
+            // flag.style.zIndex = 99999;
 
             let records = [];
             const trackGaze = (x, y, target) => {
@@ -132,20 +136,20 @@ if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
 
             setInterval(() => {
                 if (count == 0) return;
-                dot.remove();
-                flag.remove();
+                // dot.remove();
+                // flag.remove();
                 const middleX = sumX / count;
                 const middleY = sumY / count;
                 const target = guessElement(middleX, middleY);
 
-                dot.style.left = `${middleX}px`;
-                dot.style.top = `${middleY}px`;
-                document.body.appendChild(dot);
+                // dot.style.left = `${middleX}px`;
+                // dot.style.top = `${middleY}px`;
+                // document.body.appendChild(dot);
 
-                flag.style.left = `${middleX}px`;
-                flag.style.top = `${middleY + 10}px`;
-                flag.textContent = target;
-                document.body.appendChild(flag);
+                // flag.style.left = `${middleX}px`;
+                // flag.style.top = `${middleY + 10}px`;
+                // flag.textContent = target;
+                // document.body.appendChild(flag);
 
                 trackGaze(middleX, middleY, target);
 

@@ -18,7 +18,8 @@ class SessionInformation extends Model
         'doc_height',
         'layout',
         'init_screen_width',
-        'init_screen_height'
+        'init_screen_height',
+        'browser'
     ];
 
     public $incrementing = false;

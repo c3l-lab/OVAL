@@ -143,7 +143,7 @@ function calPointClick(node) {
         node.style.setProperty('opacity', opacity);
     }
 
-    if (PointCalibrate >= 1) {
+    if (PointCalibrate >= 13) {
         document.querySelectorAll('.Calibration').forEach((i) => {
             i.style.setProperty('display', 'none');
         });

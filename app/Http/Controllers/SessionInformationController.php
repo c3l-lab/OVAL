@@ -15,6 +15,7 @@ class SessionInformationController extends Controller
         $validatedData = $request->validate([
             'id' => 'required|string',
             'os' => 'nullable|string',
+            'browser' => 'nullable|string',
             'doc_width' => 'nullable|integer',
             'doc_height' => 'nullable|integer',
             'layout' => 'nullable|string',

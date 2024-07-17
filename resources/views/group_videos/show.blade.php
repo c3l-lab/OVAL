@@ -36,8 +36,10 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
     {{-- <script type="text/javascript" src="{{ asset('js/player.js') }}"></script> --}}
     <script type="text/javascript" src="{{ asset('js/vidstack.js') }}"></script>
-    <script src="{{ asset('js/plugin/webgazer.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/eye-tracking.js') }}"></script>
+    @if ($group_video->enable_eye_tracking)
+        <script src="{{ asset('js/plugin/webgazer.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/eye-tracking.js') }}"></script>
+    @endif
 
     @if (count($video->keywords) > 0)
         <script type="text/javascript"

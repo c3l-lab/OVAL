@@ -34,8 +34,17 @@ async function main() {
             layout += 'C'
         }
 
+        let browser = "";
+        const brandsLength = navigator?.userAgentData?.brands?.length;
+        if (brandsLength) {
+            browser = navigator.userAgentData.brands[brandsLength - 1].brand;
+        } else {
+            browser = 'undetected';
+        }
+
         const sessionData = {
             id: uniqueVideoId,
+            browser,
             os: (navigator?.userAgentData?.platform || navigator?.platform) ?? 'undetected',
             doc_width: document.documentElement.scrollWidth,
             doc_height: document.documentElement.scrollWidth,
@@ -234,6 +243,7 @@ function loadQuiz(groupVideoId) {
         success: function (res) {
             if (res.quiz != null) {
                 quiz_meta = JSON.parse(res.quiz.quiz_data);
+                if (!quiz_meta) quiz_meta = [];
                 switch (parseInt(res.quiz.visable)) {
                     case 0:
                         is_visible = false;
@@ -254,37 +264,33 @@ function loadQuiz(groupVideoId) {
 }
 
 function checkQuiz() {
-    var intervalID_youtubeplayer = window.setInterval(
+    var check_quiz_interval = window.setInterval(
         function () {
 
             if (quiz_meta.length > 0 && is_visible) {
-
-                var current_video_time = parseInt(window.currentVideoTime().toFixed(0));
-                var trigger = true;
-                var meta_position = 0;
+                const current_video_time = parseInt(window.currentVideoTime().toFixed(0));
+                let meta_position = null;
 
                 for (var i = 0; i < quiz_meta.length; i++) {
-                    if (trigger && current_video_time <= parseInt(quiz_meta[i].stop)) {
+                    if (current_video_time <= parseInt(quiz_meta[i].stop)) {
                         meta_position = i;
-                        trigger = false
+                        break;
                     }
                 }
 
-                if (meta_position > 0) {
-                    var quiz_stop = parseInt(quiz_meta[meta_position].stop);
-                } else {
-                    var quiz_stop = parseInt(quiz_meta[0].stop);
+                if (meta_position == null) {
+                    clearInterval(check_quiz_interval);
+                    return;
                 }
 
+                const quiz_stop = parseInt(quiz_meta[meta_position].stop);
                 if (current_video_time === quiz_stop) {
                     setTimeout(function () {
                         track("Quiz", "Open quiz modal");
                         showQuiz(quiz_meta[meta_position]);
                     }, 1000);
                 }
-
             }
-
         },
         1000
     )
