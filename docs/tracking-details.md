@@ -28,17 +28,16 @@ Tracking detail including
 - Eye tracking every 0.5 seconds
 
 ## User Interaction:
-| Field | Description | 
-|----------|----------|
-										
-| id    |  Id of tracking record     | 
-| group_video_id    |  Id of group video where the tracking is recorded     | 
-| user_id    | Id of user     | 
-| event    | The interaction (fullscreen, pause video, add comment, etc.)     | 
-| target    | The element that user interact with     | 
-| video_time    |  Current video time    |
-| info    |  Additional information    |
-| event_time    |  Integer: The UNIX time in milisecond where this is recorded    |
-| ref_id    |  Database reference id of the target that user interact with    |
-| ref_type    |  Database reference type (comments, annotations, etc.) of the target that user interact with    |
-| session_id    |  Id of the session information record mentioned above    |
+| Field          | Description                                                                 |
+|----------------|-----------------------------------------------------------------------------|
+| id             | Id of tracking record                                                       |
+| group_video_id | Id of group video where the tracking is recorded                            |
+| user_id        | Id of user                                                                  |
+| event          | The interaction (fullscreen, pause video, add comment, etc.)                |
+| target         | The element that user interact with                                         |
+| video_time     | Current video time                                                          |
+| info           | Additional information                                                      |
+| event_time     | Integer: The UNIX time in milliseconds where this is recorded               |
+| ref_id         | Database reference id of the target that user interact with                 |
+| ref_type       | Database reference type (comments, annotations, etc.) of the target         |
+| session_id     | Id of the session information record mentioned above                        |
