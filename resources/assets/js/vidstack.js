@@ -68,6 +68,8 @@ main();
 
 async function setupPlayer(groupVideo) {
     const player = await VidstackPlayer.create({
+        controlsDelay: 1000 * 60 * 60 * 24,
+        hideControlsOnMouseLeave: false,
         target: '#target',
         src: `youtube/${window.video_identifier}`,
         poster: `https://img.youtube.com/vi/${window.video_identifier}/maxresdefault.jpg`,
