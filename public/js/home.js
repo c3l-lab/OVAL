@@ -101,6 +101,9 @@ function getAllAnnotations() {
 	});
 }
 
+// button control this modal: #structured-annotation-quiz-btn
+// the _annotation_buttons.blade.php switch buttons 
+// between normal and annotation mod
 function createStructuredAnnotationQuestionSheet() {
 	const $form = $('#structure-annotation-question-sheet form');
 	const config = window.Oval.currentGroupVideo.annotation_config;

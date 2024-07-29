@@ -9,7 +9,7 @@
         </a>
     @endif
     @if (data_get($group_video->annotation_config, 'is_show_annotation_button', true))
-        @if (data_get($group_video->annotation_config, 'enable_structured_annotation_quiz', true) && !$is_instructor)
+        @if (data_get($group_video->annotation_config, 'enable_structured_annotation_quiz', true))
             <button id="structured-annotation-quiz-btn" type="button" class="btn btn-link" title="Add an annotation">
                 {{ data_get($group_video->annotation_config, 'label', 'Answer annotation questions') }}
                 <i class="fa fa-plus-circle"></i>
