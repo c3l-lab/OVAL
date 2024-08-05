@@ -5,6 +5,7 @@ namespace oval\Providers;
 use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
+use oval\Services\InfluxDBService;
 use oval\Services\Lti1p3\LtiCache;
 use oval\Services\Lti1p3\LtiCookie;
 use oval\Services\Lti1p3\LtiDatabase;
@@ -49,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
             ]));
         });
         $this->app->bind(YoutubeService::class, YoutubeService::class);
+        $this->app->singleton(InfluxDBService::class, InfluxDBService::class);
 
         view()->composer('*', function ($view) {
             $user = \Auth::user();

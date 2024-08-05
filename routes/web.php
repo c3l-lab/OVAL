@@ -9,6 +9,7 @@ use oval\Http\Controllers\CommentController;
 use oval\Http\Controllers\CommentInstructionController;
 use oval\Http\Controllers\GroupController;
 use oval\Http\Controllers\GroupVideoController;
+use oval\Http\Controllers\SessionInformationController;
 use oval\Http\Controllers\HomeController;
 use oval\Http\Controllers\QuizResultController;
 use oval\Http\Controllers\TrackingController;
@@ -44,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('videos', VideoController::class);
 
     Route::get('/group_videos/{id}/embed', [GroupVideoController::class, 'embed'])->name('group_videos.show.embed');
+    Route::post('/session-information', [SessionInformationController::class, 'store']);
 
     Route::get('/comments/tag', [CommentController::class, 'tag'])->name('comments.tag');
     Route::get('/comments/report', [CommentController::class, 'report'])->name('comments.report');
@@ -68,8 +70,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/quiz_results/detail', [QuizResultController::class, 'detail'])->name('quiz_results.detail');
     Route::resource('quiz_results', QuizResultController::class);
     Route::singleton('group_videos.quiz', GroupVideo\QuizController::class);
+    Route::get('/group_videos/calibrate', [GroupVideoController::class, 'calibrate'])->name('group_videos.calibrate');
 
     Route::get('trackings/export', [TrackingController::class, 'export'])->name('trackings.export');
+    Route::post('trackings/eye_tracking_store', [TrackingController::class, 'eyeTrackingStore']) ->name('tracking.eye_tracking_store');
+    Route::get('trackings/eye_tracking_query', [TrackingController::class, 'eyeTrackingDownload']) ->name('tracking.eye_tracking_query')->middleware([RequireAdmin::class]);
     Route::resource('trackings', TrackingController::class);
 
     Route::middleware([RequireAdmin::class])->group(function () {
@@ -100,7 +105,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::singleton('group_videos.controls', GroupVideo\ControlsController::class);
         Route::put('/group_videos/{groupVideoId}/config/annotation', 'GroupVideo\ConfigController@configAnnotation');
-
+        Route::get('/group_videos/{groupVideoId}/config/toggle_eye_tracking', 'GroupVideo\ConfigController@toggleEyeTracking');
         Route::get('/group_videos/{groupVideo}/quiz/result', [GroupVideo\QuizController::class, 'result'])->name('group_videos.quiz.result');
         Route::post('/group_videos/{groupVideo}/quiz/toggle_visible', [GroupVideo\QuizController::class, 'toggleVisible'])->name('group_videos.quiz.toggle_visible');
 

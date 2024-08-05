@@ -30,6 +30,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \oval\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \oval\Http\Middleware\GetUniqueSessionVideoId::class
         ],
 
         'api' => [
@@ -38,6 +39,7 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             'throttle:60,1',
             'bindings',
+            \oval\Http\Middleware\GetUniqueSessionVideoId::class
         ],
     ];
 

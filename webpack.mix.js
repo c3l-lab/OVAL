@@ -6,6 +6,8 @@ mix.js('resources/assets/js/app.js', 'public/js')
   .js('resources/assets/js/theme.js', 'public/js')
   .js('resources/assets/js/player.js', 'public/js')
   .js('resources/assets/js/vidstack.js', 'public/js/vidstack.js')
+  .js('resources/assets/js/calibration.webgazer.js', 'public/js/calibration.webgazer.js')
+  .js('resources/assets/js/eye-tracking.js', 'public/js/eye-tracking.js')
   .sass('resources/assets/sass/app.scss', 'public/css')
   .options({
     processCssUrls: false,

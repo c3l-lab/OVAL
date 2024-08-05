@@ -4,10 +4,62 @@ import { PlyrLayout, VidstackPlayer } from 'vidstack/global/player';
 
 let quiz_meta = [];
 let is_visible = true;
-let flag = false; //true for modal fired, false for not fired
+let flag = false;
 
 
 async function main() {
+    // every video bound with a unique session id
+    if (!sessionStorage.getItem('v-session-id') || window.location.pathname !== sessionStorage.getItem('bounded-video')) {
+        const uniqueVideoId = Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9 * Math.pow(10, 12)).toString(36);
+        sessionStorage.setItem('v-session-id', uniqueVideoId);
+        sessionStorage.setItem('bounded-video', window.location.pathname)
+    }
+    const uniqueVideoId = sessionStorage.getItem('v-session-id');
+    if (uniqueVideoId) {
+        const previousBeforeSend = $.ajaxSettings.beforeSend;
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (previousBeforeSend) {
+                    previousBeforeSend(xhr, settings);
+                }
+                xhr.setRequestHeader('v-session-id', uniqueVideoId);
+            }
+        });
+
+        let layout = 'V';
+        if (window.Oval.currentGroupVideo.show_annotations === 1) {
+            layout += 'A'
+        }
+        if (window.Oval.currentGroupVideo.show_comments === 1) {
+            layout += 'C'
+        }
+
+        let browser = "";
+        const brandsLength = navigator?.userAgentData?.brands?.length;
+        if (brandsLength) {
+            browser = navigator.userAgentData.brands[brandsLength - 1].brand;
+        } else {
+            browser = 'undetected';
+        }
+
+        const sessionData = {
+            id: uniqueVideoId,
+            browser,
+            os: (navigator?.userAgentData?.platform || navigator?.platform) ?? 'undetected',
+            doc_width: document.documentElement.scrollWidth,
+            doc_height: document.documentElement.scrollWidth,
+            init_screen_width: window.innerWidth,
+            init_screen_height: window.innerHeight,
+            layout,
+            group_video_id: window.group_video_id
+        };
+        $.ajax({
+            type: "POST",
+            url: "/session-information",
+            data: sessionData
+        })
+    }
+
     const groupVideo = window.Oval.currentGroupVideo;
     await setupPlayer(groupVideo);
     loadQuiz(groupVideo.id);
@@ -16,6 +68,8 @@ main();
 
 async function setupPlayer(groupVideo) {
     const player = await VidstackPlayer.create({
+        controlsDelay: 1000 * 60 * 60 * 24,
+        hideControlsOnMouseLeave: false,
         target: '#target',
         src: `youtube/${window.video_identifier}`,
         poster: `https://img.youtube.com/vi/${window.video_identifier}/maxresdefault.jpg`,
@@ -191,6 +245,7 @@ function loadQuiz(groupVideoId) {
         success: function (res) {
             if (res.quiz != null) {
                 quiz_meta = JSON.parse(res.quiz.quiz_data);
+                if (!quiz_meta) quiz_meta = [];
                 switch (parseInt(res.quiz.visable)) {
                     case 0:
                         is_visible = false;
@@ -211,37 +266,33 @@ function loadQuiz(groupVideoId) {
 }
 
 function checkQuiz() {
-    var intervalID_youtubeplayer = window.setInterval(
+    var check_quiz_interval = window.setInterval(
         function () {
 
             if (quiz_meta.length > 0 && is_visible) {
-
-                var current_video_time = parseInt(window.currentVideoTime().toFixed(0));
-                var trigger = true;
-                var meta_position = 0;
+                const current_video_time = parseInt(window.currentVideoTime().toFixed(0));
+                let meta_position = null;
 
                 for (var i = 0; i < quiz_meta.length; i++) {
-                    if (trigger && current_video_time <= parseInt(quiz_meta[i].stop)) {
+                    if (current_video_time <= parseInt(quiz_meta[i].stop)) {
                         meta_position = i;
-                        trigger = false
+                        break;
                     }
                 }
 
-                if (meta_position > 0) {
-                    var quiz_stop = parseInt(quiz_meta[meta_position].stop);
-                } else {
-                    var quiz_stop = parseInt(quiz_meta[0].stop);
+                if (meta_position == null) {
+                    clearInterval(check_quiz_interval);
+                    return;
                 }
 
+                const quiz_stop = parseInt(quiz_meta[meta_position].stop);
                 if (current_video_time === quiz_stop) {
                     setTimeout(function () {
                         track("Quiz", "Open quiz modal");
                         showQuiz(quiz_meta[meta_position]);
                     }, 1000);
                 }
-
             }
-
         },
         1000
     )

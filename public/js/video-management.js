@@ -202,8 +202,6 @@ function first_key_of_array(arr) {
 
 
 $('document').ready(function () {
-
-
 	var modal = $("#modal-form");
 	var points_form = $("#modal-points-form");
 
@@ -1031,5 +1029,21 @@ $('document').ready(function () {
 		annotationConfigModal.find("input[name='label']").val(groupVideo.label);
 		annotationConfigModal.find("input[name='header_name']").val(groupVideo.headerName);
 		annotationConfigModal.modal('show');
+	});
+
+	$(".toggle-eye-track-switch").on("click", function () {
+		const groupVideoId = $(this).data('group-video-id');
+		$('body').addClass("block-disable");
+
+		$.ajax({
+			type: "GET",
+			url: `/group_videos/${groupVideoId}/config/toggle_eye_tracking`,
+			error: function (res) {
+				console.log(res.responseText);
+			},
+			complete: function () {
+				$('body').removeClass("block-disable");
+			}
+		});
 	});
 });//doc ready

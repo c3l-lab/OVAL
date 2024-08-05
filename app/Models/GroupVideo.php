@@ -13,7 +13,7 @@ class GroupVideo extends Model
 {
     use HasFactory;
     protected $table = 'group_videos';
-    protected $fillable = ['group_id', 'video_id', 'hide', 'show_analysis', 'show_annotations'];
+    protected $fillable = ['group_id', 'video_id', 'hide', 'show_analysis', 'show_annotations', 'enable_eye_tracking'];
     protected $casts = [
         'hide' => 'boolean',
         'show_analysis' => 'boolean',

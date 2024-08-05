@@ -66,6 +66,15 @@ return [
             'engine' => null,
         ],
 
+        'influxdb' => [
+            'host' => env('INFLUXDB_HOST', 'localhost'),
+            'port' => env('INFLUXDB_PORT', '8086'),
+            'protocol' => env('INFLUXDB_PROTOCOL', 'http'),
+            'token' => env('INFLUXDB_TOKEN', 'my_token'),
+            'org' => env('INFLUXDB_ORG', 'oval'),
+            'bucket' => env('INFLUXDB_BUCKET', 'oval_ts')
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'host' => env('DB_HOST', 'localhost'),

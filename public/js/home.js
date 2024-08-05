@@ -101,6 +101,9 @@ function getAllAnnotations() {
 	});
 }
 
+// button control this modal: #structured-annotation-quiz-btn
+// the _annotation_buttons.blade.php switch buttons 
+// between normal and annotation mod
 function createStructuredAnnotationQuestionSheet() {
 	const $form = $('#structure-annotation-question-sheet form');
 	const config = window.Oval.currentGroupVideo.annotation_config;
@@ -1566,6 +1569,32 @@ $(document).ready(
 		for (var i = 0; i < trackingsArr.length; i++) {
 			trackingInitial(trackingsArr[i]);
 		}
+
+		let debounce = null;
+		$(window).resize(function () {
+			if (debounce) clearTimeout(debounce);
+
+			debounce = setTimeout(() => {
+				window.trackings.push({
+					target: "window",
+					event: "resize",
+					info: `Resize to ${window.innerWidth}/${window.innerHeight}`,
+					video_time: window.exactCurrentVideoTime(),
+					event_time: Date.now()
+				});
+				// for guessElement()
+				if (window.getElPosition) {
+					window.cRect = window.getElPosition($("#right-side")[0]); // comment sizes
+					const $leftSize = $("#left-side .video-width");
+					window.vRect = window.getElPosition($leftSize[0]); // annotation sizes
+					window.aRect = window.getElPosition($leftSize[1]); // video sizes
+				}
+
+				if (window.trackings.length >= 3) {
+					saveTracking();
+				}
+			}, 1000)
+		});
 
 		function showAlertDialog(msg) {
 			window.pauseVideo();
