@@ -3,10 +3,11 @@
         class="hidden !pointer-events-auto z-50 fixed w-96 bg-slate-300 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 m-6 p-4 rounded shadow-2xl">
         <p class="text-teal-900 bold text-2xl">Gaze Tracking. Cookie.</p>
         <p class="text-slate-500 bold">
-            We will use your camera to collect gazing data.
-            We also use cookie to save your permission reference.
-            You will be <span class="text-red-900">navigated</span> to a calibrate process to provide your gazing
-            pattern.
+            We would like to use your camera for eye-tracking. We would only store your gaze data. The actual camera
+            image is not stored.
+            A cookie will be set to save your permission preference.
+            If you agree, you will be <span class="text-red-900">navigated</span> to a calibration process before
+            watching the video.
         </p>
         <br>
         <div class="flex items-center justify-around">

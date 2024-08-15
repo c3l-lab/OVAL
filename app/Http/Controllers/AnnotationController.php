@@ -213,7 +213,7 @@ class AnnotationController extends Controller
                     if ($c['privacy'] == "private") {
                         $visibility = "Private";
                     } elseif ($c['privacy'] == "all") {
-                        $visiblity = "All students in course";
+                        $visibility = "All students in course";
                     } elseif ($c['privacy'] == "nominated") {
                         $visibility = "Nominated studnets";
                     }
