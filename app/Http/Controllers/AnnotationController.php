@@ -407,6 +407,7 @@ class AnnotationController extends Controller
                 $row['Video ID']  = $annotation->group_video_id;
                 $row['User email'] = isset($annotation->author) ? $annotation->author->email : '';
                 $row['Time in Video'] = $annotation->start_time;
+                $row['Annotation ID'] = $annotation->id;
                 $row['Annotation']  = htmlspecialchars_decode($annotation->description, ENT_QUOTES);
                 $row['Tags'] = join(",", array_map(function ($tag) {
                     return $tag['tag'];
