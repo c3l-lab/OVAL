@@ -397,7 +397,7 @@ class AnnotationController extends Controller
             "Expires"             => "0"
         );
 
-        $columns = array('Video ID', 'User email', 'Time in Video', 'Annotation', 'Tags', 'Created', 'Updated');
+        $columns = array('Video ID', 'User email', 'Time in Video', 'Annotation ID', 'Annotation', 'Tags', 'Created', 'Updated');
 
         $callback = function () use ($annotations, $columns) {
             $file = fopen('php://output', 'w');
@@ -407,6 +407,7 @@ class AnnotationController extends Controller
                 $row['Video ID']  = $annotation->group_video_id;
                 $row['User email'] = isset($annotation->author) ? $annotation->author->email : '';
                 $row['Time in Video'] = $annotation->start_time;
+                $row['Annotation ID'] = $annotation->id;
                 $row['Annotation']  = htmlspecialchars_decode($annotation->description, ENT_QUOTES);
                 $row['Tags'] = join(",", array_map(function ($tag) {
                     return $tag['tag'];
@@ -418,6 +419,7 @@ class AnnotationController extends Controller
                     $row['Video ID'],
                     $row['User email'],
                     $row['Time in Video'],
+                    $row['Annotation ID'],
                     $row['Annotation'],
                     $row['Tags'],
                     $row['Created'],
