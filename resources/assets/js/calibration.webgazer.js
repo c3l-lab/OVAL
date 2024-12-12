@@ -121,7 +121,7 @@ function helpModalShow() {
   helpModal.show();
 }
 
-function calcAccuracy() {
+function calcAccuracy(id) {
   //https://github.com/brownhci/WebGazer/blob/master/www/js/calibration.js
   swal({
     title: "Calibration Successful",
@@ -129,7 +129,9 @@ function calcAccuracy() {
     buttons: {
       confirm: true,
     },
-  }).then((result) => {});
+  }).then((result) => {
+    window.location.href = `/group_videos/${id}`;
+  });
 }
 
 function completeCalibration() {
@@ -149,7 +151,7 @@ function completeCalibration() {
       group_video_id: urlParams.get("gvid"),
     },
     complete: function (data) {
-      calcAccuracy();
+      calcAccuracy(urlParams.get("gvid"));
     },
   });
 }
