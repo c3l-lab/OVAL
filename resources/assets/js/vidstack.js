@@ -96,7 +96,12 @@ async function setupPlayer(groupVideo) {
       speed: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
     }),
   });
+
   bindUtilityToWindowObject(player);
+  const slider = document.getElementsByClassName("plyr__slider")?.[0];
+  if (slider) {
+    slider.style.pointerEvents = "none";
+  }
 
   player.addEventListener("started", () => onVideoStart(player));
   player.addEventListener("rate-change", (e) =>
@@ -113,8 +118,14 @@ async function setupPlayer(groupVideo) {
   player.addEventListener("ended", () => {
     track("Ended");
   });
+  player.addEventListener("media-seeking-request", (e) => {
+    track("seek", null, { target: e.detail });
+  });
 
   player.addEventListener("can-play", () => {
+    if (slider) {
+      slider.style.pointerEvents = "auto";
+    }
     window.playVideo = () => {
       player.play();
     };
@@ -176,14 +187,14 @@ function onVideoStart(player) {
   checkQuiz();
 }
 
-function track(action, info = null, ...arg) {
+function track(action, info = null, args = {}) {
   window.trackings.push({
     event: action,
     target: null,
     info: info,
     video_time: window.exactCurrentVideoTime(),
     event_time: Date.now(),
-    ...arg,
+    ...args,
   });
 
   if (window.trackings.length >= 3) {
