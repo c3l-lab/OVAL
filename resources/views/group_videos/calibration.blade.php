@@ -17,15 +17,15 @@ Instructions on use can be found in the README repository.
     <TITLE>WebGazer Demo</TITLE>
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/calibration.webgazer.css') }}">
+    <meta name="_token" content="{{ csrf_token() }}" />
     <!-- <script src="./tensorflow.js"></script> -->
 </head>
 
 <body LANG="en-US" LINK="#0000ff" DIR="LTR">
     <canvas id="plotting_canvas" width="500" height="500" style="cursor:crosshair;"></canvas>
+    @include('parts.scripts')
     <script src="{{ asset('js/plugin/webgazer.js') }}"></script>
     <script src="{{ asset('js/plugin/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('js/plugin/sweetalert.min.js') }}"></script>
-    <script src="{{ asset('js/calibration.webgazer.js') }}"></script>
     <!-- Calibration points -->
     <div class="calibrationDiv">
         <input type="button" class="Calibration" id="Pt1"></input>
@@ -70,6 +70,9 @@ Instructions on use can be found in the README repository.
 
         </div>
     </div>
+
+    <script src="{{ asset('js/plugin/sweetalert.min.js') }}"></script>
+    <script src="{{ asset('js/calibration.webgazer.js') }}"></script>
 </body>
 
 </html>
