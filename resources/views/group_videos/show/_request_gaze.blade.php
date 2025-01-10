@@ -40,7 +40,10 @@
 
             document.cookie =
                 `allow_gaze_tracking=true; expires=${nextWeek.toUTCString()}; path=/group_videos`;
-            window.location.href = '/group_videos/calibrate';
+
+            document.getElementById('gaze-request').style.display = 'none';
+            document.body.classList.remove('block-disable');
+            window.location.href = `/group_videos/calibrate?gvid=${window.group_video_id}`;
         });
 
         document.getElementById('gaze-no').addEventListener('click', function() {
@@ -53,6 +56,20 @@
 
             document.getElementById('gaze-request').style.display = 'none';
             document.body.classList.remove('block-disable');
+
+            $.ajax({
+                type: "POST",
+                url: "/trackings",
+                data: {
+                    data: [{
+                        target: null,
+                        event: "calibrate",
+                        info: 'denied',
+                        event_time: Date.now(),
+                    }],
+                    group_video_id: window.group_video_id
+                },
+            });
         });
     </script>
 @endif

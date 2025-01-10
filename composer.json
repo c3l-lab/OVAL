@@ -1,82 +1,84 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
-    "license": "MIT",
-    "type": "project",
-    "require": {
-        "php": "^8.1",
-        "firebase/php-jwt": "6.5.0",
-        "google/apiclient": "^2.13.1",
-        "guzzlehttp/guzzle": "^7.0",
-        "influxdata/influxdb-client-php": "^3.6",
-        "laracasts/utilities": "^3.0",
-        "laravel/framework": "^10.0",
-        "laravel/tinker": "^2.8",
-        "laravel/ui": "^4.2",
-        "oat-sa/imsglobal-lti": "^4.0",
-        "packbackbooks/lti-1p3-tool": "^5.3",
-        "symfony/polyfill-uuid": "^1.22"
-    },
-    "require-dev": {
-        "barryvdh/laravel-ide-helper": "^2.13",
-        "doctrine/dbal": "^3.6",
-        "fakerphp/faker": "^1.23",
-        "friendsofphp/php-cs-fixer": "^3.22",
-        "laravel/dusk": "^7.9",
-        "laravel/homestead": "^14.4",
-        "laravel/sail": "^1.24",
-        "mockery/mockery": "^1.5",
-        "nunomaduro/collision": "^7.7",
-        "phpunit/phpunit": "^10.0",
-        "symfony/css-selector": "^6.2",
-        "symfony/dom-crawler": "^6.2"
-    },
-    "autoload": {
-        "files": [
-            "app/helpers.php"
-        ],
-        "psr-4": {
-            "oval\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-
-        "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
-        ],
-        "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
-        ],
-        "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
-        "post-create-project-cmd": [
-            "@php artisan key:generate --ansi"
-        ]
-    },
-    "extra": {
-        "laravel": {
-            "dont-discover": []
-        }
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "php-http/discovery": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+  "name": "laravel/laravel",
+  "description": "The Laravel Framework.",
+  "keywords": [
+    "framework",
+    "laravel"
+  ],
+  "license": "MIT",
+  "type": "project",
+  "require": {
+    "php": "^8.1",
+    "firebase/php-jwt": "6.5.0",
+    "google/apiclient": "^2.13.1",
+    "guzzlehttp/guzzle": "^7.0",
+    "influxdata/influxdb-client-php": "^3.6",
+    "laracasts/utilities": "^3.0",
+    "laravel/framework": "^10.0",
+    "laravel/tinker": "^2.8",
+    "laravel/ui": "^4.2",
+    "oat-sa/imsglobal-lti": "^4.0",
+    "packbackbooks/lti-1p3-tool": "^5.3",
+    "symfony/polyfill-uuid": "^1.22"
+  },
+  "require-dev": {
+    "barryvdh/laravel-ide-helper": "^2.13",
+    "doctrine/dbal": "^3.6",
+    "fakerphp/faker": "^1.23",
+    "friendsofphp/php-cs-fixer": "^3.22",
+    "laravel/dusk": "^8.2.12",
+    "laravel/homestead": "^14.4",
+    "laravel/sail": "^1.24",
+    "mockery/mockery": "^1.5",
+    "nunomaduro/collision": "^7.7",
+    "phpunit/phpunit": "^10.0",
+    "symfony/css-selector": "^6.2",
+    "symfony/dom-crawler": "^6.2"
+  },
+  "autoload": {
+    "files": [
+      "app/helpers.php"
+    ],
+    "psr-4": {
+      "oval\\": "app/",
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover --ansi"
+    ],
+    "post-update-cmd": [
+      "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+    ],
+    "post-root-package-install": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "post-create-project-cmd": [
+      "@php artisan key:generate --ansi"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "php-http/discovery": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
