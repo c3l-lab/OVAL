@@ -265,6 +265,9 @@ class GroupVideoController extends Controller
     }
 
     public function calibrate(Request $request){
-        return view('group_videos.calibration');
+        $user = \Auth::user();
+        return view('group_videos.calibration', [
+            'user' => $user
+        ]);
     }
 }
