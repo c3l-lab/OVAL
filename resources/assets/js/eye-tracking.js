@@ -9,11 +9,8 @@ if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
       return "N";
     }
 
-    if (!window.cRect || !window.vRect || !window.aRect) {
-      return "O";
-    }
-
     if (
+      window.cRect &&
       x >= window.cRect.left &&
       x <= window.cRect.right &&
       y >= window.cRect.top &&
@@ -23,6 +20,7 @@ if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
     }
 
     if (
+      window.aRect &&
       x >= window.aRect.left &&
       x <= window.aRect.right &&
       y >= window.aRect.top &&
@@ -32,6 +30,7 @@ if (gazeConsent && gazeConsent[2] === "true" && enableEyeTracking) {
     }
 
     if (
+      window.vRect &&
       x >= window.vRect.left &&
       x <= window.vRect.right &&
       y >= window.vRect.top &&
