@@ -24,7 +24,7 @@
   "dependencies": {
     "htmx.org": "^1.9.4",
     "js-cookie": "^3.0.5",
-    "terser-webpack-plugin": "^5.3.10",
+    "terser-webpack-plugin": "^5.4.0",
     "vidstack": "^1.11.21"
   },
   "lint-staged": {
